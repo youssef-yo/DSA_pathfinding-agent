@@ -62,5 +62,7 @@ def gridGenerator(rows, cols, freeCellRatio):
 
     graph.printGraph()
 
+    return graph
+
 
 gridGenerator(3,3, 0.5)

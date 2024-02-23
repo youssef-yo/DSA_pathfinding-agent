@@ -18,6 +18,9 @@ class Graph:
 	def addEdge(self, src, dst, w):
 		self.adjacent[src].append(Edge(dst, w))
 
+	def containsVertex(self, vertex):
+		return vertex in self.adjacent
+	
 	def printGraph(self):
 		for vertex in self.adjacent:
 			print(vertex, end=" -> ")
