@@ -26,7 +26,7 @@ def addObstacles(grid, nObstacle):
 def createGraphFromGrid(grid):
     rows, cols = len(grid), len(grid[0])
 
-    cardinalMoves = [(-1,0), (1,0), (0,-1), (0,1)] #cardinal moves have cost = 1
+    cardinalMoves = [(0,0), (-1,0), (1,0), (0,-1), (0,1)] #cardinal moves and self-loop have cost = 1
     diagonalMoves = [(1,1), (-1,1), (-1,-1), (1,-1)] #diagonal moves have cost = sqrt(2)
 
     graph = Graph()
