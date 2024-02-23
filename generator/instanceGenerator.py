@@ -44,17 +44,38 @@ def main(n_agents, max):
         init = chooseRandomStart(availableCells)
         goal = chooseRandomGoal(availableCells)
 
+        current = init
         # create random path from init to goal
         t = 0   
         while t < max:
+            availableMoves = graph.adjacent[current] # value: list of tuple, where a tuple contains (dst_node, weight)
+
+            for p in paths:
+                found = False
+                edgeToRemove = None
+                
+                
+
+                for edge in availableMoves:
+                    if edge.isNeighbor(p.getMove(t)[1]):
+                        edgeToRemove = edge
+                        found = True
+                        break
+
+                if p.getMove(t) and found:
+                    availableMoves.remove(edgeToRemove)
+
+            if len(availableMoves) == 0:
+                print("No more moves available for agent ", i, " at time ", t)
+                break
+
             # choose a random move
-            move = random.choice(graph.adjacent[init])
-            while path.checkCollision(move.neighbor, t):
-                move = random.choice(graph.adjacent[init])
+            move = random.choice(availableMoves)
+
             path.addMove(t, init, move.neighbor, move.weight)
-            init = move.neighbor
+            current = move.neighbor
             t += 1
-            if init == goal:
+            if current == goal:
                 break
         
         paths.append(path)
