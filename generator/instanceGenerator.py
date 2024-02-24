@@ -1,4 +1,4 @@
-from main import gridGenerator
+from main import graphGenerator
 import random
 from Path import Path 
 
@@ -21,21 +21,16 @@ def chooseRandomGoal(availabeCells):
     
     return randomCell
 
-def main(n_agents, max):
+def main(n_agents, max, graph):
     # for all n_agents we will choose randomly the initial and goal positions
     # The movement of the agents will be random as well
 
-    nrows, ncols = 3, 3
-    freeCellRatio = 0.8
-    # these variables will be all parameters of the instance
-    
-    graph = gridGenerator(nrows, ncols, freeCellRatio)
-
-    availableCells = [] # list of tuples (r,c) where there are no obstacles
-    for i in range(nrows):
-        for j in range(ncols):
-            if graph.containsVertex((i,j)):
-                availableCells.append((i,j))
+    # availableCells = [] # list of tuples (r,c) where there are no obstacles
+    # for i in range(nrows):
+    #     for j in range(ncols):
+    #         if graph.containsVertex((i,j)):
+    #             availableCells.append((i,j))
+    availableCells = list(graph.adjacent.keys())
 
     # create path for each agent
     paths = []
@@ -86,8 +81,15 @@ def main(n_agents, max):
 
     for path in paths:
         path.printPath()
+    
+    return paths
 
 
-main(2, 20)
+nrows, ncols = 3, 3
+freeCellRatio = 0.8
+# these variables will be all parameters of the instance
+
+graph = graphGenerator(nrows, ncols, freeCellRatio)
+main(2, 20, graph)
 
 

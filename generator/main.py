@@ -58,11 +58,15 @@ def gridGenerator(rows, cols, freeCellRatio):
     nObstacle = math.floor(rows*cols*obstacleRatio)
     grid = addObstacles(grid, nObstacle)
 
+    return grid
+    
+
+def graphGenerator(rows, cols, freeCellRatio):
+    grid = gridGenerator(rows, cols, freeCellRatio)
     graph = createGraphFromGrid(grid)
 
     graph.printGraph()
 
     return graph
 
-
-gridGenerator(3,3, 0.5)
+# graphGenerator(10,10, 0.5)
