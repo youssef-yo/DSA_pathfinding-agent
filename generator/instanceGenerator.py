@@ -23,11 +23,11 @@ def chooseRandomGoal(availabeCells):
 
 def main(n_agents, max):
     # for all n_agents we will choose randomly the initial and goal positions
-    # The mowement of the agents will be random as well
+    # The movement of the agents will be random as well
 
     nrows, ncols = 3, 3
     freeCellRatio = 0.8
-    # this variables will be all parameters of the instance
+    # these variables will be all parameters of the instance
     
     graph = gridGenerator(nrows, ncols, freeCellRatio)
 
@@ -54,10 +54,8 @@ def main(n_agents, max):
                 found = False
                 edgeToRemove = None
                 
-                
-
                 for edge in availableMoves:
-                    if edge.isNeighbor(p.getMove(t)[1]):
+                    if p.getMove(t) and edge.isNeighbor(p.getMove(t)[1]):
                         edgeToRemove = edge
                         found = True
                         break
@@ -84,6 +82,6 @@ def main(n_agents, max):
         path.printPath()
 
 
-main(2, 30)
+main(2, 20)
 
 

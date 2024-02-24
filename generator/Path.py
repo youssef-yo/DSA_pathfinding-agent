@@ -20,7 +20,7 @@ class Path:
         return self.lenght
     
     def getMove(self, t):
-        return self.path[t]
+        return self.path.get(t)
 
     def addMove(self, t, src, dst, w):
         self.path[t] = (src, dst, w)
