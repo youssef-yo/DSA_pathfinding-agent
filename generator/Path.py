@@ -1,6 +1,5 @@
 from typing import Any
 
-
 class Path:
     def __init__(self) -> None:
         self.path = {} # key = time t as integer, value: (startnode, endnode, weight)
@@ -39,8 +38,27 @@ class Path:
                 return True
         return False
     
-    def checkCollision(self, dst, t):
-        return self.checkSameDestination(dst, t) or self.checkSeatSwapping(dst, t)
+    def checkTrajectories(self, src, dst, t):
+        if t not in self.path:
+            return False
+        #check that one agent is up/down of the other
+        if (self.path[t][0][1] == src[1] and
+             abs(self.path[t][0][0]-src[0]) == 1):
+            #check if they cross each other
+            if (self.path[t][1][1] == dst[1] and
+                abs(self.path[t][1][0]-dst[0]) == 1):
+                return True
+        #check that one agent is left/right of the other
+        if (self.path[t][0][0] == src[0] and
+             abs(self.path[t][0][1]-src[1]) == 1):
+            #check if they cross each other
+            if (self.path[t][1][0] == dst[0] and
+                abs(self.path[t][1][1]-dst[1]) == 1):
+                return True
+        return False
+    
+    def checkCollision(self, src, dst, t):
+        return self.checkSameDestination(dst, t) or self.checkSeatSwapping(dst, t) or self.checkTrajectories(src, dst, t)
     
     def printPath(self):
         # print start node end goal node

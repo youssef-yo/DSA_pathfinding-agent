@@ -50,18 +50,24 @@ def main(n_agents, max):
         while t < max:
             availableMoves = graph.adjacent[current] # value: list of tuple, where a tuple contains (dst_node, weight)
 
-            for p in paths:
-                found = False
-                edgeToRemove = None
+            # OLD CODE TO REMOVE COLLISION(?)
+            # for p in paths:
+            #     found = False
+            #     edgeToRemove = None
                 
-                for edge in availableMoves:
-                    if p.getMove(t) and edge.isNeighbor(p.getMove(t)[1]):
-                        edgeToRemove = edge
-                        found = True
-                        break
+            #     for edge in availableMoves:
+            #         if p.getMove(t) and edge.isNeighbor(p.getMove(t)[1]):
+            #             edgeToRemove = edge
+            #             found = True
+            #             break
 
-                if p.getMove(t) and found:
-                    availableMoves.remove(edgeToRemove)
+            #     if p.getMove(t) and found:
+            #         availableMoves.remove(edgeToRemove)
+
+            for p in paths:
+                for edge in availableMoves:
+                    if p.checkCollision(current, edge.neighbor, t):
+                        availableMoves.remove(edge)
 
             if len(availableMoves) == 0:
                 print("No more moves available for agent ", i, " at time ", t)
@@ -70,7 +76,7 @@ def main(n_agents, max):
             # choose a random move
             move = random.choice(availableMoves)
 
-            path.addMove(t, init, move.neighbor, move.weight)
+            path.addMove(t, current, move.neighbor, move.weight)
             current = move.neighbor
             t += 1
             if current == goal:
