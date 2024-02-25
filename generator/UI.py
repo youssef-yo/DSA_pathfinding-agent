@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
-from main import gridGenerator, graphGenerator
+from main import gridGenerator, graphGeneratorFromGrid
 from instanceGenerator import main
+import numpy as np
 
 def plot_grid(grid, graph):
     # Extract the dimensions of the grid
@@ -23,11 +24,14 @@ def plot_grid(grid, graph):
     ax.set_xlim(0, cols)
     ax.set_ylim(0, rows)
 
+    ax.set_xticks(np.arange(0, cols + 1, 1))
+    ax.set_yticks(np.arange(0, rows + 1, 1))
+
 
     # ax.grid(True, color='black', linestyle='-', linewidth=1)
 
     # Call the main function in instanceGenerator.py
-    paths = main(2,20, graph)
+    paths = main(4,20, graph)
 
     # Print the paths on the plot
     for path in paths:
@@ -38,8 +42,13 @@ def plot_grid(grid, graph):
                 yStart = src[1]
                 xEnd = dst[0]
                 yEnd = dst[1]
-                # ax.plot([yStart + 0.5, yEnd + 0.5], [xStart + 0.5, xEnd + 0.5], color=colors[i], linewidth=2)
-                ax.plot([yStart, yEnd], [xStart, xEnd], color=colors[i], linewidth=2)
+
+                if (xStart, yStart) == path.getFirstNode():
+                    ax.plot(yStart + 0.5, xStart + 0.5, marker='*', markersize=10, color=colors[i])
+                if (xEnd, yEnd) == path.getLastNode():
+                    ax.plot(yEnd + 0.5, xEnd + 0.5, marker='^', markersize=10, color=colors[i])
+                ax.plot([yStart + 0.5, yEnd + 0.5], [xStart + 0.5, xEnd + 0.5], color=colors[i], linewidth=2)
+                # ax.plot([yStart, yEnd], [xStart, xEnd], color=colors[i], linewidth=2)
 
         # Add a legend for the paths
         legend_labels = [f'Path {i+1}' for i in range(len(paths))]
@@ -50,11 +59,14 @@ def plot_grid(grid, graph):
     plt.show()
     
 
-nrows, ncols = 3, 3
-freeCellRatio = 0.8
+nrows, ncols = 5, 5
+freeCellRatio = 0.6
 # Assuming you have a grid generated in gridGenerator
 grid = gridGenerator(nrows,ncols, freeCellRatio)
-graph = graphGenerator(nrows, ncols, freeCellRatio)
+
+graph = graphGeneratorFromGrid(grid)
+
+graph.printGraph()
 # Plot the grid using the plot_grid function
 plot_grid(grid, graph)
 

@@ -25,11 +25,6 @@ def main(n_agents, max, graph):
     # for all n_agents we will choose randomly the initial and goal positions
     # The movement of the agents will be random as well
 
-    # availableCells = [] # list of tuples (r,c) where there are no obstacles
-    # for i in range(nrows):
-    #     for j in range(ncols):
-    #         if graph.containsVertex((i,j)):
-    #             availableCells.append((i,j))
     availableCells = list(graph.adjacent.keys())
 
     # create path for each agent
@@ -37,6 +32,7 @@ def main(n_agents, max, graph):
     for i in range(n_agents):
         path = Path()
         init = chooseRandomStart(availableCells)
+        #TODO: is it right to remove init from avaibleCells? A goal could be the init of another agent
         goal = chooseRandomGoal(availableCells)
 
         current = init
@@ -44,20 +40,6 @@ def main(n_agents, max, graph):
         t = 0   
         while t < max:
             availableMoves = graph.adjacent[current] # value: list of tuple, where a tuple contains (dst_node, weight)
-
-            # OLD CODE TO REMOVE COLLISION(?)
-            # for p in paths:
-            #     found = False
-            #     edgeToRemove = None
-                
-            #     for edge in availableMoves:
-            #         if p.getMove(t) and edge.isNeighbor(p.getMove(t)[1]):
-            #             edgeToRemove = edge
-            #             found = True
-            #             break
-
-            #     if p.getMove(t) and found:
-            #         availableMoves.remove(edgeToRemove)
 
             for p in paths:
                 for edge in availableMoves:
@@ -85,11 +67,11 @@ def main(n_agents, max, graph):
     return paths
 
 
-nrows, ncols = 3, 3
-freeCellRatio = 0.8
-# these variables will be all parameters of the instance
+# nrows, ncols = 3, 3
+# freeCellRatio = 0.8
+# # these variables will be all parameters of the instance
 
-graph = graphGenerator(nrows, ncols, freeCellRatio)
-main(2, 20, graph)
+# graph = graphGenerator(nrows, ncols, freeCellRatio)
+# main(2, 20, graph)
 
 
