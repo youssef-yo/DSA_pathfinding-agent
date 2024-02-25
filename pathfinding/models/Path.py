@@ -1,5 +1,3 @@
-from typing import Any
-
 class Path:
     def __init__(self) -> None:
         self.path = {} # key = time t as integer, value: (startnode, endnode, weight)

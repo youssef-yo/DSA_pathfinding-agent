@@ -1,6 +1,6 @@
 import math
 import random
-from Graph import Graph
+from models.Graph import Graph
 
 # GRID 
 # 0 -> free cell

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from main import gridGenerator, graphGeneratorFromGrid
-from instanceGenerator import main
+from generator.main import gridGenerator, graphGeneratorFromGrid
+from generator.instanceGenerator import createPaths
 import numpy as np
 
 def plot_grid(grid, graph):
@@ -31,7 +31,7 @@ def plot_grid(grid, graph):
     # ax.grid(True, color='black', linestyle='-', linewidth=1)
 
     # Call the main function in instanceGenerator.py
-    paths = main(4,20, graph)
+    paths = createPaths(4,20, graph)
 
     # Print the paths on the plot
     for path in paths:
@@ -58,16 +58,14 @@ def plot_grid(grid, graph):
     # Show the updated plot
     plt.show()
     
+def run():
+    nrows, ncols = 5, 5
+    freeCellRatio = 0.6
+    # Assuming you have a grid generated in gridGenerator
+    grid = gridGenerator(nrows,ncols, freeCellRatio)
 
-nrows, ncols = 5, 5
-freeCellRatio = 0.6
-# Assuming you have a grid generated in gridGenerator
-grid = gridGenerator(nrows,ncols, freeCellRatio)
+    graph = graphGeneratorFromGrid(grid)
 
-graph = graphGeneratorFromGrid(grid)
-
-graph.printGraph()
-# Plot the grid using the plot_grid function
-plot_grid(grid, graph)
-
-
+    graph.printGraph()
+    # Plot the grid using the plot_grid function
+    plot_grid(grid, graph)

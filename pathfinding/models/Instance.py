@@ -1,4 +1,4 @@
-import Graph
+import models.Graph as Graph
 
 class Instance:
 

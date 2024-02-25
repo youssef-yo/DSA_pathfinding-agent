@@ -1,6 +1,5 @@
-from main import graphGenerator
 import random
-from Path import Path 
+from models.Path import Path 
 
 def chooseRandomStart(availabeCells):
     if len(availabeCells) == 0:
@@ -21,7 +20,7 @@ def chooseRandomGoal(availabeCells):
     
     return randomCell
 
-def main(n_agents, max, graph):
+def createPaths(n_agents, max, graph):
     # for all n_agents we will choose randomly the initial and goal positions
     # The movement of the agents will be random as well
 
@@ -43,7 +42,7 @@ def main(n_agents, max, graph):
 
             for p in paths:
                 for edge in availableMoves:
-                    if p.checkCollision(current, edge.neighbor, t):
+                    if p.checkCollision(current, edge.dst, t):
                         availableMoves.remove(edge)
 
             if len(availableMoves) == 0:
@@ -53,8 +52,8 @@ def main(n_agents, max, graph):
             # choose a random move
             move = random.choice(availableMoves)
 
-            path.addMove(t, current, move.neighbor, move.weight)
-            current = move.neighbor
+            path.addMove(t, current, move.dst, move.weight)
+            current = move.dst
             t += 1
             if current == goal:
                 break
