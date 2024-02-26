@@ -71,5 +71,3 @@ def graphGenerator(rows, cols, freeCellRatio):
 
 def graphGeneratorFromGrid(grid):
     return createGraphFromGrid(grid)
-
-# graphGenerator(10,10, 0.5)

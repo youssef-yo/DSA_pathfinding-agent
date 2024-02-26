@@ -1,38 +1,51 @@
 import random
 from models.Path import Path 
 
-def chooseRandomStart(availabeCells):
-    if len(availabeCells) == 0:
-        return None
-    
-    randomCell = random.choice(availabeCells)
-    availabeCells.remove(randomCell)
+def chooseRandomCell(availableCells):
+    return random.choice(availableCells) if len(availableCells) > 0 else None
 
-    return randomCell
 
-def chooseRandomGoal(availabeCells):
-    if len(availabeCells) == 0:
-        return None
-    
-    randomCell = random.choice(availabeCells)
-    # availabeCells.remove(randomCell) 
-    # we don't remove the goal cell from the list of available cells because it could be the initial position of another agent
-    
-    return randomCell
-
-def createPaths(n_agents, max, graph):
-    # for all n_agents we will choose randomly the initial and goal positions
+def createPaths(nAgents, max, graph):
+    # for all nAgents we will choose randomly the initial and goal positions
     # The movement of the agents will be random as well
 
     availableCells = list(graph.adjacent.keys())
 
+    #INIT and GOAL must be different for each agent
+    if len(availableCells) < nAgents*2:
+        print("Not enough cells to create a path for each agent")
+        return []
+    
+    goals = set()
+
+    for _ in range(nAgents):
+        goal = chooseRandomCell(availableCells)
+        while goal in goals:
+            goal = chooseRandomCell(availableCells)
+        goals.add(goal)
+
     # create path for each agent
     paths = []
-    for i in range(n_agents):
+    for i in range(nAgents):
         path = Path()
-        init = chooseRandomStart(availableCells)
-        #TODO: is it right to remove init from avaibleCells? A goal could be the init of another agent
-        goal = chooseRandomGoal(availableCells)
+
+        # init = chooseRandomCell(availableCells)
+        # availableCells.remove(init)
+
+        # #TODO: is it right to remove init from avaibleCells? A goal could be the init of another agent
+        # goal = chooseRandomCell(availableCells)
+
+        goal = goals.pop()
+
+        init = chooseRandomCell(availableCells)
+        while init[0] == goal[0] and init[1] == goal[1]:
+            print("Init and goal of agents: ", i, " are the same")
+            print(init)
+            print(goal)
+            print(availableCells)
+            print("----")
+            init = chooseRandomCell(availableCells)
+        availableCells.remove(init)
 
         current = init
         # create random path from init to goal
@@ -45,6 +58,7 @@ def createPaths(n_agents, max, graph):
                     if p.checkCollision(current, edge.dst, t):
                         availableMoves.remove(edge)
 
+            #TODO: we need to have a path for all the agents so this break is not correct
             if len(availableMoves) == 0:
                 print("No more moves available for agent ", i, " at time ", t)
                 break
