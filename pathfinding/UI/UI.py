@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches 
-from generator.main import gridGenerator, graphGeneratorFromGrid
-from generator.instanceGenerator import createPaths
+
 import numpy as np
 
 def definePlotGrid(grid):
@@ -57,17 +56,8 @@ def definePlotPaths(ax, paths):
 
         return ax
     
-def run(nrows, ncols, freeCellRatio):
-    # Assuming you have a grid generated in gridGenerator
-    grid = gridGenerator(nrows,ncols, freeCellRatio)
-
-    graph = graphGeneratorFromGrid(grid)
-
+def run(grid, paths):
     ax = definePlotGrid(grid)
-    
-    nAgents = 4 
-    max = 20
-    paths = createPaths(nAgents, max, graph)
     ax = definePlotPaths(ax, paths)
 
     plt.grid()
