@@ -3,6 +3,8 @@ import matplotlib.patches as mpatches
 
 import numpy as np
 
+
+
 def definePlotGrid(grid):
     # Extract the dimensions of the grid
     rows = len(grid)
@@ -52,7 +54,8 @@ def definePlotPaths(ax, paths):
                 # Creating legend with color box 
             labels.append(mpatches.Patch(color=colors[i], label=f'Agent {i+1}'))
         
-        plt.legend(handles=labels) 
+        plt.legend(handles=labels, bbox_to_anchor = (1.25, 0.6), loc='center right')
+ 
 
         return ax
     

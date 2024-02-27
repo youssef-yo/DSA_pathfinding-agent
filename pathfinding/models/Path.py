@@ -1,14 +1,16 @@
 class Path:
-    def __init__(self) -> None:
+    def __init__(self, firstNode, lastNode) -> None:
         self.path = {} # key = time t as integer, value: (startnode, endnode, weight)
+        self.firstNode = firstNode
+        self.lastNode = lastNode
         self.cost = 0
         self.lenght = 0
     
     def getFirstNode(self):
-        return self.path[0][0]
+        return self.firstNode
     
     def getLastNode(self):
-        return self.path[self.lenght-1][1]
+        return self.lastNode
 
     def getCost(self):
         return self.cost
@@ -30,9 +32,9 @@ class Path:
                 return True
         return False
 
-    def checkSeatSwapping(self, dst, t):
+    def checkSeatSwapping(self, src, dst, t):
         if t in self.path:
-            if self.path[t][0] == dst:
+            if self.path[t][0] == dst and self.path[t][1] == src:
                 return True
         return False
     
@@ -56,7 +58,7 @@ class Path:
         return False
     
     def checkCollision(self, src, dst, t):
-        return self.checkSameDestination(dst, t) or self.checkSeatSwapping(dst, t) or self.checkTrajectories(src, dst, t)
+        return self.checkSameDestination(dst, t) or self.checkSeatSwapping(src, dst, t) or self.checkTrajectories(src, dst, t)
     
     def printPath(self):
         # print start node end goal node
