@@ -1,5 +1,5 @@
 import random
-from models.Path import Path
+from models.path import Path
 
 def checkIllegalMove(move, paths, current, t):
     for p in paths: 
@@ -91,7 +91,7 @@ def waitGoalToBeFree(move, path, paths, t, tMax, current, ):
         t += 1
     return t, path
 
-def createPaths(nAgents, max, graph, maxIteration):
+def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     """
     For all nAgents we will choose randomly the initial and goal positions
     The movement of the agents will be random as well
@@ -102,12 +102,13 @@ def createPaths(nAgents, max, graph, maxIteration):
     
     if len(availableCells) < nAgents:
         print("Not enough cells to create a path for each agent")
-        return None
+        return None, 0
     
     goals = chooseRandomGoals(availableCells, nAgents) 
 
     paths = []
     nReset = 0
+    maxLengthPath = 0
 
     for _ in range(nAgents):
         goal, tMax  = random.choice(list(goals.items()))
@@ -124,9 +125,9 @@ def createPaths(nAgents, max, graph, maxIteration):
 
         #TODO: remove print
         while current != goal:
-            if nReset > maxIteration:
+            if nReset > limitNumberReset:
                 print("STOPPED FOR MAX ITERATION REACHED")
-                return None
+                return None, 0
             
             availableMoves = graph.adjacent[current] # list of tuple, where a tuple contains (dstNode, weight)
 
@@ -144,6 +145,7 @@ def createPaths(nAgents, max, graph, maxIteration):
                 if len(availableMoves) == 0:
                     print("RESET NO MOVE")
                     t, current, path, goals, availableCells, nReset = resetPath(path, init, goal, availableCells, nReset, goalsCopy)
+                    maxLengthPath = 0
                     continue
 
                 move = random.choice(availableMoves)
@@ -156,14 +158,17 @@ def createPaths(nAgents, max, graph, maxIteration):
             t += 1
 
             # if I can't reach the goal in max iteration, I will start again
-            if t > max:
+            if t > limitLengthPath:
                 print("RESET MAX ITERATION")
                 t, current, path, goals, availableCells, nReset = resetPath(path, init, goal, availableCells, nReset, goalsCopy)
+                maxLengthPath = 0
 
 
         paths.append(path)
+        maxLengthPath = max(maxLengthPath, path.getLength())
+
     
     for path in paths:
         path.printPath()
     
-    return paths
+    return paths, maxLengthPath
