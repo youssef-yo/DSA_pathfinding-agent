@@ -1,5 +1,5 @@
 import math
-from models.Graph import Graph
+from models.graph import Graph
 
 def createGraphFromGrid(grid):
     rows, cols = len(grid), len(grid[0])

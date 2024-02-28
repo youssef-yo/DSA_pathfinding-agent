@@ -4,7 +4,7 @@ class Path:
         self.firstNode = firstNode
         self.lastNode = lastNode
         self.cost = 0
-        self.lenght = 0
+        self.length = 0
     
     def getFirstNode(self):
         return self.firstNode
@@ -15,8 +15,8 @@ class Path:
     def getCost(self):
         return self.cost
     
-    def getLenght(self):
-        return self.lenght
+    def getLength(self):
+        return self.length
     
     def getMove(self, t):
         return self.path.get(t)
@@ -24,7 +24,7 @@ class Path:
     def addMove(self, t, src, dst, w):
         self.path[t] = (src, dst, w)
         self.cost += w
-        self.lenght += 1
+        self.length += 1
 
     def checkSameDestination(self, dst, t):
         if t in self.path:
