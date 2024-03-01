@@ -52,7 +52,10 @@ def definePlotPaths(ax, paths):
                 ax.plot([yStart + 0.5, yEnd + 0.5], [xStart + 0.5, xEnd + 0.5], color=colors[i], linewidth=2)
 
                 # Creating legend with color box 
-            labels.append(mpatches.Patch(color=colors[i], label=f'Agent {i+1}'))
+            if path == paths[-1]:
+                labels.append(mpatches.Patch(color=colors[i], label='New Agent'))
+            else:
+                labels.append(mpatches.Patch(color=colors[i], label=f'Agent {i+1}'))
         
         plt.legend(handles=labels, bbox_to_anchor = (1.25, 0.6), loc='center right')
  

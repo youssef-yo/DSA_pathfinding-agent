@@ -12,6 +12,9 @@ class Instance:
 
     def getGrid(self):
         return self.grid
+    
+    def getGraph(self): 
+        return self.graph
 
     def getPaths(self):
         return self.paths
@@ -25,3 +28,5 @@ class Instance:
     def getMax(self):
         return self.maxLengthNewAgent
     
+    def addPath(self, path):
+        self.paths.append(path)

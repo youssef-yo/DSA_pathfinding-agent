@@ -1,13 +1,13 @@
 from UI.UI import run
 from generator.instanceGenerator import generateInstance
+from solver.reachGoal import start
+nrows = 20
+ncols = 20
+freeCellRatio = 0.9
+agglomerationFactor = 0.2
+max = 50
 
-nrows = 5
-ncols = 5
-freeCellRatio = 0.8
-agglomerationFactor = 0.3
-max = 20
-
-nAgents = 4
+nAgents = 5
 limitLengthPath = freeCellRatio * nrows * ncols
 
 maxIteration = 80 # max number of iteration to reset the creation of a single path
@@ -19,7 +19,13 @@ if not instance:
     print("Parameter max was not valid for the current configuration.")
 
 if instance and nIteration < maxRun:
+    
+    path = start(instance.getGraph(), instance.getPaths(), instance.getInit(), instance.getGoal(), max)
+    if path:
+        instance.addPath(path)
+        
     run(instance.getGrid(), instance.getPaths())
+
 else:
     print("Parameters too restrictive, try again with different ones.")
 
