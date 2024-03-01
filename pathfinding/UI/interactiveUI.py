@@ -15,6 +15,9 @@ window_height = grid_height * cell_size
 # Create the window
 window = pygame.display.set_mode((window_width, window_height))
 
+# Clear the window
+window.fill((255, 255, 255))
+
 # Game loop
 running = True
 while running:
@@ -32,9 +35,9 @@ while running:
             
             # Print the cell position
             print(f"Clicked on cell ({cell_x}, {cell_y})")
-    
-    # Clear the window
-    window.fill((255, 255, 255))
+
+            # Set the color of the clicked cell to red
+            pygame.draw.rect(window, (255, 0, 0), (cell_x * cell_size, cell_y * cell_size, cell_size, cell_size))
     
     # Draw the grid
     for x in range(grid_width):
