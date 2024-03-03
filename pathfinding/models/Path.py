@@ -1,16 +1,16 @@
 class Path:
-    def __init__(self, firstNode, lastNode) -> None:
+    def __init__(self, init, goal) -> None:
         self.path = {} # key = time t as integer, value: (startnode, endnode, weight)
-        self.firstNode = firstNode
-        self.lastNode = lastNode
+        self.init = init
+        self.goal = goal
         self.cost = 0
         self.length = 0
     
-    def getFirstNode(self):
-        return self.firstNode
+    def getInit(self):
+        return self.init
     
-    def getLastNode(self):
-        return self.lastNode
+    def getGoal(self):
+        return self.goal
 
     def getCost(self):
         return self.cost
@@ -20,6 +20,9 @@ class Path:
     
     def getMove(self, t):
         return self.path.get(t)
+
+    def getMoves(self):
+        return self.path
 
     def addMove(self, t, src, dst, w):
         self.path[t] = (src, dst, w)
@@ -63,8 +66,8 @@ class Path:
     def printPath(self):
         # print start node end goal node
         print("\n--------------------")
-        print("Start node: ", self.getFirstNode())
-        print("Goal node: ", self.getLastNode())
+        print("Start node: ", self.getInit())
+        print("Goal node: ", self.getGoal())
         print("Path: ")
         for t in self.path:
             print(t, self.path[t])

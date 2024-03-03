@@ -28,8 +28,8 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     occupied_inits = set()
     occupied_goals = set()
     for path in paths:
-        init = path.getFirstNode()
-        goal = path.getLastNode()
+        init = path.getInit()
+        goal = path.getGoal()
         occupied_inits.add(init)
         occupied_goals.add(goal)
 

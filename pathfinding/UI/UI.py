@@ -45,9 +45,9 @@ def definePlotPaths(ax, paths):
                 xEnd = dst[0]
                 yEnd = dst[1]
 
-                if (xStart, yStart) == path.getFirstNode():
+                if (xStart, yStart) == path.getInit():
                     ax.plot(yStart + 0.5, xStart + 0.5, marker='*', markersize=10, color=colors[i])
-                if (xEnd, yEnd) == path.getLastNode():
+                if (xEnd, yEnd) == path.getGoal():
                     ax.plot(yEnd + 0.5, xEnd + 0.5, marker='^', markersize=10, color=colors[i])
                 ax.plot([yStart + 0.5, yEnd + 0.5], [xStart + 0.5, xEnd + 0.5], color=colors[i], linewidth=2)
 
