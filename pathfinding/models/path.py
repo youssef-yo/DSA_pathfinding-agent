@@ -1,6 +1,26 @@
+class Move:
+    def __init__(self, src, dst, w) -> None:
+        self.src = src
+        self.dst = dst
+        self.w = w
+
+    def __str__(self):
+        return "(" + str(self.src) + "," + str(self.dst) + "," + str(self.w) + ")"
+    
+    def getSrc(self):
+        return self.src
+    
+    def getDst(self):
+        return self.dst
+    
+    def getWeight(self):
+        return self.w
+    
+
+
 class Path:
     def __init__(self, init, goal) -> None:
-        self.path = {} # key = time t as integer, value: (startnode, endnode, weight)
+        self.moves = {} # key = time t as integer, value: Move(src, dst, weight)
         self.init = init
         self.goal = goal
         self.cost = 0
@@ -19,44 +39,46 @@ class Path:
         return self.length
     
     def getMove(self, t):
-        return self.path.get(t)
+        #TODO: throw exception if t not in self.path ?
+        return self.moves.get(t)
 
     def getMoves(self):
-        return self.path
+        return self.moves
 
     def addMove(self, t, src, dst, w):
-        self.path[t] = (src, dst, w)
+        # self.path[t] = (src, dst, w)
+        self.moves[t] = Move(src, dst, w)
         self.cost += w
         self.length += 1
 
     def checkSameDestination(self, dst, t):
-        if t in self.path:
-            if self.path[t][1] == dst:
+        if t in self.moves:
+            if self.getMove(t).dst == dst:
                 return True
         return False
 
     def checkSeatSwapping(self, src, dst, t):
-        if t in self.path:
-            if self.path[t][0] == dst and self.path[t][1] == src:
+        if t in self.moves:
+            if self.getMove(t).src == dst and self.getMove(t).dst == src:
                 return True
         return False
     
     def checkTrajectories(self, src, dst, t):
-        if t not in self.path:
+        if t not in self.moves:
             return False
         #check that one agent is up/down of the other
-        if (self.path[t][0][1] == src[1] and
-             abs(self.path[t][0][0]-src[0]) == 1):
+        if (self.getMove(t).src[1] == src[1] and
+             abs(self.getMove(t).src[0]-src[0]) == 1):
             #check if they cross each other
-            if (self.path[t][1][1] == dst[1] and
-                abs(self.path[t][1][0]-dst[0]) == 1):
+            if (self.getMove(t).dst[1] == dst[1] and
+                abs(self.getMove(t).dst[0]-dst[0]) == 1):
                 return True
         #check that one agent is left/right of the other
-        if (self.path[t][0][0] == src[0] and
-             abs(self.path[t][0][1]-src[1]) == 1):
+        if (self.getMove(t).src[0] == src[0] and
+             abs(self.getMove(t).src[1]-src[1]) == 1):
             #check if they cross each other
-            if (self.path[t][1][0] == dst[0] and
-                abs(self.path[t][1][1]-dst[1]) == 1):
+            if (self.getMove(t).dst[0] == dst[0] and
+                abs(self.getMove(t).dst[1]-dst[1]) == 1):
                 return True
         return False
     
@@ -69,5 +91,5 @@ class Path:
         print("Start node: ", self.getInit())
         print("Goal node: ", self.getGoal())
         print("Path: ")
-        for t in self.path:
-            print(t, self.path[t])
+        for t in self.moves:
+            print(t, self.moves[t])

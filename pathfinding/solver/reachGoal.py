@@ -1,13 +1,15 @@
 from models.state import State
-import random, math
+import math
 from generator import pathsGenerator
 from collections import defaultdict 
+from .reconstructPath import reconstructPath
+import heapq
 
 def start(graph, paths, init, goal, maxLengthNewAgent):
     print(" ------------- ")
     print("NEW AGENT (init, goal): (", init, ", ", goal, ")")
 
-    path = reachGoal(graph, paths, init, goal, maxLengthNewAgent)
+    path, stateList = reachGoal(graph, paths, init, goal, maxLengthNewAgent)
 
     if not path:
         print("No path found for new agent")
@@ -16,12 +18,9 @@ def start(graph, paths, init, goal, maxLengthNewAgent):
         print("!!!! Path found for new agent")
         path.printPath()
         
-        return path
+        return path, stateList
         
 def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
-    # implement A* algorithm
-    import heapq
-    from .reconstructPath import reconstructPath
 
     def calculateHeuristic(graph):
         # implement BFS algorithm
@@ -56,16 +55,13 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
         return h
         
 
-    # implement A* algorithm
     def a_star(graph, paths, init, goalNode):
-        import heapq
-
         # initialize the open and closed sets
         open_set = []
         closed_set = set() # set o tuples (node, time)
         stateList = defaultdict(State) # list of states, we use it instead of P. Each state has a pointer to parent state
         heuristic = calculateHeuristic(graph)
-  
+
         stateList[(init, 0)] = State(init, 0, None, 0, heuristic[(init, goalNode)])
 
         # push the initial node into the open set with its f-score
@@ -75,7 +71,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
         maxTimeGoalOccupied = -1
         for path in paths:
             for time, move in path.getMoves().items():
-                if move[1] == goalNode:
+                if move.dst == goalNode:
                     maxTimeGoalOccupied = max(maxTimeGoalOccupied, time)
         if maxTimeGoalOccupied + 1 > maxLengthNewAgent:
             return None 
@@ -86,6 +82,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
             closed_set.add((currentState.getNode(), currentState.getTime()))
 
             # check if the goal will be occupied in the future, if so take another state
+            #TODO: prefer self loop instead of other moves
             if currentState.getNode() == goalNode and currentState.getTime() <= maxTimeGoalOccupied + 1:
                 newCurrentState = heapq.heappop(open_set)[1]
                 closed_set.add((newCurrentState.getNode(), newCurrentState.getTime()))
@@ -95,7 +92,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
             # check if the current node is the goal
             if currentState.getNode() == goalNode:
                 # reconstruct the path from the initial node to the goal
-                return reconstructPath(init, goalNode, stateList, currentState.getTime())
+                return reconstructPath(init, goalNode, stateList, currentState.getTime()), stateList
 
             if currentState.getTime() < maxLengthNewAgent:
                 # explore the neighbors of the current node
@@ -124,8 +121,6 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
                         #TODO: make efficient
                         if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in open_set]:
                             heapq.heappush(open_set, (stateList[(neighbor, currentState.getTime() + 1)].f, stateList[(neighbor, currentState.getTime() + 1)]))
-                                                
-        # if no path is found, return None
         return None
 
     return a_star(graph, paths, init, goal)

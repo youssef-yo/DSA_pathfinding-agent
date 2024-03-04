@@ -5,7 +5,7 @@ def checkIllegalMove(dst, paths, current, t):
     for p in paths: 
         pathEnded = False
 
-        if t not in p.path: # TODO: create method in Path class
+        if t not in p.getMoves(): # TODO: create method in Path class
             pathEnded = True
 
         if pathEnded:
@@ -20,7 +20,7 @@ def removeIllegalMoves(availableMoves, paths, current, t):
     for p in paths: 
         pathEnded = False
 
-        if t not in p.path: # TODO: create method in Path class
+        if t not in p.getMoves(): # TODO: create method in Path class
             pathEnded = True
 
         for edge in availableMoves:
