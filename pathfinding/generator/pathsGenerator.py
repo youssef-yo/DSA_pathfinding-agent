@@ -1,18 +1,18 @@
 import random
 from models.path import Path
 
-def checkIllegalMove(move, paths, current, t):
+def checkIllegalMove(dst, paths, current, t):
     for p in paths: 
         pathEnded = False
 
-        if t not in p.path: # TODO: create method in Path class
+        if t not in p.getMoves(): # TODO: create method in Path class
             pathEnded = True
 
         if pathEnded:
-            if move.dst == p.getLastNode():
+            if dst == p.getGoal():
                 return True
         else:
-            if p.checkCollision(current, move.dst, t):
+            if p.checkCollision(current, dst, t):
                 return True
     return False
 
@@ -20,12 +20,12 @@ def removeIllegalMoves(availableMoves, paths, current, t):
     for p in paths: 
         pathEnded = False
 
-        if t not in p.path: # TODO: create method in Path class
+        if t not in p.getMoves(): # TODO: create method in Path class
             pathEnded = True
 
         for edge in availableMoves:
             if pathEnded:
-                if edge.dst == p.getLastNode():
+                if edge.dst == p.getGoal():
                     availableMoves.remove(edge)
             else:
                 if p.checkCollision(current, edge.dst, t):
@@ -81,7 +81,7 @@ def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
     return t, current, path, goalsCopy, availableCells, nReset
 
 def waitGoalToBeFree(move, path, paths, t, tMax, current, ):
-    while checkIllegalMove(move, paths, current, t):
+    while checkIllegalMove(move.dst, paths, current, t):
         path.addMove(t, current, current, 1)
         t += 1
     # Improvement: if next move is the goal but another path will pass through that goal before,

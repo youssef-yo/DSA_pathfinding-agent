@@ -24,6 +24,14 @@ class Graph:
 	def containsVertex(self, vertex):
 		return vertex in self.adjacent
 	
+	def getNeighbors(self, vertex):
+		# return a list of tuple, where a tuple contains (vertex, dst_node)
+		adj = set()
+		for edge in self.adjacent[vertex]:
+			adj.add((edge.dst, edge.weight))
+
+		return adj
+
 	def printGraph(self):
 		for vertex in self.adjacent:
 			print(vertex, end=" -> ")
