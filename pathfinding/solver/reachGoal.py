@@ -1,6 +1,7 @@
 from models.state import State
 import random, math
 from generator import pathsGenerator
+from collections import defaultdict 
 
 def start(graph, paths, init, goal, maxLengthNewAgent):
     print(" ------------- ")
@@ -62,16 +63,10 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
         # initialize the open and closed sets
         open_set = []
         closed_set = set() # set o tuples (node, time)
-        stateList = dict() # list of states, we use it instead of P. Each state has a pointer to parent state
+        stateList = defaultdict(State) # list of states, we use it instead of P. Each state has a pointer to parent state
         heuristic = calculateHeuristic(graph)
-
-        # create a dictionary to store the g-score for each node
-        for t in range(maxLengthNewAgent):
-            for v in graph.adjacent.keys():
-                stateList[(v, t)] = State(v, t, None, float('inf'), float('inf'))
-
-        stateList[(init, 0)].g = 0
-        stateList[(init, 0)].f = heuristic[(init, goalNode)]
+  
+        stateList[(init, 0)] = State(init, 0, None, 0, heuristic[(init, goalNode)])
 
         # push the initial node into the open set with its f-score
         heapq.heappush(open_set, (stateList[(init, 0)].f, stateList[(init, 0)]))
@@ -84,7 +79,6 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
                     maxTimeGoalOccupied = max(maxTimeGoalOccupied, time)
         if maxTimeGoalOccupied + 1 > maxLengthNewAgent:
             return None 
-        print("maxTimeGoalOccupied: ", maxTimeGoalOccupied)
         
         while open_set:
             # get the node with the lowest f-score from the open set
@@ -93,7 +87,6 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
 
             # check if the goal will be occupied in the future, if so take another state
             if currentState.getNode() == goalNode and currentState.getTime() <= maxTimeGoalOccupied + 1:
-                print("Goal occupied at time: ", currentState.getTime(), "until time: ", maxTimeGoalOccupied)
                 newCurrentState = heapq.heappop(open_set)[1]
                 closed_set.add((newCurrentState.getNode(), newCurrentState.getTime()))
 
@@ -120,11 +113,15 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
                     if traversable:
                         currentGscore = currentState.g + weight
 
-                        if currentGscore < stateList[(neighbor, currentState.getTime() + 1)].g:
+                        if not stateList.get((neighbor, currentState.getTime() + 1), None):
+                            stateList[(neighbor, currentState.getTime()+1)] = State(neighbor, currentState.getTime() + 1, None, float('inf'), float('inf'))
+
+                        if currentGscore < stateList[(neighbor, currentState.getTime()+1)].g:
                             stateList[(neighbor, currentState.getTime() + 1)].parentState = currentState
                             stateList[(neighbor, currentState.getTime() + 1)].g = currentGscore
                             stateList[(neighbor, currentState.getTime() + 1)].f = currentGscore + heuristic[(neighbor, goalNode)]
                         
+                        #TODO: make efficient
                         if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in open_set]:
                             heapq.heappush(open_set, (stateList[(neighbor, currentState.getTime() + 1)].f, stateList[(neighbor, currentState.getTime() + 1)]))
                                                 
