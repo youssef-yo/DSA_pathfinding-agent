@@ -9,7 +9,7 @@ freeCellRatio = 0.9
 agglomerationFactor = 0.2
 max = 40
 
-nAgents = 5
+nAgents = 2
 limitLengthPath = freeCellRatio * nrows * ncols
 
 maxIteration = 80 # max number of iteration to reset the creation of a single path
