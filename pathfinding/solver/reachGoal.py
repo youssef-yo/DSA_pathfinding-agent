@@ -114,7 +114,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent):
                             stateList[(neighbor, currentState.getTime()+1)] = State(neighbor, currentState.getTime() + 1, None, float('inf'), float('inf'))
 
                         if currentGscore < stateList[(neighbor, currentState.getTime()+1)].g:
-                            stateList[(neighbor, currentState.getTime() + 1)].parentState = currentState
+                            stateList[(neighbor, currentState.getTime() + 1)].parentNode = currentState.getNode()
                             stateList[(neighbor, currentState.getTime() + 1)].g = currentGscore
                             stateList[(neighbor, currentState.getTime() + 1)].f = currentGscore + heuristic[(neighbor, goalNode)]
                         

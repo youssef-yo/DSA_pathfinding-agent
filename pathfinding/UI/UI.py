@@ -8,7 +8,7 @@ def drawTree(minimumSpanningTree, path):
     G = nx.DiGraph()
 
     for state, value in minimumSpanningTree.items():
-        parent = value.parentState.getNode() if value.parentState is not None else None
+        parent = value.getParentNode()
         if parent is not None:
             G.add_edge(parent, state[0])
 
@@ -90,8 +90,8 @@ def plotPathsStepByStep(ax, paths):
 
                 ax.plot([yStart + 0.5, yEnd + 0.5], [xStart + 0.5, xEnd + 0.5], color=colors[i], linewidth=2)
         t += 1
-        plt.pause(0.2)
-    plt.title(f'END at t={t}')
+        plt.pause(0.5)
+    plt.title(f'END at t={t}') # TODO: end at wrong time, solve it
     return ax
 
 def definePlotPaths(ax, paths):

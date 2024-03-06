@@ -13,13 +13,13 @@ random.seed(10)
 np.random.seed(10)
 
 
-nrows = 10
+nrows = 7
 ncols = 7
 freeCellRatio = 0.9
 agglomerationFactor = 0.2
 max = 40
 
-nAgents = 2
+nAgents = 4
 limitLengthPath = freeCellRatio * nrows * ncols
 
 maxIteration = 80 # max number of iteration to reset the creation of a single path
@@ -47,8 +47,8 @@ if instance and nIteration < maxRun:
     #         print(r, end="\t\t\t")
     #     print("\t")
 
-    # runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
-    runInteractiveUI(instance.getGrid(), instance.getPaths())
+    runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+    # runInteractiveUI(instance.getGrid(), instance.getPaths())
 
 else:
     print("Parameters too restrictive, try again with different ones.")
