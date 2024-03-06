@@ -11,7 +11,7 @@ random.seed(10)
 np.random.seed(10)
 
 
-nrows = 7
+nrows = 10
 ncols = 7
 freeCellRatio = 0.9
 agglomerationFactor = 0.2

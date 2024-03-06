@@ -129,7 +129,6 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
 
             move = None
 
-            # Improvement: if next move is the goal but it's illegal, I will choose the self loop until it becomes legal
             for m in availableMoves:
                 if m.dst == goal:
                     t, path = waitGoalToBeFree(m, path, paths, t, timeMaxOccupied, current)
