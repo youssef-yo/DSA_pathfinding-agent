@@ -1,9 +1,27 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches 
+import networkx as nx
 
 import numpy as np
 
+def drawTree(minimumSpanningTree, path):
+    G = nx.DiGraph()
 
+    for state, value in minimumSpanningTree.items():
+        parent = value.parentState.getNode() if value.parentState is not None else None
+        if parent is not None:
+            G.add_edge(parent, state[0])
+
+    pos = nx.spring_layout(G)
+    nx.draw(G, pos, with_labels=True, node_size=500, node_color='lightblue', font_size=8, arrows=True)
+
+    # Draw nodes in path in red
+    for move in path.getMoves().values():
+        src = move.src
+        dst = move.dst
+        nx.draw_networkx_nodes(G, pos, nodelist=[src, dst], node_color='red', node_size=500)
+
+    plt.show()
 
 def definePlotGrid(grid):
     # Extract the dimensions of the grid
@@ -39,27 +57,35 @@ def definePlotPaths(ax, paths):
         for i, path in enumerate(paths):
             color = list(np.random.random(size=3))
             colors.append(color)
-            for src, dst, _ in path.path.values():
+            for move in path.getMoves().values():
+                src = move.src
+                dst = move.dst
+                
                 xStart = src[0]
                 yStart = src[1]
                 xEnd = dst[0]
                 yEnd = dst[1]
 
-                if (xStart, yStart) == path.getFirstNode():
+                if (xStart, yStart) == path.getInit():
                     ax.plot(yStart + 0.5, xStart + 0.5, marker='*', markersize=10, color=colors[i])
-                if (xEnd, yEnd) == path.getLastNode():
+                if (xEnd, yEnd) == path.getGoal():
                     ax.plot(yEnd + 0.5, xEnd + 0.5, marker='^', markersize=10, color=colors[i])
                 ax.plot([yStart + 0.5, yEnd + 0.5], [xStart + 0.5, xEnd + 0.5], color=colors[i], linewidth=2)
 
                 # Creating legend with color box 
-            labels.append(mpatches.Patch(color=colors[i], label=f'Agent {i+1}'))
+            if path == paths[-1]:
+                labels.append(mpatches.Patch(color=colors[i], label='New Agent'))
+            else:
+                labels.append(mpatches.Patch(color=colors[i], label=f'Agent {i+1}'))
         
         plt.legend(handles=labels, bbox_to_anchor = (1.25, 0.6), loc='center right')
  
 
         return ax
     
-def run(grid, paths):
+def run(grid, paths, minimumSpanningTree):
+    drawTree(minimumSpanningTree, paths[-1])
+
     ax = definePlotGrid(grid)
     ax = definePlotPaths(ax, paths)
 

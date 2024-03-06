@@ -1,11 +1,16 @@
 import math
 from models.graph import Graph
+from models.path import Path
 
 def createGraphFromGrid(grid):
+    
+    if not grid:
+        return None
+    
     rows, cols = len(grid), len(grid[0])
 
-    cardinalMoves = [(0,0), (-1,0), (1,0), (0,-1), (0,1)] # Cardinal moves and self-loop have cost = 1
-    diagonalMoves = [(1,1), (-1,1), (-1,-1), (1,-1)] # Diagonal moves have cost = sqrt(2)
+    cardinalMoves = Path.getCardinalMoves() # Cardinal moves and self-loop have cost = 1
+    diagonalMoves = Path.getDiagonalMoves() # Diagonal moves have cost = sqrt(2)
 
     graph = Graph()
     

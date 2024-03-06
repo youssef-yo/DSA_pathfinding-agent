@@ -10,6 +10,7 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     i = 0
 
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
+    #TODO: handle when graph is None
     graph = createGraphFromGrid(grid)
     paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
 
@@ -25,15 +26,23 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     
     # devo definire max
     init, goal = None, None
-    
-    while not init:
+    occupied_inits = set()
+    occupied_goals = set()
+    for path in paths:
+        init = path.getInit()
+        goal = path.getGoal()
+        occupied_inits.add(init)
+        occupied_goals.add(goal)
+
+    # TODO: check if init and goal are the same, init end goal should be different from existing agents init and goal
+    while not init or init in occupied_inits:
         r = random.randint(0, nrows-1)
         c = random.randint(0, ncols-1)
 
         if grid[r][c] == 0:
             init = (r,c)
 
-    while not goal:
+    while not goal or goal in occupied_goals or goal == init:
         r = random.randint(0, nrows-1)
         c = random.randint(0, ncols-1)
 
