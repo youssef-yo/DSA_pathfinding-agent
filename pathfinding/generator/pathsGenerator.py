@@ -1,6 +1,17 @@
 import random
 from models.path import Path
 
+def isPathCollisionFree(path, paths, startTime, maxTimeGoalOccupied):
+
+    # if path is shorter than the time that the goal will be occupied, it means that it will collide
+    if path.getLength() + startTime < maxTimeGoalOccupied + 1:
+        return False
+
+    for t, move in path.getMoves().items():
+        if checkIllegalMove(move.dst, paths, move.src, t):
+            return False
+    return True
+
 def checkIllegalMove(dst, paths, current, t):
     for p in paths: 
         pathEnded = False

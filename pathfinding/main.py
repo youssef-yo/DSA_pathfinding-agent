@@ -2,8 +2,7 @@ from UI.UI import run as runUI
 from UI.interactiveUI import run as runInteractiveUI
 
 from generator.instanceGenerator import generateInstance
-from solver.reachGoal import start
-import math
+from solver.reachGoal import reachGoal, reachGoalV2
 
 import random
 import numpy as np
@@ -13,13 +12,13 @@ random.seed(10)
 np.random.seed(10)
 
 
-nrows = 10
+nrows = 7
 ncols = 7
 freeCellRatio = 0.9
 agglomerationFactor = 0.2
 max = 40
 
-nAgents = 2
+nAgents = 4
 limitLengthPath = freeCellRatio * nrows * ncols
 
 maxIteration = 80 # max number of iteration to reset the creation of a single path
@@ -31,7 +30,15 @@ if not instance:
     print("Parameter max was not valid for the current configuration.")
 
 if instance and nIteration < maxRun: 
-    path, minimumSpanningTree = start(instance.getGraph(), instance.getPaths(), instance.getInit(), instance.getGoal(), max)
+    print(" ------------- ")
+    print("NEW AGENT (init, goal): (", instance.getInit(), ", ", instance.getGoal(), ")")
+    path, minimumSpanningTree = reachGoalV2(instance.getGraph(), instance.getPaths(), instance.getInit(), instance.getGoal(), max)
+    
+    if not path:
+        print("No path found for new agent")
+    else:
+        print("!!!! Path found for new agent")
+        path.printPath()
     if path:
         instance.addPath(path)
         
@@ -47,8 +54,8 @@ if instance and nIteration < maxRun:
     #         print(r, end="\t\t\t")
     #     print("\t")
 
-    # runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
-    runInteractiveUI(instance.getGrid(), instance.getPaths())
+    runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+    # runInteractiveUI(instance.getGrid(), instance.getPaths())
 
 else:
     print("Parameters too restrictive, try again with different ones.")
