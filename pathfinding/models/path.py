@@ -86,6 +86,11 @@ class Path:
     def checkCollision(self, src, dst, t):
         return self.checkSameDestination(dst, t) or self.checkSeatSwapping(src, dst, t) or self.checkTrajectories(src, dst, t)
     
+
+    def concatenatePaths(self, path2):
+        for t, move in path2.getMoves().items():
+            self.addMove(t, move.src, move.dst, move.w)
+
     @staticmethod
     def calculateWeight(src, dst):
         cardinalMoves = Path.getCardinalMoves() # Cardinal moves and self-loop have cost = 1

@@ -90,7 +90,7 @@ def plotPathsStepByStep(ax, paths):
 
                 ax.plot([yStart + 0.5, yEnd + 0.5], [xStart + 0.5, xEnd + 0.5], color=colors[i], linewidth=2)
         t += 1
-        plt.pause(0.5)
+        plt.pause(0.2)
     plt.title(f'END at t={t}') # TODO: end at wrong time, solve it
     return ax
 
@@ -133,7 +133,7 @@ def run(grid, paths, minimumSpanningTree):
     # drawTree(minimumSpanningTree, paths[-1])
     
     ax = definePlotGrid(grid)
-    # ax = definePlotPaths(ax, paths)
-    ax = plotPathsStepByStep(ax, paths)
+    ax = definePlotPaths(ax, paths)
+    # ax = plotPathsStepByStep(ax, paths)
 
     plt.show()
