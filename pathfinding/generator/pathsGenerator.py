@@ -112,7 +112,7 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     maxLengthPath = 0
 
     for _ in range(nAgents):
-        goal, timeMaxWait  = random.choice(list(goals.items()))
+        goal, timeMaxOccupied  = random.choice(list(goals.items()))
         goals.pop(goal)
         
         init = chooseRandomInit(availableCells, goal)
@@ -136,7 +136,7 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
 
             for m in availableMoves:
                 if m.dst == goal:
-                    t, path = waitGoalToBeFree(m, path, paths, t, timeMaxWait, current)
+                    t, path = waitGoalToBeFree(m, path, paths, t, timeMaxOccupied, current)
                     move = m
 
             if not move:       
