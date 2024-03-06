@@ -82,12 +82,7 @@ def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
 
 
 def waitGoalToBeFree(move, path, paths, t, timeMaxOccupied, current):
-    while checkIllegalMove(move.dst, paths, current, t):
-        path.addMove(t, current, current, 1)
-        t += 1
-    # Improvement: if next move is the goal but another path will pass through that goal before,
-    # I will choose the self loop
-    while t <= timeMaxOccupied:
+    while (checkIllegalMove(move.dst, paths, current, t) or t <= timeMaxOccupied) and not checkIllegalMove(current, paths, current, t):
         path.addMove(t, current, current, 1)
         t += 1
     return t, path
@@ -137,7 +132,8 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
             for m in availableMoves:
                 if m.dst == goal:
                     t, path = waitGoalToBeFree(m, path, paths, t, timeMaxOccupied, current)
-                    move = m
+                    move = m if not checkIllegalMove(m.dst, paths, current, t) else None
+                    break
 
             if not move:       
                 availableMoves = removeIllegalMoves(availableMoves, paths, current, t)
