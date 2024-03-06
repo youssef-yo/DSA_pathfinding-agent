@@ -2,7 +2,8 @@ import unittest
 import math
 from models.path import Path
 from generator.graphGenerator import createGraphFromGrid
-from generator.pathsGenerator import waitGoalToBeFree
+from generator.pathsGenerator import chooseRandomGoals, chooseRandomInit
+from generator.gridGenerator import createAgglomeration
 
 class TestPath(unittest.TestCase):
     def setUp(self):
@@ -106,38 +107,50 @@ class TestGraphGenerator(unittest.TestCase):
         self.assertEqual(len(graph.getNeighbors((0, 0))), 4)
 
 class TestPathsGenerator(unittest.TestCase):
-    def test_waitGoalToBeFree(self):
-        # Test case 1: No illegal moves
-        move = None
-        path = None
-        paths = []
-        t = 0
-        tMax = 10
-        current = None
+    def test_calculateWeight(self):
+        # cardinal move
+        result_w = Path.calculateWeight((0, 0), (0, 1))
+        expected_w = 1
 
-        expected_t = 0
-        expected_path = None
+        self.assertEqual(result_w, expected_w)
 
-        result_t, result_path = waitGoalToBeFree(move, path, paths, t, tMax, current)
+        # diagonal move
+        result_w = Path.calculateWeight((0, 0), (1, 1))
+        expected_w = math.sqrt(2)
 
-        self.assertEqual(result_t, expected_t)
-        self.assertEqual(result_path, expected_path)
+        self.assertEqual(result_w, expected_w)
+    
+    def test_chooseRandomGoals(self):
+        availableCells = {(0, 0), (0, 1), (1, 0), (1, 1)}
+        n_agents = 2
 
-        # Test case 2: Illegal move exists
-        move = None
-        path = None
-        paths = [[(0, 0), (1, 1)], [(2, 2), (3, 3)]]
-        t = 0
-        tMax = 10
-        current = (1, 1)
+        goals = chooseRandomGoals(availableCells, n_agents)
 
-        expected_t = 2
-        expected_path = None
+        self.assertEqual(len(goals), n_agents)
 
-        result_t, result_path = waitGoalToBeFree(move, path, paths, t, tMax, current)
+        setGoals = set(goals.keys())  
 
-        self.assertEqual(result_t, expected_t)
-        self.assertEqual(result_path, expected_path)
+        self.assertEqual(len(setGoals), len(goals))
+        
+    def test_chooseRandomInit(self):
+        availableCells = {(0, 0), (0, 1), (1, 0), (1, 1)}
+        goal = (1, 1)
 
+        init = chooseRandomInit(availableCells, goal)
+
+        self.assertNotEqual(init, goal)
+
+class TestGridGenerator(unittest.TestCase):
+    def test_createAgglomeration(self):
+        grid = [
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+        ]
+
+        n_obstacles = 5
+        agglomerations = createAgglomeration(grid, n_obstacles)
+        self.assertEqual(len(agglomerations), n_obstacles)     
+    
 if __name__ == '__main__':
     unittest.main()

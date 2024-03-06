@@ -1,3 +1,5 @@
+import math 
+
 class Move:
     def __init__(self, src, dst, w) -> None:
         self.src = src
@@ -14,8 +16,7 @@ class Move:
         return self.dst
     
     def getWeight(self):
-        return self.w
-    
+        return self.w   
 
 
 class Path:
@@ -85,6 +86,24 @@ class Path:
     def checkCollision(self, src, dst, t):
         return self.checkSameDestination(dst, t) or self.checkSeatSwapping(src, dst, t) or self.checkTrajectories(src, dst, t)
     
+    @staticmethod
+    def calculateWeight(src, dst):
+        cardinalMoves = Path.getCardinalMoves() # Cardinal moves and self-loop have cost = 1
+        diagonalMoves = Path.getDiagonalMoves() # Diagonal moves have cost = sqrt(2)
+
+        if (dst[0] - src[0], dst[1] - src[1]) in cardinalMoves:
+            return 1
+        elif (dst[0] - src[0], dst[1] - src[1]) in diagonalMoves:
+            return math.sqrt(2)
+    
+    @staticmethod
+    def getCardinalMoves():
+        return [(0,0), (-1,0), (1,0), (0,-1), (0,1)]
+    
+    @staticmethod
+    def getDiagonalMoves():
+        return [(1,1), (-1,1), (-1,-1), (1,-1)]
+
     def printPath(self):
         # print start node end goal node
         print("\n--------------------")

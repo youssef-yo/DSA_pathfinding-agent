@@ -10,16 +10,7 @@ from solver.reachGoal import start
 
 import math
 
-class TestReconstructPath(unittest.TestCase):
-    def getWeight(src, dst):
-        cardinalMoves = [(0,0), (-1,0), (1,0), (0,-1), (0,1)] # Cardinal moves and self-loop have cost = 1
-        #diagonalMoves = [(1,1), (-1,1), (-1,-1), (1,-1)] # Diagonal moves have cost = sqrt(2)
-
-        if (dst[0] - src[0], dst[1] - src[1]) in cardinalMoves:
-            return 1
-        else:
-            return math.sqrt(2)
-    
+class TestReconstructPath(unittest.TestCase):    
     def defineGrid(m, n):
         grid = [[0] * n for _ in range(m)]
 
@@ -45,7 +36,7 @@ class TestReconstructPath(unittest.TestCase):
     for i in range(3):
         paths.append(Path(cells[i][0], cells[i][-1]))
         for j in range(len(cells[i]) - 1):
-            paths[i].addMove(j, cells[i][j], cells[i][j+1], getWeight(cells[i][j], cells[i][j+1]))
+            paths[i].addMove(j, cells[i][j], cells[i][j+1], paths[i].calculateWeight(cells[i][j], cells[i][j+1]))
 
     for p in paths:
         p.printPath()
