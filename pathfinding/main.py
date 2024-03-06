@@ -6,6 +6,7 @@ import math
 import random
 import numpy as np
 
+# seed = 10 to check waitGoalToBeFree (nAgent = 2)
 random.seed(10)
 np.random.seed(10)
 
