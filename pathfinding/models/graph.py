@@ -24,6 +24,9 @@ class Graph:
 	def containsVertex(self, vertex):
 		return vertex in self.adjacent
 	
+	def getNodes(self):
+		return self.adjacent.keys()
+
 	def getNeighbors(self, vertex):
 		# return a list of tuple, where a tuple contains (vertex, dst_node)
 		adj = set()

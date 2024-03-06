@@ -10,6 +10,7 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     i = 0
 
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
+    #TODO: handle when graph is None
     graph = createGraphFromGrid(grid)
     paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
 
