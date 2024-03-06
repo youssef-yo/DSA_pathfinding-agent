@@ -1,4 +1,6 @@
-from UI.UI import run
+from UI.UI import run as runUI
+from UI.interactiveUI import run as runInteractiveUI
+
 from generator.instanceGenerator import generateInstance
 from solver.reachGoal import start
 import math
@@ -45,7 +47,8 @@ if instance and nIteration < maxRun:
     #         print(r, end="\t\t\t")
     #     print("\t")
 
-    run(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+    # runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+    runInteractiveUI(instance.getGrid(), instance.getPaths())
 
 else:
     print("Parameters too restrictive, try again with different ones.")
