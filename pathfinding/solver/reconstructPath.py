@@ -11,20 +11,9 @@ def reconstructPath(init, goal, P, t):
     while t > 0 and P[(current, t)]:
         src = P[(current, t)].getParentNode()
         dst = current
-        path.addMove(t-1, src, dst, getWeight(src, dst)) 
+        path.addMove(t-1, src, dst, path.calculateWeight(src, dst)) 
 
         current = P[(current, t)].getParentNode()
         t -= 1
 
     return path
-
-# TODO: reduntant code
-def getWeight(src, dst):
-    cardinalMoves = [(0,0), (-1,0), (1,0), (0,-1), (0,1)] # Cardinal moves and self-loop have cost = 1
-    #diagonalMoves = [(1,1), (-1,1), (-1,-1), (1,-1)] # Diagonal moves have cost = sqrt(2)
-
-    if (dst[0] - src[0], dst[1] - src[1]) in cardinalMoves:
-        return 1
-    else:
-        return math.sqrt(2)
-

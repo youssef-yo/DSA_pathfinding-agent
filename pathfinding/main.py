@@ -5,7 +5,15 @@ from generator.instanceGenerator import generateInstance
 from solver.reachGoal import start
 import math
 
-nrows = 7
+import random
+import numpy as np
+
+# seed = 10 to check waitGoalToBeFree (nAgent = 2)
+random.seed(10)
+np.random.seed(10)
+
+
+nrows = 10
 ncols = 7
 freeCellRatio = 0.9
 agglomerationFactor = 0.2
