@@ -28,7 +28,9 @@ class Graph:
 		return self.adjacent.keys()
 
 	def getNeighbors(self, vertex):
-		# return a list of tuple, where a tuple contains (vertex, dst_node)
+		""""
+		Return a list of vertices that are adjacent to the given vertex
+		"""
 		adj = set()
 		for edge in self.adjacent[vertex]:
 			adj.add((edge.dst, edge.weight))

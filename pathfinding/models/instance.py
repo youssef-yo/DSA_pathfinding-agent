@@ -25,7 +25,7 @@ class Instance:
     def getGoal(self):
         return self.goal 
     
-    def getMax(self):
+    def getMaxLengthNewAgent(self):
         return self.maxLengthNewAgent
     
     def addPath(self, path):

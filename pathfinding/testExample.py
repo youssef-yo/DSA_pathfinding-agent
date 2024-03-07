@@ -6,7 +6,7 @@ from models.path import Path
 from UI.UI import run
 from generator.instanceGenerator import generateInstance
 from generator.graphGenerator import createGraphFromGrid   
-from solver.reachGoal import start
+from solver.reachGoal import reachGoal
 
 import math
 
@@ -48,6 +48,7 @@ class TestReconstructPath(unittest.TestCase):
     graph = createGraphFromGrid(grid)
     #instance = Instance(grid, graph, paths, init, goal, maxLengthPathNewAgent)
 
-    newPath, minSpanningTree = start(graph, paths, init, goal, 40)
+    useRelaxedPlan = False
+    newPath, minSpanningTree = reachGoal(graph, paths, init, goal, 40, useRelaxedPlan)
     paths.append(newPath)
     run(grid, paths, minSpanningTree)

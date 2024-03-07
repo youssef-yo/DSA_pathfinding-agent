@@ -47,7 +47,6 @@ class Path:
         return self.moves
 
     def addMove(self, t, src, dst, w):
-        # self.path[t] = (src, dst, w)
         self.moves[t] = Move(src, dst, w)
         self.cost += w
         self.length += 1
@@ -67,20 +66,28 @@ class Path:
     def checkTrajectories(self, src, dst, t):
         if t not in self.moves:
             return False
+        
+        src_move_x = self.getMove(t).src[0]
+        src_move_y = self.getMove(t).src[1]
+        dst_move_x = self.getMove(t).dst[0]
+        dst_move_y = self.getMove(t).dst[1]
+
         #check that one agent is up/down of the other
-        if (self.getMove(t).src[1] == src[1] and
-             abs(self.getMove(t).src[0]-src[0]) == 1):
+        if (src_move_y == src[1] and
+             abs(src_move_x-src[0]) == 1):
             #check if they cross each other
-            if (self.getMove(t).dst[1] == dst[1] and
-                abs(self.getMove(t).dst[0]-dst[0]) == 1):
+            if (dst_move_y == dst[1] and
+                abs(dst_move_x-dst[0]) == 1):
                 return True
+            
         #check that one agent is left/right of the other
-        if (self.getMove(t).src[0] == src[0] and
-             abs(self.getMove(t).src[1]-src[1]) == 1):
+        if (src_move_x == src[0] and
+             abs(src_move_y-src[1]) == 1):
             #check if they cross each other
-            if (self.getMove(t).dst[0] == dst[0] and
-                abs(self.getMove(t).dst[1]-dst[1]) == 1):
+            if (dst_move_x == dst[0] and
+                abs(dst_move_y-dst[1]) == 1):
                 return True
+            
         return False
     
     def checkCollision(self, src, dst, t):
