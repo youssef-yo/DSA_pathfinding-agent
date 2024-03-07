@@ -1,7 +1,14 @@
 
 class State:
     def __init__(self, node, time, parent, g, f_score) -> None:
-        self.node = node # node is a tuple (x, y)
+        """"
+        node: tuple (x, y)
+        time: integer
+        parent: node
+        g: integer
+        f_score: integer
+        """
+        self.node = node
         self.time = time
         self.parentNode = parent
         self.g = g
@@ -16,6 +23,7 @@ class State:
     def getTime(self):  
         return self.time
     
+    # Needed for the priority queue
     def __lt__(self, other):
         return self.f < other.f
     

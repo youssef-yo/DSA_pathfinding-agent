@@ -12,11 +12,12 @@ def isPathCollisionFree(path, paths, startTime, maxTimeGoalOccupied):
             return False
     return True
 
+#TODO: a better way to implement and use checkIllegalMove and removeIllegalMoves
 def checkIllegalMove(dst, paths, current, t):
     for p in paths: 
         pathEnded = False
 
-        if t not in p.getMoves(): # TODO: create method in Path class
+        if t not in p.getMoves():
             pathEnded = True
 
         if pathEnded:
@@ -31,7 +32,7 @@ def removeIllegalMoves(availableMoves, paths, current, t):
     for p in paths: 
         pathEnded = False
 
-        if t not in p.getMoves(): # TODO: create method in Path class
+        if t not in p.getMoves():
             pathEnded = True
 
         for edge in availableMoves:
@@ -174,7 +175,7 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
         paths.append(path)
         maxLengthPath = max(maxLengthPath, path.getLength())
 
-    
+    # TODO: remove print
     for path in paths:
         path.printPath()
     

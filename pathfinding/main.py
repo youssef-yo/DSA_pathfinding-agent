@@ -2,7 +2,7 @@ from UI.UI import run as runUI
 from UI.interactiveUI import run as runInteractiveUI
 
 from generator.instanceGenerator import generateInstance
-from solver.reachGoal import reachGoal, reachGoalV2
+from solver.reachGoal import reachGoal
 
 import random
 import numpy as np
@@ -32,7 +32,9 @@ if not instance:
 if instance and nIteration < maxRun: 
     print(" ------------- ")
     print("NEW AGENT (init, goal): (", instance.getInit(), ", ", instance.getGoal(), ")")
-    path, minimumSpanningTree = reachGoalV2(instance.getGraph(), instance.getPaths(), instance.getInit(), instance.getGoal(), max)
+    
+    useRelaxedPlan = True
+    path, minimumSpanningTree = reachGoal(instance.getGraph(), instance.getPaths(), instance.getInit(), instance.getGoal(), max, useRelaxedPlan)
     
     if not path:
         print("No path found for new agent")

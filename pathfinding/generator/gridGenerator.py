@@ -1,10 +1,6 @@
 import random
 import math
 
-# GRID 
-# 0 -> free cell
-# 1 -> obstacle
-
 def createAgglomeration(grid, nObstaclesInAgglomeration):
     """"
     Create an agglomeration of obstacles
@@ -59,6 +55,11 @@ def addObstacles(grid, nObstacle, agglomerationFactor):
     return grid
 
 def gridGenerator(rows, cols, freeCellRatio, agglomerationFactor):
+    """"
+    Generate a grid of size rows x cols with freeCellRatio of free cells
+    grid[r][c] = 0 -> free cell
+    grid[r][c] = 1 -> obstacle
+    """
     grid = [[0 for _ in range(rows)] for _ in range(cols)]
     
     #add obstacles to grid

@@ -1,6 +1,9 @@
 import math
 
 def bfs(v, g, graph):
+    """"
+    Return the distance between two points
+    """
     visited = set()
     queue = []
     queue.append((v, 0))
@@ -17,12 +20,20 @@ def bfs(v, g, graph):
     return float('inf')
 
 def diagonalDistance(v, g):
+    """"
+    Return the diagonal distance between two points
+    """
     dx = abs(v[0] - g[0])
     dy = abs(v[1] - g[1])
     return dx + dy + (math.sqrt(2) - 2) * min(dx, dy)
 
 def computeHeuristic(graph, goal):
-    # as heuristic use BFS to fine the shortest path from init to goal for each agent. 
+    """"
+    Return a dict where:
+    KEY: tuple (vertex, goal)
+    VALUE: heuristic value
+    """
+    # as heuristic use BFS to find the shortest path from init to goal for each agent. 
     h = dict() # key = vertex v, goal g, value = bfs(v, g)
     for v in graph.adjacent.keys():
         # h[(v, goal)] = bfs(v, goal, graph)
