@@ -12,9 +12,9 @@ random.seed(10)
 np.random.seed(10)
 
 
-nrows = 7
-ncols = 7
-freeCellRatio = 0.9
+nrows = 10
+ncols = 10
+freeCellRatio = 0.7
 agglomerationFactor = 0.2
 max = 40
 

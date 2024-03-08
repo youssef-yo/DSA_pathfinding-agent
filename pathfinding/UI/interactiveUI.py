@@ -1,7 +1,7 @@
 import pygame
 import numpy as np
 
-from solver.reachGoal import reachGoalV2
+from solver.reachGoal import reachGoal
 
 def drawPaths(window, cell_size, paths):
     for path in paths:
@@ -41,7 +41,7 @@ def run_interactive_ui(grid, graph, paths):
     cell_size = 50
 
     # Set the dimensions of the window
-    window_width = grid_width * cell_size + 100  # Increased window width to accommodate buttons
+    window_width = grid_width * cell_size + 300  # Increased window width to accommodate buttons
     window_height = grid_height * cell_size
 
     # Create the window
@@ -67,6 +67,15 @@ def run_interactive_ui(grid, graph, paths):
     btnSetGoal = pygame.Rect(button_x, button_y + button_height + button_padding, button_width, button_height)
     btnFindPath = pygame.Rect(button_x, button_y + 3 * (button_height + button_padding), button_width, button_height)
     btnReset = pygame.Rect(button_x, button_y + 2 * (button_height + button_padding), button_width, button_height)
+
+    # Add a text input
+    inputRowRect = pygame.Rect(button_x, button_y + 4 * (button_height + button_padding), button_width, button_height)
+    inputRowText = ''
+    inputRowActive = False
+
+    inputColRect = pygame.Rect(button_x, button_y + 5 * (button_height + button_padding), button_width, button_height)
+    inputColText = ''
+    inputColActive = False
 
     # Game loop
     running = True
@@ -135,7 +144,7 @@ def run_interactive_ui(grid, graph, paths):
                         # # TODO: check for MVC correctness
 
                         # Wait for the controller response
-                        path, _ = reachGoalV2(graph, paths, newInit, newGoal, 20)
+                        path, _ = reachGoal(graph, paths, newInit, newGoal, 20, False)
 
                         # Process the response
                         if path:
@@ -148,7 +157,63 @@ def run_interactive_ui(grid, graph, paths):
                         else:
                             # No path found, display an error message
                             print("No path found")
+                
+                if inputRowRect.collidepoint(event.pos):
+                    inputRowActive = True
+                    inputColActive = False
 
+                if inputColRect.collidepoint(event.pos):
+                    inputRowActive = False
+                    inputColActive = True
+
+                # Handle text input events
+                if event.type == pygame.KEYDOWN:
+                    if inputRowActive:
+                        if event.key == pygame.K_RETURN:
+                            # Process the input row value
+                            try:
+                                inputRowValue = int(inputRowText)
+                                # TODO: Process the input row value
+                                print(f"Input Row: {inputRowValue}")
+                            except ValueError:
+                                print("Invalid input for row")
+                            inputRowText = ''
+                            inputRowActive = False
+                        elif event.key == pygame.K_BACKSPACE:
+                            inputRowText = inputRowText[:-1]
+                        else:
+                            inputRowText += event.unicode
+
+                    if inputColActive:
+                        if event.key == pygame.K_RETURN:
+                            # Process the input col value
+                            try:
+                                inputColValue = int(inputColText)
+                                # TODO: Process the input col value
+                                print(f"Input Col: {inputColValue}")
+                            except ValueError:
+                                print("Invalid input for col")
+                            inputColText = ''
+                            inputColActive = False
+                        elif event.key == pygame.K_BACKSPACE:
+                            inputColText = inputColText[:-1]
+                        else:
+                            inputColText += event.unicode
+
+                # Check if the input text boxes are clicked
+                if inputRowRect.collidepoint(event.pos):
+                    inputRowActive = True
+                    inputColActive = False
+                elif inputColRect.collidepoint(event.pos):
+                    inputColActive = True
+                    inputRowActive = False
+
+            # Render the input text
+            font = pygame.font.Font(None, 20)
+            inputRowSurface = font.render(inputRowText, True, (0, 0, 0))
+            inputColSurface = font.render(inputColText, True, (0, 0, 0))
+            window.blit(inputRowSurface, (inputRowRect.x + 5, inputRowRect.y + 5))
+            window.blit(inputColSurface, (inputColRect.x + 5, inputColRect.y + 5))
         # Draw the grid
         for x in range(grid_width):
             for y in range(grid_height):
@@ -159,6 +224,10 @@ def run_interactive_ui(grid, graph, paths):
         pygame.draw.rect(window, (0, 0, 0), btnSetGoal, 2)
         pygame.draw.rect(window, (0, 0, 0), btnFindPath, 2)
         pygame.draw.rect(window, (0, 0, 0), btnReset, 2)
+
+        # Draw the input text
+        pygame.draw.rect(window, (0, 0, 0), inputRowRect, 2)
+        pygame.draw.rect(window, (0, 0, 0), inputColRect, 2)
 
         # Add text to the buttons
         font = pygame.font.Font(None, 20)
@@ -178,7 +247,7 @@ def run_interactive_ui(grid, graph, paths):
     # Quit Pygame
     pygame.quit()
 
-def run(grid,graph, paths):
+def run(grid, graph, paths):
     run_interactive_ui(grid, graph, paths)
 
 # if __name__ == "__main__":
