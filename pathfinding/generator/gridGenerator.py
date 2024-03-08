@@ -22,7 +22,7 @@ def createAgglomeration(grid, nObstaclesInAgglomeration):
         randomCellInAgglomeration = random.choice(list(grid.getOccupiedCells()))
 
         nextR, nextC = randomCellInAgglomeration[0] + randomDirection[0], randomCellInAgglomeration[1] + randomDirection[1]
-        if 0 <= nextR < grid.getNrows() and 0 <= nextC < grid.getNCols() and grid.isFree(nextR, nextC):
+        if 0 <= nextR < grid.getNrows() and 0 <= nextC < grid.getNcols() and grid.isFree(nextR, nextC):
             grid.addObstacle(nextR, nextC) 
     
         

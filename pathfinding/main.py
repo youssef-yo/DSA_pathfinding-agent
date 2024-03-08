@@ -8,8 +8,8 @@ import random
 import numpy as np
 
 # seed = 10 to check waitGoalToBeFree (nAgent = 2)
-random.seed(13)
-np.random.seed(13)
+random.seed(14)
+np.random.seed(14)
 
 
 nrows = 7

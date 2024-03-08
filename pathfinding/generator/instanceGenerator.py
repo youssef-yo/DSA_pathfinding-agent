@@ -26,7 +26,7 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     while goal == init:
         goal = chooseRandomNode(grid, occupied_goals)
 
-    maxAvailableCells = len(graph.adjacent.keys())
+    maxAvailableCells = len(graph.getNodes())
     maxLengthPath = max(maxLengthPath, maxAvailableCells)
 
     if maxLengthPathNewAgent > maxLengthPath:

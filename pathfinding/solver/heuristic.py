@@ -35,7 +35,7 @@ def computeHeuristic(graph, goal):
     """
     # as heuristic use BFS to find the shortest path from init to goal for each agent. 
     h = dict() # key = vertex v, goal g, value = bfs(v, g)
-    for v in graph.adjacent.keys():
+    for v in graph.getNodes():
         # h[(v, goal)] = bfs(v, goal, graph)
         h[(v, goal)] = diagonalDistance(v, goal)
 

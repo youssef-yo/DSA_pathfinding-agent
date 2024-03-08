@@ -65,7 +65,11 @@ def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heur
     """"
     Explore the neighbors of the current node    
     """
-    for neighbor, weight in graph.getNeighbors(currentState.getNode()):
+    # for neighbor, weight in graph.getNeighbors(currentState.getNode()):
+    for edge in graph.getNeighbors(currentState.getNode()):
+        neighbor = edge.dst
+        weight = edge.weight
+
         if (neighbor, currentState.getTime() + 1) in closedSet:
             continue
 
@@ -127,7 +131,10 @@ def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
 
         if currentState.getTime() < maxLengthNewAgent:
             # explore the neighbors of the current node
-            for neighbor, weight in graph.getNeighbors(currentState.getNode()):
+            for edge in graph.getNeighbors(currentState.getNode()):
+                
+                neighbor = edge.dst
+                weight = edge.weight
 
                 if (neighbor, currentState.getTime() + 1) in closed_set:
                     continue
