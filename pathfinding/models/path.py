@@ -77,7 +77,8 @@ class Path:
              abs(src_move_x-src[0]) == 1):
             #check if they cross each other
             if (dst_move_y == dst[1] and
-                abs(dst_move_x-dst[0]) == 1):
+                abs(dst_move_x-dst[0]) == 1 and 
+                (src_move_x == dst[0] and dst_move_x == src[0])):
                 return True
             
         #check that one agent is left/right of the other
@@ -85,7 +86,8 @@ class Path:
              abs(src_move_y-src[1]) == 1):
             #check if they cross each other
             if (dst_move_x == dst[0] and
-                abs(dst_move_y-dst[1]) == 1):
+                abs(dst_move_y-dst[1]) == 1 and 
+                (src_move_y == dst[1] and dst_move_y == src[1])):
                 return True
             
         return False

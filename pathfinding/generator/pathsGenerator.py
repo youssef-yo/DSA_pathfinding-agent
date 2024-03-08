@@ -185,7 +185,7 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
 
 
 
-def createPathsUsingReachGoal(nAgents, limitLengthPath, graph):
+def createPathsUsingReachGoal(nAgents, limitLengthPath, graph, useRelaxedPath = False):
     """
     For all nAgents we will choose randomly the initial and goal positions
     The movement of the agents will be random as well
@@ -205,16 +205,12 @@ def createPathsUsingReachGoal(nAgents, limitLengthPath, graph):
     maxLengthPath = 0
 
     for _ in range(nAgents):
-        # TODO: change to list before entering the loop
-        # TODO: given the fact that we choose the goals randomly, why choose randomly again the goal for a specific agent? Just choose the first one
         goal, timeMaxOccupied  = random.choice(list(goals.items()))
         goals.pop(goal)
         
         init = chooseRandomInit(availableCells, goal)
 
-        useRelaxedPlan = False
-        limitLengthPath = 1000
-        path, _ = reachGoal(graph, paths, init, goal, limitLengthPath, useRelaxedPlan)
+        path, _ = reachGoal(graph, paths, init, goal, limitLengthPath, useRelaxedPath)
        
         paths.append(path)
         maxLengthPath = max(maxLengthPath, path.getLength())

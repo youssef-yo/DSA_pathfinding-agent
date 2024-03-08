@@ -24,6 +24,7 @@ limitLengthPath = freeCellRatio * nrows * ncols
 maxIteration = 80 # max number of iteration to reset the creation of a single path
 maxRun = 6 # max number of run to create a valid instance
 
+useRelaxedPath = False
 instance, nIteration = generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, max, limitLengthPath, maxIteration, maxRun)
 
 if not instance:
@@ -33,8 +34,7 @@ if instance and nIteration < maxRun:
     print(" ------------- ")
     print("NEW AGENT (init, goal): (", instance.getInit(), ", ", instance.getGoal(), ")")
     
-    useRelaxedPlan = False
-    path, minimumSpanningTree = reachGoal(instance.getGraph(), instance.getPaths(), instance.getInit(), instance.getGoal(), max, useRelaxedPlan)
+    path, minimumSpanningTree = reachGoal(instance.getGraph(), instance.getPaths(), instance.getInit(), instance.getGoal(), max, useRelaxedPath)
     
     if not path:
         print("No path found for new agent")
