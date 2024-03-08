@@ -37,14 +37,14 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     return instance, i
 
 def chooseRandomNode(grid, occupied_nodes):
-    nrows, ncols = len(grid), len(grid[0])
+    nrows, ncols = grid.getNrows(), grid.getNcols()
     node = None
     
     while not node or node in occupied_nodes:
         r = random.randint(0, nrows-1)
         c = random.randint(0, ncols-1)
 
-        if grid[r][c] == 0:
+        if grid.isFree(r, c):
             node = (r,c)
     
     return node

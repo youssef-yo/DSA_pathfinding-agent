@@ -120,7 +120,6 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     maxLengthPath = 0
 
     for _ in range(nAgents):
-        # TODO: change to list before entering the loop
         goal, timeMaxOccupied  = random.choice(list(goals.items()))
         goals.pop(goal)
         
