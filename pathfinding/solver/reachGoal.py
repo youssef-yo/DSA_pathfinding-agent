@@ -8,6 +8,10 @@ import heapq
 
 
 def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
+    """"
+    Find a path from the initial node to the goal node
+    Return the path and the list of states
+    """
     # initialize the open and closed sets
     openList = []
     closedSet = set() # set o tuples (node, time)
@@ -44,7 +48,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
             #compute realxed plan   
             relaxedPath, relaxedStateList = findRelaxedPath(graph, heuristic, currentState.getNode(), goal, maxLengthNewAgent - currentState.getTime(), currentState.getTime())
             if relaxedPath and pathsGenerator.isPathCollisionFree(relaxedPath, paths, currentState.getTime(), maxTimeGoalOccupied):
-                path = reconstructPath(init, goal, stateDict, 0, currentState.getTime())
+                path = reconstructPath(init, currentState.getNode(), stateDict, 0, currentState.getTime())
 
                 for state in relaxedStateList:
                     stateDict[state] = relaxedStateList[state]
@@ -79,16 +83,16 @@ def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heur
             if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in openList]:
                 heapq.heappush(openList, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
 
-def updateStateDict(goal, stateList, heuristic, currentState, neighbor, currentGscore):
-    # Is the neighbor at time t+1 already in the stateList?
-    # If not, add it to the stateList
-    if not stateList.get((neighbor, currentState.getTime() + 1), None):        
-        stateList[(neighbor, currentState.getTime()+1)] = State(neighbor, currentState.getTime() + 1, None, float('inf'), float('inf'))
+def updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore):
+    # Is the neighbor at time t+1 already in the stateDict?
+    # If not, add it to the stateDict
+    if not stateDict.get((neighbor, currentState.getTime() + 1), None):        
+        stateDict[(neighbor, currentState.getTime()+1)] = State(neighbor, currentState.getTime() + 1, None, float('inf'), float('inf'))
 
-    if currentGscore < stateList[(neighbor, currentState.getTime()+1)].g:
-        stateList[(neighbor, currentState.getTime() + 1)].parentNode = currentState.getNode()
-        stateList[(neighbor, currentState.getTime() + 1)].g = currentGscore
-        stateList[(neighbor, currentState.getTime() + 1)].f = currentGscore + heuristic[(neighbor, goal)]
+    if currentGscore < stateDict[(neighbor, currentState.getTime()+1)].g:
+        stateDict[(neighbor, currentState.getTime() + 1)].parentNode = currentState.getNode()
+        stateDict[(neighbor, currentState.getTime() + 1)].g = currentGscore
+        stateDict[(neighbor, currentState.getTime() + 1)].f = currentGscore + heuristic[(neighbor, goal)]
 
 def calculateMaxTimeGoalOccupied(paths, goal):
     """"
@@ -105,12 +109,12 @@ def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
     # initialize the open and closed sets
     open_set = []
     closed_set = set() # set o tuples (node, time)
-    stateList = defaultdict(State) # list of states, we use it instead of P. Each state has a pointer to parent state
+    stateDict = defaultdict(State) # list of states, we use it instead of P. Each state has a pointer to parent state
 
-    stateList[(init, startTime)] = State(init, startTime, None, 0, heuristic[(init, goal)])
+    stateDict[(init, startTime)] = State(init, startTime, None, 0, heuristic[(init, goal)])
 
     # push the initial node into the open set with its f-score
-    heapq.heappush(open_set, (stateList[(init, startTime)].f, stateList[(init, startTime)]))
+    heapq.heappush(open_set, (stateDict[(init, startTime)].f, stateDict[(init, startTime)]))
     
     while open_set:
         # get the node with the lowest f-score from the open set
@@ -119,7 +123,7 @@ def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
 
         if currentState.getNode() == goal:
             # reconstruct the path from the initial node to the goal
-            return reconstructPath(init, goal, stateList, startTime, currentState.getTime()), stateList
+            return reconstructPath(init, goal, stateDict, startTime, currentState.getTime()), stateDict
 
         if currentState.getTime() < maxLengthNewAgent:
             # explore the neighbors of the current node
@@ -130,9 +134,9 @@ def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
                 
                 currentGscore = currentState.g + weight
 
-                updateStateDict(goal, stateList, heuristic, currentState, neighbor, currentGscore)
+                updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore)
                                 
                 #TODO: make efficient
                 if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in open_set]:
-                    heapq.heappush(open_set, (stateList[(neighbor, currentState.getTime() + 1)].f, stateList[(neighbor, currentState.getTime() + 1)]))
+                    heapq.heappush(open_set, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
     return None, None

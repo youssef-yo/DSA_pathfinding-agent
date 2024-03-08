@@ -1,6 +1,6 @@
 from generator.gridGenerator import gridGenerator
 from generator.graphGenerator import createGraphFromGrid
-from generator.pathsGenerator import createPaths
+from generator.pathsGenerator import createPaths, createPathsUsingReachGoal
 from models.instance import Instance
 
 import random
@@ -56,12 +56,16 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
     #TODO: handle when graph is None
     graph = createGraphFromGrid(grid)
-    paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
+    #paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
+    limit = nrows*ncols*nAgents
+    paths, maxLengthPath = createPathsUsingReachGoal(nAgents, limit, graph)
 
     while not paths and i < limitRun:
         grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
         graph = createGraphFromGrid(grid)
-        paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
+        #paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
+        
+        paths, maxLengthPath = createPathsUsingReachGoal(nAgents, limit, graph)
         i += 1
 
     return grid, graph, paths, maxLengthPath, i

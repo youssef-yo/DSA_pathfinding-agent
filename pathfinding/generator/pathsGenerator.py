@@ -1,5 +1,6 @@
 import random
 from models.path import Path
+from solver.reachGoal import reachGoal
 
 def isPathCollisionFree(path, paths, startTime, maxTimeGoalOccupied):
 
@@ -119,6 +120,7 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     maxLengthPath = 0
 
     for _ in range(nAgents):
+        # TODO: change to list before entering the loop
         goal, timeMaxOccupied  = random.choice(list(goals.items()))
         goals.pop(goal)
         
@@ -172,6 +174,48 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
                 maxLengthPath = 0
 
 
+        paths.append(path)
+        maxLengthPath = max(maxLengthPath, path.getLength())
+
+    # TODO: remove print
+    for path in paths:
+        path.printPath()
+    
+    return paths, maxLengthPath
+
+
+
+def createPathsUsingReachGoal(nAgents, limitLengthPath, graph):
+    """
+    For all nAgents we will choose randomly the initial and goal positions
+    The movement of the agents will be random as well
+    INIT and GOAL must be different for each agent
+    """
+
+    availableCells = set(graph.adjacent.keys())
+    
+    if len(availableCells) < nAgents:
+        print("Not enough cells to create a path for each agent")
+        return None, 0
+    
+    goals = chooseRandomGoals(availableCells, nAgents) 
+
+    paths = []
+    nReset = 0
+    maxLengthPath = 0
+
+    for _ in range(nAgents):
+        # TODO: change to list before entering the loop
+        # TODO: given the fact that we choose the goals randomly, why choose randomly again the goal for a specific agent? Just choose the first one
+        goal, timeMaxOccupied  = random.choice(list(goals.items()))
+        goals.pop(goal)
+        
+        init = chooseRandomInit(availableCells, goal)
+
+        useRelaxedPlan = False
+        limitLengthPath = 1000
+        path, _ = reachGoal(graph, paths, init, goal, limitLengthPath, useRelaxedPlan)
+       
         paths.append(path)
         maxLengthPath = max(maxLengthPath, path.getLength())
 

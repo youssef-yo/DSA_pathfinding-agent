@@ -98,6 +98,8 @@ class Path:
         for t, move in path2.getMoves().items():
             self.addMove(t, move.src, move.dst, move.w)
 
+        self.goal = path2.getGoal()
+
     @staticmethod
     def calculateWeight(src, dst):
         cardinalMoves = Path.getCardinalMoves() # Cardinal moves and self-loop have cost = 1
@@ -122,5 +124,7 @@ class Path:
         print("Start node: ", self.getInit())
         print("Goal node: ", self.getGoal())
         print("Path: ")
-        for t in self.moves:
+        t = 0
+        while t < self.length:
             print(t, self.moves[t])
+            t += 1

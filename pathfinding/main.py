@@ -8,8 +8,8 @@ import random
 import numpy as np
 
 # seed = 10 to check waitGoalToBeFree (nAgent = 2)
-random.seed(10)
-np.random.seed(10)
+random.seed(13)
+np.random.seed(13)
 
 
 nrows = 7
@@ -33,7 +33,7 @@ if instance and nIteration < maxRun:
     print(" ------------- ")
     print("NEW AGENT (init, goal): (", instance.getInit(), ", ", instance.getGoal(), ")")
     
-    useRelaxedPlan = True
+    useRelaxedPlan = False
     path, minimumSpanningTree = reachGoal(instance.getGraph(), instance.getPaths(), instance.getInit(), instance.getGoal(), max, useRelaxedPlan)
     
     if not path:
@@ -43,18 +43,6 @@ if instance and nIteration < maxRun:
         path.printPath()
     if path:
         instance.addPath(path)
-        
-    # matrix = [[None] * (nAgents+1)  for _ in range(math.ceil(limitLengthPath))]
-    # for i, path in enumerate(instance.getPaths()):
-    #     for t, move in path.getMoves().items():
-    #         matrix[t][i] = move
-
-    # print("Matrix:")
-    # for row in matrix:
-    #     # print(row)
-    #     for r in row:
-    #         print(r, end="\t\t\t")
-    #     print("\t")
 
     runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
     # runInteractiveUI(instance.getGrid(), instance.getPaths())
