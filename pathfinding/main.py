@@ -8,8 +8,8 @@ import random
 import numpy as np
 
 # seed = 10 to check waitGoalToBeFree (nAgent = 2)
-random.seed(14)
-np.random.seed(14)
+random.seed(10)
+np.random.seed(10)
 
 
 nrows = 7
@@ -18,7 +18,7 @@ freeCellRatio = 0.9
 agglomerationFactor = 0.2
 max = 40
 
-nAgents = 4
+nAgents = 2
 limitLengthPath = freeCellRatio * nrows * ncols
 
 maxIteration = 80 # max number of iteration to reset the creation of a single path

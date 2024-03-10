@@ -25,6 +25,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
 
     #check for wait
     maxTimeGoalOccupied = calculateMaxTimeGoalOccupied(paths, goal)
+    print("SECONDO: timeMaxOccupied", maxTimeGoalOccupied)
     if maxTimeGoalOccupied + 1 > maxLengthNewAgent:
         return None, None
     

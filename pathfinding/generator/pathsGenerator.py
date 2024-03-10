@@ -27,8 +27,11 @@ def checkIllegalMove(dst, paths, current, t):
     return False
 
 def removeIllegalMoves(availableMoves, paths, current, t):
-    for p in paths: 
-        availableMoves = [edge for edge in availableMoves if isMoveLegal(current, edge.dst, t, p)]
+    '''
+    Remove all the moves that are illegal for the current time t
+    Return the list of available moves
+    '''
+    availableMoves = [edge for edge in availableMoves if not checkIllegalMove(edge.dst, paths, current, t)]
 
     return availableMoves
 
@@ -40,24 +43,22 @@ def chooseRandomGoals(availableCells, nAgents):
     """
     goals = {}
     for _ in range(nAgents):
-        goal = availableCells.pop()
+        goal = random.choice(availableCells)
         while goal in goals:
-            availableCells.add(goal)
-            goal = availableCells.pop()
-        availableCells.add(goal)
-        goals[goal] = 0
+            availableCells.append(goal)
+            goal = random.choice(availableCells)
+        availableCells.append(goal)
+        goals[goal] = -1
     return goals
 
 def chooseRandomInit(availableCells, goal):
     """
     Chose init from availableCells, remove it from availableCells and return it
     """
-    if goal in availableCells:
-        availableCells.remove(goal)
-        init = availableCells.pop()
-        availableCells.add(goal)
-    else:
-        init = availableCells.pop()
+    init = random.choice(availableCells)
+    while init == goal:
+        availableCells.append(init)
+        init = random.choice(availableCells)
     return init
 
 def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
@@ -67,11 +68,11 @@ def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
     tmp = init 
     if goal in availableCells:
         availableCells.remove(goal)
-        init = availableCells.pop()
-        availableCells.add(goal)
+        init = random.choice(availableCells)
+        availableCells.append(goal)
     else:
-        init = availableCells.pop()
-    availableCells.add(tmp)
+        init = random.choice(availableCells)
+    availableCells.append(tmp)
     current = init
 
     path = Path(init, goal)
@@ -92,7 +93,7 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     INIT and GOAL must be different for each agent
     """
 
-    availableCells = set(graph.getNodes())
+    availableCells = list(graph.getNodes())
     
     if len(availableCells) < nAgents:
         print("Not enough cells to create a path for each agent")
@@ -125,7 +126,6 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
             availableMoves = graph.getNeighbors(current)
             move = None
 
-            #TODO: move after "removeIllegalMoves", it's more efficient?
             for m in availableMoves:
                 if m.dst == goal:
                     t, path = waitGoalToBeFree(m, path, paths, t, timeMaxOccupied, current)
@@ -141,8 +141,7 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
                     maxLengthPath = 0
                     continue
 
-                move = random.choice(list(availableMoves)) # O(N) each time
-                # move = availableMoves.pop() 
+                move = random.choice(availableMoves)
 
             if move.dst in goals:
                 goals[move.dst] = t
@@ -176,7 +175,7 @@ def createPathsUsingReachGoal(nAgents, limitLengthPath, graph, useRelaxedPath = 
     INIT and GOAL must be different for each agent
     """
 
-    availableCells = set(graph.getNodes()) #TODO: need to be a set()?
+    availableCells = list(graph.getNodes()) 
     
     if len(availableCells) < nAgents:
         print("Not enough cells to create a path for each agent")
@@ -190,6 +189,7 @@ def createPathsUsingReachGoal(nAgents, limitLengthPath, graph, useRelaxedPath = 
 
     for _ in range(nAgents):
         goal, timeMaxOccupied  = random.choice(list(goals.items()))
+        print("PRIMO: timeMaxOccupied", timeMaxOccupied)
         goals.pop(goal)
         
         init = chooseRandomInit(availableCells, goal)
