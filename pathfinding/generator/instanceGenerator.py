@@ -5,9 +5,9 @@ from models.instance import Instance
 
 import random
 
-def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, maxLengthPathNewAgent, limitLengthPath, limitIteration, limitRun, useRelaxedPath = True):
+def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, maxLengthPathNewAgent, limitLengthPath, limitIteration, limitRun, useReachGoal=False, useRelaxedPath = True):
 
-    grid, graph, paths, maxLengthPath, i = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthPath, limitIteration, limitRun, useRelaxedPath)
+    grid, graph, paths, maxLengthPath, i = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthPath, limitIteration, limitRun, useReachGoal, useRelaxedPath)
 
     if not paths: 
         return None, i
@@ -50,22 +50,26 @@ def chooseRandomNode(grid, occupied_nodes):
     return node
 
 
-def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthPath, limitIteration, limitRun, useRelaxedPath):
+def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthPath, limitIteration, limitRun, useReachGoal, useRelaxedPath):
     i = 0
     
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
-    #TODO: handle when graph is None
     graph = createGraphFromGrid(grid)
-    paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
+
     limit = nrows*ncols*nAgents
-    # paths, maxLengthPath = createPathsUsingReachGoal(nAgents, limit, graph, useRelaxedPath)
+    if useReachGoal:
+        paths, maxLengthPath = createPathsUsingReachGoal(nAgents, limit, graph, useRelaxedPath)
+    else: 
+        paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
 
     while not paths and i < limitRun:
         grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
         graph = createGraphFromGrid(grid)
-        paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
+        if useReachGoal:
+            paths, maxLengthPath = createPathsUsingReachGoal(nAgents, limit, graph, useRelaxedPath)
+        else:
+            paths, maxLengthPath = createPaths(nAgents, limitLengthPath, graph, limitIteration)
         
-        # paths, maxLengthPath = createPathsUsingReachGoal(nAgents, limit, graph, useRelaxedPath)
         i += 1
 
     return grid, graph, paths, maxLengthPath, i

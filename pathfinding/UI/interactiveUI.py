@@ -38,7 +38,7 @@ def run_interactive_ui(grid, paths):
         color = list(np.random.randint(256, size=3))
         colors.append(color)
         print(color)
-        for move in path.getMoves().values():
+        for _, move in path.getMoves():
             pygame.draw.rect(window, color, (move.getDst()[0] * cell_size, move.getDst()[1] * cell_size, cell_size, cell_size))
 
 

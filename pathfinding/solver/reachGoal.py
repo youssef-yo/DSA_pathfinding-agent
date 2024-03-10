@@ -35,7 +35,6 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
         closedSet.add((currentState.getNode(), currentState.getTime()))
 
         # check if the goal will be occupied in the future, if so take another state
-        #TODO: prefer self loop instead of other moves
         if currentState.getNode() == goal and currentState.getTime() <= maxTimeGoalOccupied + 1:
             newCurrentState = heapq.heappop(openList)[1]
             closedSet.add((newCurrentState.getNode(), newCurrentState.getTime()))
@@ -84,7 +83,6 @@ def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heur
 
             updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore)
                     
-            #TODO: make efficient
             if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in openList]:
                 heapq.heappush(openList, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
 
@@ -105,7 +103,7 @@ def calculateMaxTimeGoalOccupied(paths, goal):
     """
     maxTimeGoalOccupied = -1
     for path in paths:
-        for time, move in path.getMoves().items():
+        for time, move in path.getMoves():
             if move.dst == goal:
                 maxTimeGoalOccupied = max(maxTimeGoalOccupied, time)
     return maxTimeGoalOccupied
@@ -144,7 +142,6 @@ def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
 
                 updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore)
                                 
-                #TODO: make efficient
                 if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in open_set]:
                     heapq.heappush(open_set, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
     return None, None

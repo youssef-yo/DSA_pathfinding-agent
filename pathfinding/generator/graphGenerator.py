@@ -14,7 +14,6 @@ def createGraphFromGrid(grid):
 
     graph = Graph()
     
-    # TODO: a more efficient way to create the graph
     for i in range(rows):
         for j in range(cols):
             if not grid.isObstacle(i,j):

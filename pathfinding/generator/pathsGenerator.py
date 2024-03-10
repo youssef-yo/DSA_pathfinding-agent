@@ -7,16 +7,13 @@ def isPathCollisionFree(path, paths, startTime, maxTimeGoalOccupied):
     if path.getLength() + startTime < maxTimeGoalOccupied + 1:
         return False
 
-    for t, move in path.getMoves().items():
+    for t, move in path.getMoves():
         if checkIllegalMove(move.dst, paths, move.src, t):
             return False
     return True
 
 def isMoveLegal(current, dst, t, p):
-    pathEnded = False
-    if t not in p.getMoves():
-            pathEnded = True
-
+    pathEnded = not p.existMoveAtTimeT(t)
     return (pathEnded and dst != p.getGoal()) or (not pathEnded and not p.checkCollision(current, dst, t))
 
 def checkIllegalMove(dst, paths, current, t):

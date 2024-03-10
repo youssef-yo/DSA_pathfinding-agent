@@ -25,7 +25,8 @@ maxIteration = 80 # max number of iteration to reset the creation of a single pa
 maxRun = 6 # max number of run to create a valid instance
 
 useRelaxedPath = False
-instance, nIteration = generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, max, limitLengthPath, maxIteration, maxRun)
+useReachGoalExistingAgents = False
+instance, nIteration = generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, max, limitLengthPath, maxIteration, maxRun, useReachGoalExistingAgents, useRelaxedPath)
 
 if not instance:
     print("Parameter max was not valid for the current configuration.")

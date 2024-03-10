@@ -102,7 +102,7 @@ def definePlotPaths(ax, paths):
         for i, path in enumerate(paths):
             color = list(np.random.random(size=3))
             colors.append(color)
-            for move in path.getMoves().values():
+            for _, move in path.getMoves():
                 src = move.src
                 dst = move.dst
                 

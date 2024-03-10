@@ -40,12 +40,19 @@ class Path:
         return self.length
     
     def getMove(self, t):
-        #TODO: throw exception if t not in self.path ?
         return self.moves.get(t)
 
     def getMoves(self):
-        return self.moves
+        """"
+        Return a dictionary where:
+        KEY: time t
+        VALUE: Move(src, dst, weight)
+        """
+        return self.moves.items()
 
+    def existMoveAtTimeT(self, t):
+        return t in self.moves
+    
     def addMove(self, t, src, dst, w):
         self.moves[t] = Move(src, dst, w)
         self.cost += w
@@ -97,7 +104,7 @@ class Path:
     
 
     def concatenatePaths(self, path2):
-        for t, move in path2.getMoves().items():
+        for t, move in path2.getMoves():
             self.addMove(t, move.src, move.dst, move.w)
 
         self.goal = path2.getGoal()
