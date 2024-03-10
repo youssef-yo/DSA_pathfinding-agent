@@ -1,5 +1,5 @@
 from models.state import State
-from generator import pathsGenerator
+from models.path import Path
 from collections import defaultdict 
 from .reconstructPath import reconstructPath
 from .heuristic import computeHeuristic
@@ -47,7 +47,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
         if relaxedPlan:
             #compute realxed plan   
             relaxedPath, relaxedStateList = findRelaxedPath(graph, heuristic, currentState.getNode(), goal, maxLengthNewAgent - currentState.getTime(), currentState.getTime())
-            if relaxedPath and pathsGenerator.isPathCollisionFree(relaxedPath, paths, currentState.getTime(), maxTimeGoalOccupied):
+            if relaxedPath and relaxedPath.isPathCollisionFree(paths, currentState.getTime(), maxTimeGoalOccupied):
                 path = reconstructPath(init, currentState.getNode(), stateDict, 0, currentState.getTime())
 
                 for state in relaxedStateList:
@@ -75,7 +75,7 @@ def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heur
 
         traversable = True
                 
-        if pathsGenerator.checkIllegalMove(neighbor, paths, currentState.getNode(), currentState.getTime()):
+        if Path.checkIllegalMove(neighbor, paths, currentState.getNode(), currentState.getTime()):
             traversable = False
                 
         if traversable:

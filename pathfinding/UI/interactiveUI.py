@@ -1,7 +1,7 @@
 import pygame
 import numpy as np
 
-from solver.reachGoal import reachGoal
+# from solver.reachGoal import reachGoal
 
 def drawPaths(window, cell_size, paths):
     for path in paths:
@@ -137,26 +137,27 @@ def run_interactive_ui(grid, graph, paths):
                     setGoal = False
 
                 if btnFindPath.collidepoint(event.pos):
-                    if not newInit or not newGoal:
-                        print("First set Init and Goal")
-                    else:
-                        print("Find Path")
-                        # # TODO: check for MVC correctness
+                    pass
+                    # if not newInit or not newGoal:
+                    #     print("First set Init and Goal")
+                    # else:
+                    #     print("Find Path")
+                    #     # # TODO: check for MVC correctness
 
-                        # Wait for the controller response
-                        path, _ = reachGoal(graph, paths, newInit, newGoal, 20, False)
+                    #     # Wait for the controller response
+                    #     path, _ = reachGoal(graph, paths, newInit, newGoal, 20, False)
 
-                        # Process the response
-                        if path:
-                            # Path found, update the grid with the path
-                            for move in path.getMoves().values():
+                    #     # Process the response
+                    #     if path:
+                    #         # Path found, update the grid with the path
+                    #         for move in path.getMoves().values():
                                 
-                                xStart, yStart = move.getSrc()
-                                xEnd, yEnd = move.getDst()
-                                pygame.draw.line(window, [255, 0, 0], ((xStart + 0.5) * cell_size, (yStart + 0.5) * cell_size), ((xEnd + 0.5) * cell_size, (yEnd + 0.5) * cell_size), 4)
-                        else:
-                            # No path found, display an error message
-                            print("No path found")
+                    #             xStart, yStart = move.getSrc()
+                    #             xEnd, yEnd = move.getDst()
+                    #             pygame.draw.line(window, [255, 0, 0], ((xStart + 0.5) * cell_size, (yStart + 0.5) * cell_size), ((xEnd + 0.5) * cell_size, (yEnd + 0.5) * cell_size), 4)
+                    #     else:
+                    #         # No path found, display an error message
+                    #         print("No path found")
                 
                 if inputRowRect.collidepoint(event.pos):
                     inputRowActive = True

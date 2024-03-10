@@ -2,35 +2,36 @@ import random
 from models.path import Path
 from solver.reachGoal import reachGoal
 
-def isPathCollisionFree(path, paths, startTime, maxTimeGoalOccupied):
-    # if path is shorter than the time that the goal will be occupied, it means that it will collide
-    if path.getLength() + startTime < maxTimeGoalOccupied + 1:
-        return False
+#TODO: move method into path
+# def isPathCollisionFree(path, paths, startTime, maxTimeGoalOccupied):
+#     # if path is shorter than the time that the goal will be occupied, it means that it will collide
+#     if path.getLength() + startTime < maxTimeGoalOccupied + 1:
+#         return False
 
-    for t, move in path.getMoves():
-        if checkIllegalMove(move.dst, paths, move.src, t):
-            return False
-    return True
+#     for t, move in path.getMoves():
+#         if checkIllegalMove(move.dst, paths, move.src, t):
+#             return False
+#     return True
 
-def isMoveLegal(current, dst, t, p):
-    pathEnded = not p.existMoveAtTimeT(t)
-    return (pathEnded and dst != p.getGoal()) or (not pathEnded and not p.checkCollision(current, dst, t))
+# def isMoveLegal(current, dst, t, p):
+#     pathEnded = not p.existMoveAtTimeT(t)
+#     return (pathEnded and dst != p.getGoal()) or (not pathEnded and not p.checkCollision(current, dst, t))
 
-def checkIllegalMove(dst, paths, current, t):
-    for p in paths:
-        if not isMoveLegal(current, dst, t, p):
-            return True
+# def checkIllegalMove(dst, paths, current, t):
+#     for p in paths:
+#         if not isMoveLegal(current, dst, t, p):
+#             return True
         
-    return False
+#     return False
 
-def removeIllegalMoves(availableMoves, paths, current, t):
-    '''
-    Remove all the moves that are illegal for the current time t
-    Return the list of available moves
-    '''
-    availableMoves = [edge for edge in availableMoves if not checkIllegalMove(edge.dst, paths, current, t)]
+# def removeIllegalMoves(availableMoves, paths, current, t):
+#     '''
+#     Remove all the moves that are illegal for the current time t
+#     Return the list of available moves
+#     '''
+#     availableMoves = [edge for edge in availableMoves if not checkIllegalMove(edge.dst, paths, current, t)]
 
-    return availableMoves
+#     return availableMoves
 
 def chooseRandomGoals(availableCells, nAgents):
     """
@@ -76,13 +77,6 @@ def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
 
     return t, current, path, goalsCopy, availableCells, nReset
 
-
-def waitGoalToBeFree(move, path, paths, t, timeMaxOccupied, current):
-    while (checkIllegalMove(move.dst, paths, current, t) or t <= timeMaxOccupied) and not checkIllegalMove(current, paths, current, t):
-        path.addMove(t, current, current, 1)
-        t += 1
-    return t, path
-
 def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     """
     For all nAgents we will choose randomly the initial and goal positions
@@ -125,12 +119,12 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
 
             for m in availableMoves:
                 if m.dst == goal:
-                    t, path = waitGoalToBeFree(m, path, paths, t, timeMaxOccupied, current)
-                    move = m if not checkIllegalMove(m.dst, paths, current, t) else None
+                    t = path.waitGoalToBeFree(m, paths, t, timeMaxOccupied, current)
+                    move = m if not Path.checkIllegalMove(m.dst, paths, current, t) else None
                     break
 
             if not move:       
-                availableMoves = removeIllegalMoves(availableMoves, paths, current, t)
+                availableMoves = Path.removeIllegalMoves(availableMoves, paths, current, t)
 
                 if len(availableMoves) == 0:
                     print("RESET NO MOVE")

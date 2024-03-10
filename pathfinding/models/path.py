@@ -102,13 +102,54 @@ class Path:
     def checkCollision(self, src, dst, t):
         return self.checkSameDestination(dst, t) or self.checkSeatSwapping(src, dst, t) or self.checkTrajectories(src, dst, t)
     
-
     def concatenatePaths(self, path2):
         for t, move in path2.getMoves():
             self.addMove(t, move.src, move.dst, move.w)
 
         self.goal = path2.getGoal()
 
+    def isPathCollisionFree(self, paths, startTime, maxTimeGoalOccupied):
+        # if path is shorter than the time that the goal will be occupied, it means that it will collide
+        if self.getLength() + startTime < maxTimeGoalOccupied + 1:
+            return False
+
+        for t, move in self.getMoves():
+            if Path.checkIllegalMove(move.dst, paths, move.src, t):
+                return False
+        return True
+
+    def isMoveLegal(self, current, dst, t):
+        pathEnded = not self.existMoveAtTimeT(t)
+        return (pathEnded and dst != self.getGoal()) or (not pathEnded and not self.checkCollision(current, dst, t))
+
+    def waitGoalToBeFree(self, move, paths, t, timeMaxOccupied, current):
+        '''
+        Wait until the goal is free
+        Return the new time
+        '''
+        while (Path.checkIllegalMove(move.dst, paths, current, t) or t <= timeMaxOccupied) and not Path.checkIllegalMove(current, paths, current, t):
+            self.addMove(t, current, current, 1)
+            t += 1
+        return t
+    
+    @staticmethod
+    def checkIllegalMove(dst, paths, current, t):
+        for p in paths:
+            if not p.isMoveLegal(current, dst, t):
+                return True
+            
+        return False
+    
+    @staticmethod
+    def removeIllegalMoves(availableMoves, paths, current, t):
+        '''
+        Remove all the moves that are illegal for the current time t
+        Return the list of available moves
+        '''
+        availableMoves = [edge for edge in availableMoves if not Path.checkIllegalMove(edge.dst, paths, current, t)]
+
+        return availableMoves
+    
     @staticmethod
     def calculateWeight(src, dst):
         cardinalMoves = Path.getCardinalMoves() # Cardinal moves and self-loop have cost = 1
