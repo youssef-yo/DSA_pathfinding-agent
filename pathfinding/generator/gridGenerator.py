@@ -33,6 +33,7 @@ def addObstacles(grid, nObstacle, agglomerationFactor):
 
     nObstacle = nObstacle - nObstaclesInAgglomeration
 
+    # TODO: add method in grid for aading random obstacles
     for _ in range(nObstacle):
         r = random.randint(0, grid.getNrows()-1)
         c = random.randint(0, grid.getNcols()-1)

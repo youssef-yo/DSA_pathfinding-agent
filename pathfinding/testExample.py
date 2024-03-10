@@ -7,25 +7,26 @@ from UI.UI import run
 from generator.instanceGenerator import generateInstance
 from generator.graphGenerator import createGraphFromGrid   
 from solver.reachGoal import reachGoal
+from models.grid import Grid
 
 import math
 
 class TestReconstructPath(unittest.TestCase):    
     def defineGrid(m, n):
-        grid = [[0] * n for _ in range(m)]
+        grid = Grid(m, n)
 
-        grid[1][7] = 1
-        grid[2][1] = 1
-        grid[1][6] = 1
-        grid[3][1] = 1
-        grid[4][1] = 1
-        grid[5][1] = 1  
-        grid[3][5] = 1
-        grid[4][5] = 1
-        grid[5][5] = 1
-        grid[7][2] = 1
-        grid[7][3] = 1
-        grid[7][4] = 1
+        grid.addObstacle(1, 7)
+        grid.addObstacle(2, 1)
+        grid.addObstacle(1, 6)
+        grid.addObstacle(3, 1)
+        grid.addObstacle(4, 1)
+        grid.addObstacle(5, 1)
+        grid.addObstacle(3, 5)
+        grid.addObstacle(4, 5)
+        grid.addObstacle(5, 5)
+        grid.addObstacle(7, 2)
+        grid.addObstacle(7, 3)
+        grid.addObstacle(7, 4)
 
         return grid
         
