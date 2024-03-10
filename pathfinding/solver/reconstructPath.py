@@ -1,19 +1,22 @@
-import math
 from models.path import Path 
 
-def reconstructPath(init, goal, P, t):
+def reconstructPath(init, goal, P, tStart, tEnd):
     """
     P: dictionary where key is a state <ndoe, time> and value is an array with index 0: the parent node, index 1: the cost
+    tStart: start time
+    tEnd: end time
+    
+    Reconstruction of the path from the goal to the init using the parent node of each state in P (Minimum Spanning Tree)
     """
-
+    
     path = Path(init, goal)
     current = goal
-    while t > 0 and P[(current, t)]:
-        src = P[(current, t)].getParentNode()
+    while tEnd > tStart and P[(current, tEnd)]:
+        src = P[(current, tEnd)].getParentNode()
         dst = current
-        path.addMove(t-1, src, dst, path.calculateWeight(src, dst)) 
+        path.addMove(tEnd-1, src, dst, path.calculateWeight(src, dst)) 
 
-        current = P[(current, t)].getParentNode()
-        t -= 1
+        current = P[(current, tEnd)].getParentNode()
+        tEnd -= 1
 
     return path

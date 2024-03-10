@@ -40,14 +40,20 @@ class Path:
         return self.length
     
     def getMove(self, t):
-        #TODO: throw exception if t not in self.path ?
         return self.moves.get(t)
 
     def getMoves(self):
-        return self.moves
+        """"
+        Return a dictionary where:
+        KEY: time t
+        VALUE: Move(src, dst, weight)
+        """
+        return self.moves.items()
 
+    def existMoveAtTimeT(self, t):
+        return t in self.moves
+    
     def addMove(self, t, src, dst, w):
-        # self.path[t] = (src, dst, w)
         self.moves[t] = Move(src, dst, w)
         self.cost += w
         self.length += 1
@@ -67,25 +73,42 @@ class Path:
     def checkTrajectories(self, src, dst, t):
         if t not in self.moves:
             return False
+        
+        src_move_x = self.getMove(t).src[0]
+        src_move_y = self.getMove(t).src[1]
+        dst_move_x = self.getMove(t).dst[0]
+        dst_move_y = self.getMove(t).dst[1]
+
         #check that one agent is up/down of the other
-        if (self.getMove(t).src[1] == src[1] and
-             abs(self.getMove(t).src[0]-src[0]) == 1):
+        if (src_move_y == src[1] and
+             abs(src_move_x-src[0]) == 1):
             #check if they cross each other
-            if (self.getMove(t).dst[1] == dst[1] and
-                abs(self.getMove(t).dst[0]-dst[0]) == 1):
+            if (dst_move_y == dst[1] and
+                abs(dst_move_x-dst[0]) == 1 and 
+                (src_move_x == dst[0] and dst_move_x == src[0])):
                 return True
+            
         #check that one agent is left/right of the other
-        if (self.getMove(t).src[0] == src[0] and
-             abs(self.getMove(t).src[1]-src[1]) == 1):
+        if (src_move_x == src[0] and
+             abs(src_move_y-src[1]) == 1):
             #check if they cross each other
-            if (self.getMove(t).dst[0] == dst[0] and
-                abs(self.getMove(t).dst[1]-dst[1]) == 1):
+            if (dst_move_x == dst[0] and
+                abs(dst_move_y-dst[1]) == 1 and 
+                (src_move_y == dst[1] and dst_move_y == src[1])):
                 return True
+            
         return False
     
     def checkCollision(self, src, dst, t):
         return self.checkSameDestination(dst, t) or self.checkSeatSwapping(src, dst, t) or self.checkTrajectories(src, dst, t)
     
+
+    def concatenatePaths(self, path2):
+        for t, move in path2.getMoves():
+            self.addMove(t, move.src, move.dst, move.w)
+
+        self.goal = path2.getGoal()
+
     @staticmethod
     def calculateWeight(src, dst):
         cardinalMoves = Path.getCardinalMoves() # Cardinal moves and self-loop have cost = 1
@@ -110,5 +133,7 @@ class Path:
         print("Start node: ", self.getInit())
         print("Goal node: ", self.getGoal())
         print("Path: ")
-        for t in self.moves:
+        t = 0
+        while t < self.length:
             print(t, self.moves[t])
+            t += 1

@@ -1,9 +1,6 @@
 import random
 import math
-
-# GRID 
-# 0 -> free cell
-# 1 -> obstacle
+from models.grid import Grid
 
 def createAgglomeration(grid, nObstaclesInAgglomeration):
     """"
@@ -17,50 +14,47 @@ def createAgglomeration(grid, nObstaclesInAgglomeration):
 
     directions = [(0,1), (0,-1), (1,0), (-1,0)]
 
-    rows, cols = len(grid), len(grid[0])
-    agglomeration = set()
+    startR, startC = random.randint(0, grid.getNrows()-1), random.randint(0, grid.getNcols()-1)    
+    grid.addObstacle(startR, startC)
 
-    startR, startC = random.randint(0, rows-1), random.randint(0, cols-1)
-    agglomeration.add((startR, startC))
-    grid[startR][startC] = 1
-
-    while len(agglomeration) < nObstaclesInAgglomeration:
+    while grid.getLengthObstacles() < nObstaclesInAgglomeration:
         randomDirection = random.choice(directions)
-        randomCellInAgglomeration = random.choice(list(agglomeration))
+        randomCellInAgglomeration = random.choice(list(grid.getOccupiedCells()))
 
         nextR, nextC = randomCellInAgglomeration[0] + randomDirection[0], randomCellInAgglomeration[1] + randomDirection[1]
-        if 0 <= nextR < rows and 0 <= nextC < cols and (nextR, nextC) not in agglomeration:
-            agglomeration.add((nextR, nextC))
-            grid[nextR][nextC] = 1
-
-    return agglomeration
+        if 0 <= nextR < grid.getNrows() and 0 <= nextC < grid.getNcols() and grid.isFree(nextR, nextC):
+            grid.addObstacle(nextR, nextC) 
     
         
 def addObstacles(grid, nObstacle, agglomerationFactor):
-
-    rows, cols = len(grid), len(grid[0])
-
     nObstaclesInAgglomeration = math.floor(agglomerationFactor * nObstacle)
-    obstacoles = createAgglomeration(grid, nObstaclesInAgglomeration) 
+
+    createAgglomeration(grid, nObstaclesInAgglomeration)
 
     nObstacle = nObstacle - nObstaclesInAgglomeration
 
     for _ in range(nObstacle):
-        r = random.randint(0, rows-1)
-        c = random.randint(0, cols-1)
+        r = random.randint(0, grid.getNrows()-1)
+        c = random.randint(0, grid.getNcols()-1)
 
-        while (r,c) in obstacoles:
-            r = random.randint(0, rows-1)
-            c = random.randint(0, cols-1)
+        while (r,c) in grid.getOccupiedCells():
+            r = random.randint(0, grid.getNrows()-1)
+            c = random.randint(0, grid.getNcols()-1)
 
-        obstacoles.add((r,c))
-        grid[r][c] = 1
+        grid.addObstacle(r,c)
 
     return grid
 
 def gridGenerator(rows, cols, freeCellRatio, agglomerationFactor):
-    grid = [[0 for _ in range(rows)] for _ in range(cols)]
-    
+    """"
+    Generate a grid of size rows x cols with freeCellRatio of free cells
+    grid[r][c] = 0 -> free cell
+    grid[r][c] = 1 -> obstacle
+    """
+
+    # grid = [[0 for _ in range(rows)] for _ in range(cols)]
+    grid = Grid(rows, cols)
+
     #add obstacles to grid
     obstacleRatio = 1 - freeCellRatio
 
