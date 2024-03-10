@@ -25,8 +25,7 @@ def drawTree(minimumSpanningTree, path):
 
 def definePlotGrid(grid):
     # Extract the dimensions of the grid
-    rows = len(grid)
-    cols = len(grid[0])
+    rows, cols = grid.getNrows(), grid.getNcols()
 
     # Create a figure and axis object
     fig, ax = plt.subplots()
@@ -34,7 +33,7 @@ def definePlotGrid(grid):
     # Plot the grid
     for i in range(rows):
         for j in range(cols):
-            if grid[i][j] == 1:
+            if grid.isObstacle(i, j):
                 ax.add_patch(plt.Rectangle((j, i), 1, 1, color='black'))
             else:
                 ax.add_patch(plt.Rectangle((j, i), 1, 1, color='white', fill=False))
@@ -103,7 +102,7 @@ def definePlotPaths(ax, paths):
         for i, path in enumerate(paths):
             color = list(np.random.random(size=3))
             colors.append(color)
-            for move in path.getMoves().values():
+            for _, move in path.getMoves():
                 src = move.src
                 dst = move.dst
                 

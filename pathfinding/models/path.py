@@ -40,12 +40,19 @@ class Path:
         return self.length
     
     def getMove(self, t):
-        #TODO: throw exception if t not in self.path ?
         return self.moves.get(t)
 
     def getMoves(self):
-        return self.moves
+        """"
+        Return a dictionary where:
+        KEY: time t
+        VALUE: Move(src, dst, weight)
+        """
+        return self.moves.items()
 
+    def existMoveAtTimeT(self, t):
+        return t in self.moves
+    
     def addMove(self, t, src, dst, w):
         self.moves[t] = Move(src, dst, w)
         self.cost += w
@@ -77,7 +84,8 @@ class Path:
              abs(src_move_x-src[0]) == 1):
             #check if they cross each other
             if (dst_move_y == dst[1] and
-                abs(dst_move_x-dst[0]) == 1):
+                abs(dst_move_x-dst[0]) == 1 and 
+                (src_move_x == dst[0] and dst_move_x == src[0])):
                 return True
             
         #check that one agent is left/right of the other
@@ -85,7 +93,8 @@ class Path:
              abs(src_move_y-src[1]) == 1):
             #check if they cross each other
             if (dst_move_x == dst[0] and
-                abs(dst_move_y-dst[1]) == 1):
+                abs(dst_move_y-dst[1]) == 1 and 
+                (src_move_y == dst[1] and dst_move_y == src[1])):
                 return True
             
         return False
@@ -95,8 +104,10 @@ class Path:
     
 
     def concatenatePaths(self, path2):
-        for t, move in path2.getMoves().items():
+        for t, move in path2.getMoves():
             self.addMove(t, move.src, move.dst, move.w)
+
+        self.goal = path2.getGoal()
 
     @staticmethod
     def calculateWeight(src, dst):
@@ -122,5 +133,7 @@ class Path:
         print("Start node: ", self.getInit())
         print("Goal node: ", self.getGoal())
         print("Path: ")
-        for t in self.moves:
+        t = 0
+        while t < self.length:
             print(t, self.moves[t])
+            t += 1

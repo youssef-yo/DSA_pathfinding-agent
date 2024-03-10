@@ -48,7 +48,7 @@ class TestReconstructPath(unittest.TestCase):
     graph = createGraphFromGrid(grid)
     #instance = Instance(grid, graph, paths, init, goal, maxLengthPathNewAgent)
 
-    useRelaxedPlan = False
-    newPath, minSpanningTree = reachGoal(graph, paths, init, goal, 40, useRelaxedPlan)
+    useRelaxedPath = False
+    newPath, minSpanningTree = reachGoal(graph, paths, init, goal, 40, useRelaxedPath)
     paths.append(newPath)
     run(grid, paths, minSpanningTree)
