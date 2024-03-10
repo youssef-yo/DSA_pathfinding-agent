@@ -1,3 +1,5 @@
+import random
+
 class Grid:
     def __init__(self, nrows, ncols) -> None:
         """
@@ -27,6 +29,17 @@ class Grid:
     
     def addObstacle(self, r, c):
         self.occupiedCells.add((r,c))
+
+    def addRandomObstacle(self, nObstacle):
+        for _ in range(nObstacle):
+            r = random.randint(0, self.nrows-1)
+            c = random.randint(0, self.ncols-1)
+
+            while (r,c) in self.occupiedCells:
+                r = random.randint(0, self.nrows-1)
+                c = random.randint(0, self.ncols-1)
+
+            self.addObstacle(r,c)
     
     def getLengthObstacles(self):
         return len(self.occupiedCells)
