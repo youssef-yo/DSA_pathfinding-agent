@@ -1,6 +1,7 @@
 import unittest
 import math
 from models.path import Path
+from models.grid import Grid
 from generator.graphGenerator import createGraphFromGrid
 from generator.pathsGenerator import chooseRandomGoals, chooseRandomInit
 from generator.gridGenerator import createAgglomeration
@@ -62,47 +63,33 @@ class TestGraphGenerator(unittest.TestCase):
         self.assertEqual(graph, None)
 
     def test_grid_with_obstacles(self):
-        grid = [
-            [0, 0, 0],
-            [0, 1, 0],
-            [0, 0, 0]
-        ]
+        grid = Grid(3, 3)
+        grid.addObstacle(0, 0)
         graph = createGraphFromGrid(grid)
         self.assertEqual(len(graph.getNodes()), 8)
 
     def test_grid_with_all_obstacles(self):
-        grid = [
-            [1, 1, 1],
-            [1, 1, 1],
-            [1, 1, 1]
-        ]
+        grid = Grid(3, 3)
+        for i in range(3):
+            for j in range(3):
+                grid.addObstacle(i, j)
+
         graph = createGraphFromGrid(grid)
         self.assertEqual(len(graph.getNodes()), 0)
 
     def test_grid_without_obstacles(self):
-        grid = [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-        ]
+        grid = Grid(3, 3)
         graph = createGraphFromGrid(grid)
         self.assertEqual(len(graph.getNodes()), 9)
     
     def test_contain_vertex(self):
-        grid = [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-        ]
+        grid = Grid(3, 3)
         graph = createGraphFromGrid(grid)
         self.assertEqual(graph.containsVertex((0, 0)), True)
 
     def test_addEdge(self):
-        grid = [
-            [0, 0, 0],
-            [0, 0, 0],
-            [0, 0, 0]
-        ]
+        grid = Grid(3, 3)
+
         graph = createGraphFromGrid(grid)
         self.assertEqual(len(graph.getNeighbors((0, 0))), 4)
 
@@ -121,19 +108,15 @@ class TestPathsGenerator(unittest.TestCase):
         self.assertEqual(result_w, expected_w)
     
     def test_chooseRandomGoals(self):
-        availableCells = {(0, 0), (0, 1), (1, 0), (1, 1)}
+        availableCells = [(0, 0), (0, 1), (1, 0), (1, 1)]
         n_agents = 2
 
         goals = chooseRandomGoals(availableCells, n_agents)
 
         self.assertEqual(len(goals), n_agents)
-
-        setGoals = set(goals.keys())  
-
-        self.assertEqual(len(setGoals), len(goals))
         
     def test_chooseRandomInit(self):
-        availableCells = {(0, 0), (0, 1), (1, 0), (1, 1)}
+        availableCells = [(0, 0), (0, 1), (1, 0), (1, 1)]
         goal = (1, 1)
 
         init = chooseRandomInit(availableCells, goal)
@@ -142,15 +125,11 @@ class TestPathsGenerator(unittest.TestCase):
 
 class TestGridGenerator(unittest.TestCase):
     def test_createAgglomeration(self):
-        grid = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-        ]
+        grid = Grid(3, 4)
 
         n_obstacles = 5
-        agglomerations = createAgglomeration(grid, n_obstacles)
-        self.assertEqual(len(agglomerations), n_obstacles)     
+        createAgglomeration(grid, n_obstacles)
+        self.assertEqual(len(grid.getOccupiedCells()), n_obstacles)     
     
 if __name__ == '__main__':
     unittest.main()

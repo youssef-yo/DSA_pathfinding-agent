@@ -33,15 +33,7 @@ def addObstacles(grid, nObstacle, agglomerationFactor):
 
     nObstacle = nObstacle - nObstaclesInAgglomeration
 
-    for _ in range(nObstacle):
-        r = random.randint(0, grid.getNrows()-1)
-        c = random.randint(0, grid.getNcols()-1)
-
-        while (r,c) in grid.getOccupiedCells():
-            r = random.randint(0, grid.getNrows()-1)
-            c = random.randint(0, grid.getNcols()-1)
-
-        grid.addObstacle(r,c)
+    grid.addRandomObstacle(nObstacle)
 
     return grid
 

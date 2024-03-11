@@ -1,5 +1,5 @@
 from models.state import State
-from generator import pathsGenerator
+from models.path import Path
 from collections import defaultdict 
 from .reconstructPath import reconstructPath
 from .heuristic import computeHeuristic
@@ -7,11 +7,20 @@ import heapq
 
 
 
-def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
+def reachGoal(instance, relaxedPlan = False):
     """"
     Find a path from the initial node to the goal node
     Return the path and the list of states
     """
+
+    # Note that instance.getGrid() could be None
+    graph = instance.getGraph()
+    paths = instance.getPaths()
+    init = instance.getInit()
+    goal = instance.getGoal()
+    maxLengthNewAgent = instance.getMaxLengthNewAgent()
+    maxTimeGoalOccupied = instance.getMaxTimeGoalOccupied()
+
     # initialize the open and closed sets
     openList = []
     closedSet = set() # set o tuples (node, time)
@@ -24,8 +33,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
     heapq.heappush(openList, (stateDict[(init, 0)].f, stateDict[(init, 0)]))
 
     #check for wait
-    maxTimeGoalOccupied = calculateMaxTimeGoalOccupied(paths, goal)
-    print("SECONDO: timeMaxOccupied", maxTimeGoalOccupied)
+    # maxTimeGoalOccupied = calculateMaxTimeGoalOccupied(paths, goal)
     if maxTimeGoalOccupied + 1 > maxLengthNewAgent:
         return None, None
     
@@ -47,7 +55,7 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
         if relaxedPlan:
             #compute realxed plan   
             relaxedPath, relaxedStateList = findRelaxedPath(graph, heuristic, currentState.getNode(), goal, maxLengthNewAgent - currentState.getTime(), currentState.getTime())
-            if relaxedPath and pathsGenerator.isPathCollisionFree(relaxedPath, paths, currentState.getTime(), maxTimeGoalOccupied):
+            if relaxedPath and relaxedPath.isPathCollisionFree(paths, currentState.getTime(), maxTimeGoalOccupied):
                 path = reconstructPath(init, currentState.getNode(), stateDict, 0, currentState.getTime())
 
                 for state in relaxedStateList:
@@ -75,7 +83,7 @@ def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heur
 
         traversable = True
                 
-        if pathsGenerator.checkIllegalMove(neighbor, paths, currentState.getNode(), currentState.getTime()):
+        if Path.checkIllegalMove(neighbor, paths, currentState.getNode(), currentState.getTime()):
             traversable = False
                 
         if traversable:
@@ -96,17 +104,6 @@ def updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentG
         stateDict[(neighbor, currentState.getTime() + 1)].parentNode = currentState.getNode()
         stateDict[(neighbor, currentState.getTime() + 1)].g = currentGscore
         stateDict[(neighbor, currentState.getTime() + 1)].f = currentGscore + heuristic[(neighbor, goal)]
-
-def calculateMaxTimeGoalOccupied(paths, goal):
-    """"
-    Return the max time the goal will be occupied by any of the others agents
-    """
-    maxTimeGoalOccupied = -1
-    for path in paths:
-        for time, move in path.getMoves():
-            if move.dst == goal:
-                maxTimeGoalOccupied = max(maxTimeGoalOccupied, time)
-    return maxTimeGoalOccupied
 
 def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
     # initialize the open and closed sets
