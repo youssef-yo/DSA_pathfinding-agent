@@ -28,6 +28,7 @@ def chooseRandomInit(availableCells, goal):
     availableCells.remove(init)
     return init
 
+
 def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
     nReset += 1
     t = 0
@@ -59,7 +60,7 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     if len(availableCells) < nAgents:
         print("Not enough cells to create a path for each agent")
         return None, 0
-    
+
     goals = chooseRandomGoals(availableCells, nAgents) 
 
     paths = []
@@ -67,9 +68,8 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     maxLengthPath = 0
 
     for _ in range(nAgents):
-        goal, timeMaxOccupied  = random.choice(list(goals.items()))
-        goals.pop(goal)
-        
+        goal, timeMaxOccupied  = goals.popitem()
+
         init = chooseRandomInit(availableCells, goal)
 
         path = Path(init, goal)
@@ -147,9 +147,8 @@ def createPathsUsingReachGoal(nAgents, limitLengthPath, graph, useRelaxedPath = 
     maxLengthPath = 0
 
     for _ in range(nAgents):
-        goal, timeMaxOccupied  = random.choice(list(goals.items()))
-        goals.pop(goal)
-        
+        goal, _  = goals.popitem()
+
         init = chooseRandomInit(availableCells, goal)
         
         # grid is None becuase we don't need it in reachGoal

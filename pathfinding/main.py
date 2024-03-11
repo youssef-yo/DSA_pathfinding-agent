@@ -24,7 +24,7 @@ MAX_ITERATION = 80 # max number of iteration to reset the creation of a single p
 MAX_TOTAL_RUN = 6 # max number of run to create a valid instance
 
 USE_RELAXED_PATH = False
-USE_REACH_GOAL_EXISTING_AGENTS = True
+USE_REACH_GOAL_EXISTING_AGENTS = False
 
 def main():
     instance, nIteration = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
