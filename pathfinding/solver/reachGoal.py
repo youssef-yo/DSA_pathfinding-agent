@@ -7,11 +7,18 @@ import heapq
 
 
 
-def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
+def reachGoal(instance, relaxedPlan = False):
     """"
     Find a path from the initial node to the goal node
     Return the path and the list of states
     """
+
+    # Note that instance.getGrid() could be None
+    graph = instance.getGraph()
+    paths = instance.getPaths()
+    init = instance.getInit()
+    goal = instance.getGoal()
+    maxLengthNewAgent = instance.getMaxLengthNewAgent()
     # initialize the open and closed sets
     openList = []
     closedSet = set() # set o tuples (node, time)
@@ -25,7 +32,6 @@ def reachGoal(graph, paths, init, goal, maxLengthNewAgent, relaxedPlan = False):
 
     #check for wait
     maxTimeGoalOccupied = calculateMaxTimeGoalOccupied(paths, goal)
-    print("SECONDO: timeMaxOccupied", maxTimeGoalOccupied)
     if maxTimeGoalOccupied + 1 > maxLengthNewAgent:
         return None, None
     

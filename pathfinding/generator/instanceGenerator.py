@@ -55,7 +55,7 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
     
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
     graph = createGraphFromGrid(grid)
-
+    
     limit = nrows*ncols*nAgents
     if useReachGoal:
         paths, maxLengthPath = createPathsUsingReachGoal(nAgents, limit, graph, useRelaxedPath)

@@ -1,37 +1,7 @@
 import random
 from models.path import Path
+from models.instance import Instance
 from solver.reachGoal import reachGoal
-
-#TODO: move method into path
-# def isPathCollisionFree(path, paths, startTime, maxTimeGoalOccupied):
-#     # if path is shorter than the time that the goal will be occupied, it means that it will collide
-#     if path.getLength() + startTime < maxTimeGoalOccupied + 1:
-#         return False
-
-#     for t, move in path.getMoves():
-#         if checkIllegalMove(move.dst, paths, move.src, t):
-#             return False
-#     return True
-
-# def isMoveLegal(current, dst, t, p):
-#     pathEnded = not p.existMoveAtTimeT(t)
-#     return (pathEnded and dst != p.getGoal()) or (not pathEnded and not p.checkCollision(current, dst, t))
-
-# def checkIllegalMove(dst, paths, current, t):
-#     for p in paths:
-#         if not isMoveLegal(current, dst, t, p):
-#             return True
-        
-#     return False
-
-# def removeIllegalMoves(availableMoves, paths, current, t):
-#     '''
-#     Remove all the moves that are illegal for the current time t
-#     Return the list of available moves
-#     '''
-#     availableMoves = [edge for edge in availableMoves if not checkIllegalMove(edge.dst, paths, current, t)]
-
-#     return availableMoves
 
 def chooseRandomGoals(availableCells, nAgents):
     """
@@ -43,9 +13,7 @@ def chooseRandomGoals(availableCells, nAgents):
     for _ in range(nAgents):
         goal = random.choice(availableCells)
         while goal in goals:
-            availableCells.append(goal)
             goal = random.choice(availableCells)
-        availableCells.append(goal)
         goals[goal] = -1
     return goals
 
@@ -55,8 +23,8 @@ def chooseRandomInit(availableCells, goal):
     """
     init = random.choice(availableCells)
     while init == goal:
-        availableCells.append(init)
         init = random.choice(availableCells)
+    availableCells.remove(init)
     return init
 
 def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
@@ -157,8 +125,6 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
     
     return paths, maxLengthPath
 
-
-
 def createPathsUsingReachGoal(nAgents, limitLengthPath, graph, useRelaxedPath = False):
     """
     For all nAgents we will choose randomly the initial and goal positions
@@ -180,12 +146,14 @@ def createPathsUsingReachGoal(nAgents, limitLengthPath, graph, useRelaxedPath = 
 
     for _ in range(nAgents):
         goal, timeMaxOccupied  = random.choice(list(goals.items()))
-        print("PRIMO: timeMaxOccupied", timeMaxOccupied)
         goals.pop(goal)
         
         init = chooseRandomInit(availableCells, goal)
+        
+        # grid is None becuase we don't need it in reachGoal
+        instance = Instance(None, graph, paths, init, goal, limitLengthPath)
 
-        path, _ = reachGoal(graph, paths, init, goal, limitLengthPath, useRelaxedPath)
+        path, _ = reachGoal(instance, useRelaxedPath)
        
         paths.append(path)
         maxLengthPath = max(maxLengthPath, path.getLength())
