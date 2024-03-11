@@ -21,6 +21,7 @@ def chooseRandomInit(availableCells, goal):
     """
     Chose init from availableCells, remove it from availableCells and return it
     """
+
     init = random.choice(availableCells)
     while init == goal:
         init = random.choice(availableCells)
@@ -32,12 +33,13 @@ def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
     t = 0
 
     tmp = init 
-    if goal in availableCells:
-        availableCells.remove(goal)
-        init = random.choice(availableCells)
-        availableCells.append(goal)
-    else:
-        init = random.choice(availableCells)
+    # if goal in availableCells:
+    #     availableCells.remove(goal)
+    #     init = random.choice(availableCells)
+    #     availableCells.append(goal)
+    # else:
+    #     init = random.choice(availableCells)
+    init = chooseRandomInit(availableCells, goal)
     availableCells.append(tmp)
     current = init
 
