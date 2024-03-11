@@ -19,6 +19,8 @@ def reachGoal(instance, relaxedPlan = False):
     init = instance.getInit()
     goal = instance.getGoal()
     maxLengthNewAgent = instance.getMaxLengthNewAgent()
+    maxTimeGoalOccupied = instance.getMaxTimeGoalOccupied()
+
     # initialize the open and closed sets
     openList = []
     closedSet = set() # set o tuples (node, time)
@@ -31,7 +33,7 @@ def reachGoal(instance, relaxedPlan = False):
     heapq.heappush(openList, (stateDict[(init, 0)].f, stateDict[(init, 0)]))
 
     #check for wait
-    maxTimeGoalOccupied = calculateMaxTimeGoalOccupied(paths, goal)
+    # maxTimeGoalOccupied = calculateMaxTimeGoalOccupied(paths, goal)
     if maxTimeGoalOccupied + 1 > maxLengthNewAgent:
         return None, None
     
@@ -102,17 +104,6 @@ def updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentG
         stateDict[(neighbor, currentState.getTime() + 1)].parentNode = currentState.getNode()
         stateDict[(neighbor, currentState.getTime() + 1)].g = currentGscore
         stateDict[(neighbor, currentState.getTime() + 1)].f = currentGscore + heuristic[(neighbor, goal)]
-
-def calculateMaxTimeGoalOccupied(paths, goal):
-    """"
-    Return the max time the goal will be occupied by any of the others agents
-    """
-    maxTimeGoalOccupied = -1
-    for path in paths:
-        for time, move in path.getMoves():
-            if move.dst == goal:
-                maxTimeGoalOccupied = max(maxTimeGoalOccupied, time)
-    return maxTimeGoalOccupied
 
 def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
     # initialize the open and closed sets
