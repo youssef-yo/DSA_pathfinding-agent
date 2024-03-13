@@ -23,9 +23,9 @@ NROWS = 7
 NCOLS = 7
 FREE_CELL_RATIO = 0.8
 AGGLOMERATION_FACTOR = 0.2
-MAX = 80
+MAX = 40
 
-N_AGENTS = 5
+N_AGENTS = 2
 LIMIT_LENGTH_PATH = FREE_CELL_RATIO * NROWS * NCOLS
 
 MAX_ITERATION = 80 # max number of iteration to reset the creation of a single path
@@ -35,8 +35,8 @@ USE_RELAXED_PATH = False
 USE_REACH_GOAL_EXISTING_AGENTS = False
 
 def main():
-    parser = argparse.ArgumentParser(description="Esempio di applicazione con interfaccia grafica o da riga di comando")
-    parser.add_argument('--gui', action='store_true', help="Avvia l'applicazione con l'interfaccia grafica")
+    parser = argparse.ArgumentParser(description="Pathfinding algorithm for multi-agent systems.")
+    parser.add_argument('--gui', action='store_true', help="Execute the program with the GUI interface. If not specified, the program will run in command line mode.")
     args = parser.parse_args()
 
     if args.gui:
@@ -75,8 +75,9 @@ def main():
 
                 executionTime = end_time - start_time
 
-                information = Information(path, minimumSpanningTree, closedSet, executionTime, memoryUsage) 
+                information = Information(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, executionTime, memoryUsage, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS) 
                 information.printInformation()
+                information.saveInformationToFile()
 
                 # runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
         else:
