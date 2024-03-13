@@ -12,6 +12,9 @@ from solver.reachGoal import reachGoal
 import random
 import numpy as np
 
+import time
+import tracemalloc
+
 # seed = 10 to check waitGoalToBeFree (nAgent = 2)
 random.seed(22)
 np.random.seed(12)
@@ -40,6 +43,10 @@ def main():
         ui = UI(generateInstance, reachGoal) #TODO: create class for the two controllers
         ui.run()
     else:
+        # Start time and memory monitoring
+        tracemalloc.start()
+        start_time = time.time()
+
         instance, nIteration = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
 
         if not instance:
@@ -60,10 +67,18 @@ def main():
             if path:
                 instance.addPath(path)
 
-            information = Information(path, minimumSpanningTree, closedSet) 
+            # Stop time
+            end_time = time.time()
+            # Stop memory monitoring
+            snapshot = tracemalloc.take_snapshot()
+            memoryUsage = snapshot.statistics('lineno')
+
+            executionTime = end_time - start_time
+
+            information = Information(path, minimumSpanningTree, closedSet, executionTime, memoryUsage) 
             information.printInformation()
 
-            runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+            # runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
         else:
             print("Parameters too restrictive, try again with different ones.")
 
