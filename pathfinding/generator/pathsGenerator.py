@@ -1,123 +1,36 @@
 import random
 from models.path import Path
+from models.instance import Instance
+from solver.reachGoal import reachGoal
 
-def checkIllegalMove(dst, paths, current, t):
-    for p in paths: 
-        pathEnded = False
-
-        if t not in p.getMoves(): # TODO: create method in Path class
-            pathEnded = True
-
-        if pathEnded:
-            if dst == p.getGoal():
-                return True
-        else:
-            if p.checkCollision(current, dst, t):
-                return True
-    return False
-
-def removeIllegalMoves(availableMoves, paths, current, t):
-    for p in paths: 
-        pathEnded = False
-
-        if t not in p.getMoves(): # TODO: create method in Path class
-            pathEnded = True
-
-        for edge in availableMoves:
-            if pathEnded:
-                if edge.dst == p.getGoal():
-                    availableMoves.remove(edge)
-            else:
-                if p.checkCollision(current, edge.dst, t):
-                    availableMoves.remove(edge)
-
-    return availableMoves
-
-
-def chooseRandomGoals(availableCells, nAgents):
-    """
-    Return a dictionary where:
-    KEY: goal cell
-    VALUE: max time that a past agent pass through that goal
-    """
-    goals = {}
-    for _ in range(nAgents):
-        goal = availableCells.pop()
-        while goal in goals:
-            availableCells.add(goal)
-            goal = availableCells.pop()
-        availableCells.add(goal)
-        goals[goal] = 0
-    return goals
-
-def chooseRandomInit(availableCells, goal):
-    """
-    Chose init from availableCells, remove it from availableCells and return it
-    """
-    if goal in availableCells:
-        availableCells.remove(goal)
-        init = availableCells.pop()
-        availableCells.add(goal)
-    else:
-        init = availableCells.pop()
-    return init
-
-def resetPath(path, init, goal, availableCells, nReset, goalsCopy):
+def resetPath(path, init, goal, nReset, goalsInitsCopy):
     nReset += 1
     t = 0
 
-    tmp = init 
-    if goal in availableCells:
-        availableCells.remove(goal)
-        init = availableCells.pop()
-        availableCells.add(goal)
-    else:
-        init = availableCells.pop()
-    availableCells.add(tmp)
     current = init
 
     path = Path(init, goal)
 
-    return t, current, path, goalsCopy, availableCells, nReset
+    return t, current, path, nReset, goalsInitsCopy
 
-
-def waitGoalToBeFree(move, path, paths, t, timeMaxOccupied, current):
-    while (checkIllegalMove(move.dst, paths, current, t) or t <= timeMaxOccupied) and not checkIllegalMove(current, paths, current, t):
-        path.addMove(t, current, current, 1)
-        t += 1
-    return t, path
-
-def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
+def createPaths(goalsInits, nAgents, limitLengthPath, graph, limitNumberReset):
     """
     For all nAgents we will choose randomly the initial and goal positions
     The movement of the agents will be random as well
     INIT and GOAL must be different for each agent
     """
 
-    availableCells = set(graph.adjacent.keys())
-    
-    if len(availableCells) < nAgents:
-        print("Not enough cells to create a path for each agent")
-        return None, 0
-    
-    goals = chooseRandomGoals(availableCells, nAgents) 
-
     paths = []
-    nReset = 0
     maxLengthPath = 0
 
     for _ in range(nAgents):
-        goal, timeMaxOccupied  = random.choice(list(goals.items()))
-        goals.pop(goal)
-        
-        init = chooseRandomInit(availableCells, goal)
-
+        goal, (init, timeMaxGoalOccupied) = goalsInits.popitem()
         path = Path(init, goal)
         current = init
         t = 0   
+        nReset = 0
 
-
-        goalsCopy = goals.copy()
+        goalsInitsCopy = goalsInits.copy()
 
         #TODO: remove print
         while current != goal:
@@ -125,29 +38,28 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
                 print("STOPPED FOR MAX ITERATION REACHED")
                 return None, 0
             
-            availableMoves = graph.adjacent[current] # list of tuple, where a tuple contains (dstNode, weight)
-
+            availableMoves = graph.getNeighbors(current)
             move = None
 
             for m in availableMoves:
                 if m.dst == goal:
-                    t, path = waitGoalToBeFree(m, path, paths, t, timeMaxOccupied, current)
-                    move = m if not checkIllegalMove(m.dst, paths, current, t) else None
+                    t = path.waitGoalToBeFree(m, paths, t, timeMaxGoalOccupied, current)
+                    move = m if not Path.checkIllegalMove(m.dst, paths, current, t) and t > timeMaxGoalOccupied else None
                     break
 
             if not move:       
-                availableMoves = removeIllegalMoves(availableMoves, paths, current, t)
+                availableMoves = Path.removeIllegalMoves(availableMoves, paths, current, t)
 
                 if len(availableMoves) == 0:
                     print("RESET NO MOVE")
-                    t, current, path, goals, availableCells, nReset = resetPath(path, init, goal, availableCells, nReset, goalsCopy)
+                    t, current, path, nReset, goalsInits = resetPath(path, init, goal, nReset, goalsInitsCopy)
                     maxLengthPath = 0
                     continue
 
                 move = random.choice(availableMoves)
 
-            if move.dst in goals:
-                goals[move.dst] = t
+            if move.dst in goalsInits:
+                goalsInits[move.dst] = (goalsInits[move.dst][0], max(goalsInits[move.dst][1], t))
 
             path.addMove(t, current, move.dst, move.weight)
             current = move.dst
@@ -156,15 +68,43 @@ def createPaths(nAgents, limitLengthPath, graph, limitNumberReset):
             # if I can't reach the goal in max iteration, I will start again
             if t > limitLengthPath:
                 print("RESET MAX ITERATION")
-                t, current, path, goals, availableCells, nReset = resetPath(path, init, goal, availableCells, nReset, goalsCopy)
+                t, current, path, nReset, goalsInits = resetPath(path, init, goal, nReset, goalsInitsCopy)
                 maxLengthPath = 0
 
 
         paths.append(path)
         maxLengthPath = max(maxLengthPath, path.getLength())
 
-    
+    # TODO: remove print
     for path in paths:
         path.printPath()
     
-    return paths, maxLengthPath
+    return paths, maxLengthPath, goalsInits
+
+def createPathsUsingReachGoal(goalsInits, nAgents, limitLengthPath, graph, useRelaxedPath = False):
+    """
+    For all nAgents we will choose randomly the initial and goal positions
+    The movement of the agents will be random as well
+    INIT and GOAL must be different for each agent
+    """
+
+    paths = []
+    nReset = 0
+    maxLengthPath = 0
+
+    for _ in range(nAgents):
+        goal, (init, timeMaxGoalOccupied) = goalsInits.popitem()
+
+        # grid is None becuase we don't need it in reachGoal
+        instance = Instance(None, graph, paths, init, goal, limitLengthPath, timeMaxGoalOccupied)
+
+        path, _ = reachGoal(instance, useRelaxedPath)
+       
+        paths.append(path)
+        maxLengthPath = max(maxLengthPath, path.getLength())
+
+    # TODO: remove print
+    for path in paths:
+        path.printPath()
+    
+    return paths, maxLengthPath, goalsInits

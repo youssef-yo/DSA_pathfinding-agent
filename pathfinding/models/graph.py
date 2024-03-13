@@ -14,9 +14,9 @@ class Edge:
 class Graph:
 	# adjacent -> hashmap
 	# key: vertex
-	# value: list of tuple, where a tuple contains (dst_node, weight)
+	# value: set of tuple, where a tuple contains (dst_node, weight)
 	def __init__(self) -> None:
-		self.adjacent = defaultdict(list) # TODO: set instead of list? check if it's faster
+		self.adjacent = defaultdict(list)
 	
 	def addEdge(self, src, dst, w):
 		self.adjacent[src].append(Edge(dst, w))
@@ -28,12 +28,10 @@ class Graph:
 		return self.adjacent.keys()
 
 	def getNeighbors(self, vertex):
-		# return a list of tuple, where a tuple contains (vertex, dst_node)
-		adj = set()
-		for edge in self.adjacent[vertex]:
-			adj.add((edge.dst, edge.weight))
-
-		return adj
+		""""
+		Return a list of vertices that are adjacent to the given vertex
+		"""
+		return self.adjacent[vertex]
 
 	def printGraph(self):
 		for vertex in self.adjacent:

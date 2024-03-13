@@ -2,12 +2,13 @@ import models.graph as Graph
 
 class Instance:
 
-    def __init__(self, grid, graph: Graph, paths, init, goal, max) -> None:
+    def __init__(self, grid, graph: Graph, paths, init, goal, max, maxTimeGoalOccupied) -> None:
         self.grid = grid
         self.graph = graph
         self.paths = paths
         self.init = init
         self.goal = goal
+        self.maxTimeGoalOccupied = maxTimeGoalOccupied
         self.maxLengthNewAgent = max
 
     def getGrid(self):
@@ -25,8 +26,11 @@ class Instance:
     def getGoal(self):
         return self.goal 
     
-    def getMax(self):
+    def getMaxLengthNewAgent(self):
         return self.maxLengthNewAgent
+    
+    def getMaxTimeGoalOccupied(self):
+        return self.maxTimeGoalOccupied
     
     def addPath(self, path):
         self.paths.append(path)
