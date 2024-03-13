@@ -148,7 +148,7 @@ class UI:
         if global_instance:
             #TODO: scommenta quando crei le classi per i controller
             # path, minimumSpanningTree = reachGoalController.reachGoal(global_instance, USE_RELAXED_PATH)
-            path, minimumSpanningTree = reachGoalController(global_instance, USE_RELAXED_PATH)
+            path, _, _ = reachGoalController(global_instance, USE_RELAXED_PATH)
 
             if not path:
                 print("No path found for new agent")

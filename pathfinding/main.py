@@ -21,18 +21,18 @@ np.random.seed(12)
 
 NROWS = 7
 NCOLS = 7
-FREE_CELL_RATIO = 0.9
+FREE_CELL_RATIO = 0.8
 AGGLOMERATION_FACTOR = 0.2
-MAX = 40
+MAX = 80
 
-N_AGENTS = 2
+N_AGENTS = 5
 LIMIT_LENGTH_PATH = FREE_CELL_RATIO * NROWS * NCOLS
 
 MAX_ITERATION = 80 # max number of iteration to reset the creation of a single path
 MAX_TOTAL_RUN = 6 # max number of run to create a valid instance
 
-USE_RELAXED_PATH = True
-USE_REACH_GOAL_EXISTING_AGENTS = True
+USE_RELAXED_PATH = False
+USE_REACH_GOAL_EXISTING_AGENTS = False
 
 def main():
     parser = argparse.ArgumentParser(description="Esempio di applicazione con interfaccia grafica o da riga di comando")
@@ -67,18 +67,18 @@ def main():
             if path:
                 instance.addPath(path)
 
-            # Stop time
-            end_time = time.time()
-            # Stop memory monitoring
-            snapshot = tracemalloc.take_snapshot()
-            memoryUsage = snapshot.statistics('lineno')
+                # Stop time
+                end_time = time.time()
+                # Stop memory monitoring
+                snapshot = tracemalloc.take_snapshot()
+                memoryUsage = snapshot.statistics('lineno')
 
-            executionTime = end_time - start_time
+                executionTime = end_time - start_time
 
-            information = Information(path, minimumSpanningTree, closedSet, executionTime, memoryUsage) 
-            information.printInformation()
+                information = Information(path, minimumSpanningTree, closedSet, executionTime, memoryUsage) 
+                information.printInformation()
 
-            # runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+                # runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
         else:
             print("Parameters too restrictive, try again with different ones.")
 
