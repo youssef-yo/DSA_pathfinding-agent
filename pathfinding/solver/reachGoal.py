@@ -33,9 +33,8 @@ def reachGoal(instance, relaxedPlan = False):
     heapq.heappush(openList, (stateDict[(init, 0)].f, stateDict[(init, 0)]))
 
     #check for wait
-    # maxTimeGoalOccupied = calculateMaxTimeGoalOccupied(paths, goal)
     if maxTimeGoalOccupied + 1 > maxLengthNewAgent:
-        return None, None
+        return None, None, None
     
     while openList:
         # get the node with the lowest f-score from the open set
@@ -50,7 +49,7 @@ def reachGoal(instance, relaxedPlan = False):
             currentState = newCurrentState
 
         if currentState.getNode() == goal:
-            return reconstructPath(init, goal, stateDict, 0, currentState.getTime()), stateDict
+            return reconstructPath(init, goal, stateDict, 0, currentState.getTime()), stateDict, closedSet
 
         if relaxedPlan:
             #compute realxed plan   
@@ -63,11 +62,11 @@ def reachGoal(instance, relaxedPlan = False):
 
                 path.concatenatePaths(relaxedPath)
 
-                return path, stateDict
+                return path, stateDict, closedSet
 
         if currentState.getTime() < maxLengthNewAgent:
             exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heuristic, currentState)
-    return None, None
+    return None, None, None
 
 def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heuristic, currentState):
     """"
