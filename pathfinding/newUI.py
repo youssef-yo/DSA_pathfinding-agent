@@ -116,7 +116,8 @@ def create_checkbox(manager, pos, options):
     dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect(pos, (150, 30)), starting_option=options[0], options_list=options, manager=manager)
     return dropdown
 
-def initialize_color():
+def initialize_color(n_paths):
+
     # Definizione dei colori per i percorsi
     path_colors = [
         (0, 0, 255),   # Blue
@@ -139,7 +140,12 @@ def initialize_color():
         (0, 128, 128)  # Teal (Dark)
     ]
 
-    return path_colors
+    colors = []
+    for _ in range(n_paths):
+        color = random.choice(path_colors)
+        path_colors.remove(color)
+        colors.append(color)
+    return colors
 
 def generate_new_path(global_instance, toggle_relaxed_path_button):
     USE_RELAXED_PATH = toggle_relaxed_path_button.getState()
@@ -151,7 +157,8 @@ def generate_new_path(global_instance, toggle_relaxed_path_button):
             print("No path found for new agent")
             return
         
-        draw_single_path(path, (255, 0, 0))
+        return path
+    return 
     
     
 # Funzione per generare una nuova istanza
@@ -187,22 +194,18 @@ def generate_instance(nrow_input, ncol_input, free_cell_ratio_input, agglomerati
     MAX_ITERATION = 80 # max number of iteration to reset the creation of a single path
     MAX_TOTAL_RUN = 6 # max number of run to create a valid instance
 
-    path_colors = initialize_color()
 
     instance, nIteration = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
-
-    # set_instance(instance)
 
     if not instance:
         #TODO: handle error
         return
     if instance and nIteration < MAX_TOTAL_RUN: 
-        draw_instance(instance, path_colors)
-    return instance
+        return instance
+    return
 
 def draw_instance(instance, path_colors):
-    draw_grid(instance.getGrid())
-    draw_paths(instance.getPaths(), path_colors)
+    draw_paths(instance.getPaths(), path_colors)    
 
 def draw_grid(grid):
     grid_width = grid.getNcols()
@@ -214,15 +217,12 @@ def draw_grid(grid):
                     pygame.draw.rect(screen, BLACK, (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
 def draw_paths(paths, path_colors):
-    for path in paths:
-        # Genera un colore casuale per il percorso
-        color = random.choice(path_colors)
-        path_colors.remove(color)
+    for i, path in enumerate(paths):
+        draw_single_path(path, path_colors[i])
 
-        draw_single_path(path, color)
 
-        
-def draw_single_path(path, color):
+
+def draw_init_goal(path):
     # Estrai il primo e l'ultimo movimento del percorso
     start_move = path.getInit()
     end_move = path.getGoal()
@@ -231,11 +231,20 @@ def draw_single_path(path, color):
     x_start, y_start = start_move[0], start_move[1]
     x_end, y_end = end_move[0], end_move[1]
 
-    # Disegna un cerchio rosso all'inizio del percorso
+    # Disegna un cerchio verde all'inizio del percorso
     pygame.draw.circle(screen, GREEN, ((x_start + 0.5) * CELL_SIZE, (y_start + 0.5) * CELL_SIZE), 6)
-    # Disegna un cerchio blu alla fine del percorso
-    pygame.draw.circle(screen, RED, ((x_end + 0.5) * CELL_SIZE, (y_end + 0.5) * CELL_SIZE), 6)
 
+    # Disegna una X rossa alla fine del percorso (goal)
+    x_goal = (x_end + 0.5) * CELL_SIZE
+    y_goal = (y_end + 0.5) * CELL_SIZE
+    pygame.draw.line(screen, RED, (x_goal - 5, y_goal - 5), (x_goal + 5, y_goal + 5), 6)
+    pygame.draw.line(screen, RED, (x_goal + 5, y_goal - 5), (x_goal - 5, y_goal + 5), 6)
+    # Disegna un cerchio rosso alla fine del percorso
+    # pygame.draw.circle(screen, RED, ((x_end + 0.5) * CELL_SIZE, (y_end + 0.5) * CELL_SIZE), 6)
+    
+def draw_single_path(path, color):
+    
+    draw_init_goal(path)
     # Disegna il percorso
     for t, move in path.getMoves():
         x_start, y_start = move.getSrc()
@@ -243,6 +252,30 @@ def draw_single_path(path, color):
         pygame.draw.line(screen, color, ((x_start + 0.5) * CELL_SIZE, (y_start + 0.5) * CELL_SIZE), ((x_end + 0.5) * CELL_SIZE, (y_end + 0.5) * CELL_SIZE), 4)
         
 
+def draw_step_by_step(paths, path_colors):
+    for path in paths:
+        draw_init_goal(path)
+
+    draw_moves(paths, path_colors)
+
+def draw_moves(paths, path_colors):
+    t = 0
+    keepGoing = True
+
+    while keepGoing:
+        keepGoing = False
+        for i, path in enumerate(paths):
+            move = path.getMove(t)
+            if move:
+                keepGoing = True
+                x_start, y_start = move.getSrc()
+                x_end, y_end = move.getDst()
+                pygame.draw.line(screen, path_colors[i], ((x_start + 0.5) * CELL_SIZE, (y_start + 0.5) * CELL_SIZE), ((x_end + 0.5) * CELL_SIZE, (y_end + 0.5) * CELL_SIZE), 4)
+                
+        pygame.display.update()
+        pygame.time.wait(500)  # Add a delay to see the moves step by step
+
+        t += 1
 # Funzione principale
 def main():
     running = True
@@ -253,10 +286,12 @@ def main():
 
     # Creazione dei bottoni
     generate_button = Button(LIGHT_BLUE, 1000, 50, 200, 50, 'Generate Instance')
+    toggle_step_by_step_button = ToggleButton(1150, 100, img_off_path, img_on_path)
     # new_agent_button = Button(LIGHT_BLUE, 1000, 150, 200, 50, 'New Agent')
 
     toggle_relaxed_path_button = ToggleButton(1200, 600, img_off_path, img_on_path)
     toggle_reach_goal_button = ToggleButton(1200, 650, img_off_path, img_on_path)
+    
 
 
     # Creazione degli input text
@@ -272,6 +307,7 @@ def main():
     max_label = create_label(manager, (1050, 450), "Max:")
     relaxed_label = create_label(manager, (1000, 600), "Use Relaxed Path:")
     reach_goal_label = create_label(manager, (1000, 650), "Use Reach Goal:")
+    step_by_step_label = create_label(manager, (950, 100), "Step By Step:")
 
     nrow_input = create_text_input_int(manager, (1000, 350), (100, 30))
     ncol_input = create_text_input_int(manager, (1200, 350), (100, 30))
@@ -281,14 +317,18 @@ def main():
     max_input = create_text_input_int(manager, (1200, 450), (100, 30))
 
     text_inputs.extend([nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, n_agent_input, max_input])
-    labels.extend([nrow_label, ncol_label, free_cell_ratio_label, agglomeration_factor_label, n_agent_label, max_label, relaxed_label, reach_goal_label])
+    labels.extend([nrow_label, ncol_label, free_cell_ratio_label, agglomeration_factor_label, n_agent_label, max_label, relaxed_label, reach_goal_label, step_by_step_label])
 
     screen.fill(WHITE)
+
     # Draw separation line
     start_pos = (810, 0)  
     end_pos = (810, 900)  
-
     pygame.draw.line(screen, BLACK, start_pos, end_pos, 2)
+
+    toggle_relaxed_path_button.draw(screen)
+    toggle_reach_goal_button.draw(screen)  
+    toggle_step_by_step_button.draw(screen)  
 
     #TODO: move to __init__
     global_instance = None
@@ -310,20 +350,39 @@ def main():
                 pos = pygame.mouse.get_pos()
                 if generate_button.is_over(pos):
                     global_instance = generate_instance(nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button)
-                    generate_new_path(global_instance, toggle_relaxed_path_button)
+                    if global_instance:
+                        draw_grid(global_instance.getGrid())
+                        path_colors = initialize_color(len(global_instance.getPaths())) 
+
+                        if toggle_step_by_step_button.getState():
+                            new_path = generate_new_path(global_instance, toggle_relaxed_path_button)
+                            if new_path:
+                                global_instance.addPath(new_path)
+
+                                paths = global_instance.getPaths()
+                                colors = initialize_color(len(paths))
+                                colors.pop()
+                                colors.append(RED)
+                                draw_step_by_step(paths, colors)
+                        else:
+                            draw_instance(global_instance, path_colors)
+                            new_path = generate_new_path(global_instance, toggle_relaxed_path_button)
+                            draw_single_path(new_path, RED)
                 # elif new_agent_button.is_over(pos):
                 #     # generate_new_path(global_instance, toggle_relaxed_path_button)
                 #     pass
                 elif toggle_relaxed_path_button.is_over(pos):
                     toggle_relaxed_path_button.toggle()
-                    
+                    toggle_relaxed_path_button.draw(screen)
                 elif toggle_reach_goal_button.is_over(pos):
                     toggle_reach_goal_button.toggle()
+                    toggle_reach_goal_button.draw(screen)  
+                elif toggle_step_by_step_button.is_over(pos):
+                    toggle_step_by_step_button.toggle()
+                    toggle_step_by_step_button.draw(screen)  
+
                     
             manager.process_events(event)
-
-        toggle_relaxed_path_button.draw(screen)
-        toggle_reach_goal_button.draw(screen)  
         # Aggiornamento e disegno degli elementi GUI
         manager.update(time_delta)
         manager.draw_ui(screen)
