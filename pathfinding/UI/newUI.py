@@ -109,13 +109,8 @@ class UI:
         label = pygame_gui.elements.UILabel(relative_rect=pygame.Rect(pos, (200, 30)), text=text, manager=manager)
         # label.text_colour = (0, 0, 0)
         return label
-
-    # Definiamo una funzione per creare una checkbox
-    def create_checkbox(manager, pos, options):
-        # checkbox = pygame_gui.elements.UICheckBox(relative_rect=pygame.Rect(pos, (150, 30)), text=text, manager=manager)
-        dropdown = pygame_gui.elements.UIDropDownMenu(relative_rect=pygame.Rect(pos, (150, 30)), starting_option=options[0], options_list=options, manager=manager)
-        return dropdown
-
+    
+    @staticmethod
     def initialize_color(n_paths):
 
         # Definizione dei colori per i percorsi
@@ -147,7 +142,7 @@ class UI:
             colors.append(color)
         return colors
 
-    def generate_new_path(reachGoalController, global_instance, toggle_relaxed_path_button):
+    def generate_new_path(self, reachGoalController, global_instance, toggle_relaxed_path_button):
         USE_RELAXED_PATH = toggle_relaxed_path_button.getState()
 
         if global_instance:
@@ -164,11 +159,11 @@ class UI:
         
         
     # Funzione per generare una nuova istanza
-    def generate_instance(screen, instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button):
+    def generate_instance(self, instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button):
 
         # Reset the grid
         #TODO: create methods
-        screen.fill(WHITE, (0, 0, 800, HEIGHT))
+        self.screen.fill(WHITE, (0, 0, 800, HEIGHT))
 
         # Qui chiami il controller e generi la nuova istanza
         if nrow_input.get_text() == '' or ncol_input.get_text() == '' or free_cell_ratio_input.get_text() == '' or agglomeration_factor_input.get_text() == '' or max_input.get_text() == '' or n_agent_input.get_text() == '':
@@ -208,20 +203,20 @@ class UI:
         return
 
     def draw_instance(self, instance, path_colors):
-        self.draw_paths(self.screen, instance.getPaths(), path_colors)    
+        self.draw_paths(instance.getPaths(), path_colors)    
 
-    def draw_grid(screen, grid):
+    def draw_grid(self, grid):
         grid_width = grid.getNcols()
         grid_height = grid.getNrows()
         for i in range(grid_height):
             for j in range(grid_width):
-                pygame.draw.rect(screen, (0, 0, 0), (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
+                pygame.draw.rect(self.screen, (0, 0, 0), (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
                 if not grid.isFree(i, j):
-                        pygame.draw.rect(screen, BLACK, (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+                        pygame.draw.rect(self.screen, BLACK, (i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
     def draw_paths(self, paths, path_colors):
         for i, path in enumerate(paths):
-            self.draw_single_path(self.screen, path, path_colors[i])
+            self.draw_single_path(path, path_colors[i])
 
 
 
@@ -353,7 +348,7 @@ class UI:
 
                         if self.instance:
                             self.draw_grid(self.instance.getGrid())
-                            path_colors = self.initialize_color(len(self.instance.getPaths())) 
+                            path_colors = UI.initialize_color(len(self.instance.getPaths())) 
 
                             if toggle_step_by_step_button.getState():
                                 new_path = self.generate_new_path(self.reachGoalController, self.instance, toggle_relaxed_path_button)
@@ -361,13 +356,13 @@ class UI:
                                     self.instance.addPath(new_path)
 
                                     paths = self.instance.getPaths()
-                                    colors = self.initialize_color(len(paths))
+                                    colors = UI.initialize_color(len(paths))
                                     colors.pop()
                                     colors.append(RED)
                                     self.draw_step_by_step(paths, colors)
                             else:
                                 self.draw_instance(self.instance, path_colors)
-                                new_path = self.generate_new_path(self.instance, toggle_relaxed_path_button)
+                                new_path = self.generate_new_path(self.reachGoalController, self.instance, toggle_relaxed_path_button)
                                 self.draw_single_path(new_path, RED)
                     # elif new_agent_button.is_over(pos):
                     #     # generate_new_path(global_instance, toggle_relaxed_path_button)
