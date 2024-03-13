@@ -5,8 +5,8 @@ import random
 import sys
 
 # Define image
-img_off_path = 'img/toggle-off.svg'
-img_on_path = 'img/toggle-on.svg'
+img_off_path = 'pathfinding/UI/img/toggle-off.svg'
+img_on_path = 'pathfinding/UI/img/toggle-on.svg'
 
 # Definizione dei colori
 WHITE = (255, 255, 255)
