@@ -5,6 +5,7 @@ from UI.interactiveUI import run as runInteractiveUI
 from UI.newUI import UI
 
 from generator.informationGenerator import Information
+from generator import informationGenerator
 
 from generator.instanceGenerator import generateInstance
 from solver.reachGoal import reachGoal
@@ -12,8 +13,8 @@ from solver.reachGoal import reachGoal
 import random
 import numpy as np
 
-import time
-import tracemalloc
+# import time
+# import tracemalloc
 
 # seed = 10 to check waitGoalToBeFree (nAgent = 2)
 random.seed(22)
@@ -31,8 +32,8 @@ LIMIT_LENGTH_PATH = FREE_CELL_RATIO * NROWS * NCOLS
 MAX_ITERATION = 80 # max number of iteration to reset the creation of a single path
 MAX_TOTAL_RUN = 6 # max number of run to create a valid instance
 
-USE_RELAXED_PATH = False
-USE_REACH_GOAL_EXISTING_AGENTS = False
+USE_RELAXED_PATH = True
+USE_REACH_GOAL_EXISTING_AGENTS = True
 
 def main():
     parser = argparse.ArgumentParser(description="Pathfinding algorithm for multi-agent systems.")
@@ -40,12 +41,12 @@ def main():
     args = parser.parse_args()
 
     if args.gui:
-        ui = UI(generateInstance, reachGoal) #TODO: create class for the two controllers
+        ui = UI(generateInstance, reachGoal, informationGenerator) #TODO: create class for the two controllers
         ui.run()
     else:
         # Start time and memory monitoring
-        tracemalloc.start()
-        start_time = time.time()
+        information = Information()
+        information.startMonitoring()
 
         instance, nIteration = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
 
@@ -67,15 +68,11 @@ def main():
             if path:
                 instance.addPath(path)
 
-                # Stop time
-                end_time = time.time()
-                # Stop memory monitoring
-                snapshot = tracemalloc.take_snapshot()
-                memoryUsage = snapshot.statistics('lineno')
-
-                executionTime = end_time - start_time
-
-                information = Information(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, executionTime, memoryUsage, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS) 
+                information.stopMonitoring()
+                information.setValues(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS)
+                
+                #TODO: create before class information and let it calculate time and memory
+                # information = Information(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, executionTime, memoryUsage, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS) 
                 information.printInformation()
                 information.saveInformationToFile()
 

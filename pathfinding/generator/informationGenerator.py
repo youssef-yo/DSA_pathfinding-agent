@@ -1,9 +1,79 @@
 import uuid
 import os
+import time
+import tracemalloc
+
 
 class Information():
 
-    def __init__(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, executionTime, memoryUsage, relaxedPath, reachGoalExistingAgents):
+    def __init__(self):
+        self.startTime = None
+        self.instance = None
+        self.freeCellRatio = None
+        self.agglomerationFactor = None
+        self.path = None
+        self.P = None
+        self.closedSet = None
+        self.waitCounter = None
+        self.executionTime = None
+        self.totalMemory = None
+        self.relaxedPath = None
+        self.reachGoalExistingAgents = None
+
+    def startMonitoring(self):
+        self.startTime = self.getCurrentTime()
+        tracemalloc.start()
+
+    def stopMonitoring(self):
+        self.executionTime = self.getCurrentTime() - self.startTime
+        self.totalMemory = self.computeMemoryUsage()
+
+
+    def getCurrentTime(self):
+        return time.time()
+
+    def getInstance(self):
+        return self.instance
+    
+    def getFreeCellRatio(self):
+        return self.freeCellRatio
+    
+    def getAgglomerationFactor(self):
+        return self.agglomerationFactor
+    
+    def getPath(self):
+        return self.path
+    
+    def getP(self):
+        return self.P
+    
+    def getClosedSet(self):
+        return self.closedSet
+    
+    def getWaitCounter(self):
+        return self.waitCounter
+    
+    def getExecutionTime(self):
+        return self.executionTime
+    
+    def getTotalMemory(self):
+        return self.totalMemory
+    
+    def getRelaxedPath(self):
+        return self.relaxedPath
+    
+    def getReachGoalExistingAgents(self):
+        return self.reachGoalExistingAgents
+    
+
+    def computeMemoryUsage(self):
+        # Stop memory monitoring
+        snapshot = tracemalloc.take_snapshot()
+        tracemalloc.stop()
+        memoryUsage = snapshot.statistics('lineno')
+        return sum(stat.size for stat in memoryUsage) / 1024
+    
+    def setValues(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents):
         self.instance = instance
         self.freeCellRatio = freeCellRatio
         self.agglomerationFactor = agglomerationFactor
@@ -11,10 +81,24 @@ class Information():
         self.P = P
         self.closedSet = closedSet
         self.waitCounter = self.computeWaitMove(path)
-        self.executionTime = executionTime
-        self.totalMemory = self.computeMemoryUsage(memoryUsage)
         self.relaxedPath = relaxedPath
         self.reachGoalExistingAgents = reachGoalExistingAgents
+        
+
+
+
+    # def __init__(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, executionTime, memoryUsage, relaxedPath, reachGoalExistingAgents):
+    #     self.instance = instance
+    #     self.freeCellRatio = freeCellRatio
+    #     self.agglomerationFactor = agglomerationFactor
+    #     self.path = path
+    #     self.P = P
+    #     self.closedSet = closedSet
+    #     self.waitCounter = self.computeWaitMove(path)
+    #     self.executionTime = executionTime
+    #     self.totalMemory = self.computeMemoryUsage(memoryUsage)
+    #     self.relaxedPath = relaxedPath
+    #     self.reachGoalExistingAgents = reachGoalExistingAgents
 
     def computeWaitMove(self, path):
         waitCounter = 0
@@ -23,8 +107,8 @@ class Information():
                 waitCounter += 1
         return waitCounter
 
-    def computeMemoryUsage(self, memoryUsage):
-        return sum(stat.size for stat in memoryUsage) / 1024
+    # def computeMemoryUsage(self, memoryUsage):
+    #     return sum(stat.size for stat in memoryUsage) / 1024
     
     def printInformation(self):
         if self.relaxedPath:

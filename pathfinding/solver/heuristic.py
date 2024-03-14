@@ -15,7 +15,9 @@ def bfs(v, g, graph):
 
         if node not in visited:
             visited.add(node)
-            for neighbor, weight in graph.getNeighbors(node):
+            for edge in graph.getNeighbors(node):
+                neighbor = edge.dst
+                
                 queue.append((neighbor, distance + 1))
     return float('inf')
 

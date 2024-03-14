@@ -14,7 +14,7 @@ class Edge:
 class Graph:
 	# adjacent -> hashmap
 	# key: vertex
-	# value: set of tuple, where a tuple contains (dst_node, weight)
+	# value: list of tuple, where a tuple contains (dst_node, weight)
 	def __init__(self) -> None:
 		self.adjacent = defaultdict(list)
 	

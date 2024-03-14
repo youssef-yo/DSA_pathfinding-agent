@@ -7,7 +7,7 @@ import sys
 # Define image
 img_off_path = 'pathfinding/UI/img/toggle-off.svg'
 img_on_path = 'pathfinding/UI/img/toggle-on.svg'
-
+img_repeat_path = 'pathfinding/UI/img/arrow-clockwise.svg'
 # Definizione dei colori
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -20,7 +20,6 @@ WIDTH = 1400
 HEIGHT = 900
 
 CELL_SIZE = 50
-
 
 # Definizione della classe per i bottoni
 class Button:
@@ -47,6 +46,18 @@ class Button:
             if pos[1] > self.y and pos[1] < self.y + self.height:
                 return True
         return False
+
+class ImageButton(Button):
+    def __init__(self, color, x, y, img_path):
+        self.img = pygame.image.load(img_path)
+        super().__init__(color, x, y, self.img.get_width(), self.img.get_height())
+
+    def draw(self, screen, outline=None):
+        super().draw(screen, outline)
+        screen.blit(self.img, (self.x, self.y))
+
+    def is_over(self, pos):
+        return super().is_over(pos)
 
 class ToggleButton:
     def __init__(self, x, y, img_off_path, img_on_path):
@@ -77,7 +88,7 @@ class ToggleButton:
         return self.state
         
 class UI:
-    def __init__(self, instanceController, reachGoalController):
+    def __init__(self, instanceController, reachGoalController, informationController):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Pathfinding for new Agent")
@@ -86,6 +97,8 @@ class UI:
         self.reachGoalController = reachGoalController
 
         self.instance = None
+
+        self.information = informationController.Information()
 
     def setInstance(self, instance):
         self.instance = instance
@@ -148,23 +161,21 @@ class UI:
         if global_instance:
             #TODO: scommenta quando crei le classi per i controller
             # path, minimumSpanningTree = reachGoalController.reachGoal(global_instance, USE_RELAXED_PATH)
-            path, _, _ = reachGoalController(global_instance, USE_RELAXED_PATH)
+            path, P, closedSet = reachGoalController(global_instance, USE_RELAXED_PATH)
 
             if not path:
                 print("No path found for new agent")
                 return
             
-            return path
+            return path, P, closedSet
         return 
         
-        
-    # Funzione per generare una nuova istanza
-    def generate_instance(self, instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button):
-
-        # Reset the grid
-        #TODO: create methods
+    
+    def reset_grid(self):
         self.screen.fill(WHITE, (0, 0, 800, HEIGHT))
 
+    # Funzione per generare una nuova istanza
+    def generate_instance(self, instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button):
         # Qui chiami il controller e generi la nuova istanza
         if nrow_input.get_text() == '' or ncol_input.get_text() == '' or free_cell_ratio_input.get_text() == '' or agglomeration_factor_input.get_text() == '' or max_input.get_text() == '' or n_agent_input.get_text() == '':
             #TODO: handle error
@@ -191,6 +202,7 @@ class UI:
         MAX_ITERATION = 80 # max number of iteration to reset the creation of a single path
         MAX_TOTAL_RUN = 6 # max number of run to create a valid instance
 
+        self.information.startMonitoring()
         #TODO: scommenta quando crei le classi
         # instance, nIteration = instanceController.generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
         instance, nIteration = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
@@ -217,8 +229,6 @@ class UI:
     def draw_paths(self, paths, path_colors):
         for i, path in enumerate(paths):
             self.draw_single_path(path, path_colors[i])
-
-
 
     def draw_init_goal(self, path):
         # Estrai il primo e l'ultimo movimento del percorso
@@ -250,7 +260,11 @@ class UI:
             pygame.draw.line(self.screen, color, ((x_start + 0.5) * CELL_SIZE, (y_start + 0.5) * CELL_SIZE), ((x_end + 0.5) * CELL_SIZE, (y_end + 0.5) * CELL_SIZE), 4)
             
 
-    def draw_step_by_step(self, paths, path_colors):
+    def draw_step_by_step(self, paths):
+        path_colors = UI.initialize_color(len(paths))
+        path_colors.pop()
+        path_colors.append(RED)
+
         for path in paths:
             self.draw_init_goal(path)
 
@@ -274,7 +288,43 @@ class UI:
             pygame.time.wait(500)  # Add a delay to see the moves step by step
 
             t += 1
-    # Funzione principale
+    
+    def initialize_information(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents):
+        self.information.setValues(instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents)
+    
+
+    def clean_information(self):
+        self.screen.fill(WHITE, (820, 700, 400, 200))
+
+    def draw_information(self):
+        lengthP = len(self.information.getP())
+        lengthClosedSet = len(self.information.getClosedSet())
+        pathLength = self.information.getPath().getLength()
+        pathCost = self.information.getPath().getCost()
+        waitCounter = self.information.getWaitCounter()
+        executionTime = self.information.getExecutionTime()
+        totalMemory = self.information.getTotalMemory()
+
+        # Define text labels
+        labels = [
+            f"Length of the path: {pathLength}",
+            f"Length of P: {lengthP}",
+            f"Length of ClosedSet: {lengthClosedSet}",
+            f"Wait Counter: {waitCounter}",
+            f"Execution Time: {executionTime}",
+            f"Path Cost: {pathCost}",
+            f"Total Memory: {totalMemory} KB"
+        ]
+
+        # Define text positions
+        text_pos = (820, 700)
+        line_spacing = 20
+
+        # Draw new information
+        for i, label in enumerate(labels):
+            text_surface = pygame.font.Font(None, 20).render(label, True, BLACK)
+            self.screen.blit(text_surface, (text_pos[0], text_pos[1] + i * line_spacing))
+
     def run(self):
         running = True
         clock = pygame.time.Clock()
@@ -285,6 +335,8 @@ class UI:
         # Creazione dei bottoni
         generate_button = Button(LIGHT_BLUE, 1000, 50, 200, 50, 'Generate Instance')
         toggle_step_by_step_button = ToggleButton(1150, 100, img_off_path, img_on_path)
+
+        repeat_button = ImageButton(WHITE, 820, 50, img_repeat_path)
         # new_agent_button = Button(LIGHT_BLUE, 1000, 150, 200, 50, 'New Agent')
 
         toggle_relaxed_path_button = ToggleButton(1200, 600, img_off_path, img_on_path)
@@ -331,6 +383,7 @@ class UI:
 
             # Disegno dei bottoni
             generate_button.draw(self.screen, BLACK)
+            repeat_button.draw(self.screen, BLACK)
             # new_agent_button.draw(self.screen, BLACK)
 
             # Gestione degli eventi per gli elementi GUI
@@ -343,6 +396,10 @@ class UI:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     if generate_button.is_over(pos):
+
+                        self.clean_information()
+                        self.reset_grid()
+                        
                         instance = self.generate_instance(self.instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button)
                         self.setInstance(instance)
 
@@ -351,22 +408,29 @@ class UI:
                             path_colors = UI.initialize_color(len(self.instance.getPaths())) 
 
                             if toggle_step_by_step_button.getState():
-                                new_path = self.generate_new_path(self.reachGoalController, self.instance, toggle_relaxed_path_button)
+                                new_path, P, closedSet = self.generate_new_path(self.reachGoalController, self.instance, toggle_relaxed_path_button)
+                                self.information.stopMonitoring()
                                 if new_path:
                                     self.instance.addPath(new_path)
 
                                     paths = self.instance.getPaths()
-                                    colors = UI.initialize_color(len(paths))
-                                    colors.pop()
-                                    colors.append(RED)
-                                    self.draw_step_by_step(paths, colors)
+                                    self.draw_step_by_step(paths)
                             else:
                                 self.draw_instance(self.instance, path_colors)
-                                new_path = self.generate_new_path(self.reachGoalController, self.instance, toggle_relaxed_path_button)
+                                new_path, P, closedSet = self.generate_new_path(self.reachGoalController, self.instance, toggle_relaxed_path_button)
+                                self.information.stopMonitoring()
                                 self.draw_single_path(new_path, RED)
+                        self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState())
+                        self.draw_information()
                     # elif new_agent_button.is_over(pos):
                     #     # generate_new_path(global_instance, toggle_relaxed_path_button)
                     #     pass
+                    elif repeat_button.is_over(pos):
+                        if toggle_step_by_step_button.getState():
+                            if self.instance:
+                                self.reset_grid()
+                                self.draw_grid(self.instance.getGrid())
+                                self.draw_step_by_step(self.instance.getPaths())
                     elif toggle_relaxed_path_button.is_over(pos):
                         toggle_relaxed_path_button.toggle()
                         toggle_relaxed_path_button.draw(self.screen)
