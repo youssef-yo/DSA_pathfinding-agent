@@ -1,6 +1,7 @@
 from generator.gridGenerator import gridGenerator
 from generator.graphGenerator import createGraphFromGrid
 from generator.pathsGenerator import createPaths, createPathsUsingReachGoal
+from generator.reachability import checkReachability, findIslands
 from models.instance import Instance
 
 import random
@@ -78,6 +79,12 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
         print("Not enough cells to create a path for each agent")
         return None, None, None, None, None, None
     goalsInits = createGoalsInits(nAgents, availableCells)
+    
+    # check reachability
+    islands = findIslands(grid)
+    for goal, (init, _) in goalsInits.items():
+        if not checkReachability(init, goal, islands):
+            return goalsInits, grid, graph, None, None, None
 
     limit = nrows*ncols*nAgents
     if useReachGoal:
@@ -90,9 +97,9 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
         graph = createGraphFromGrid(grid)
         
         if useReachGoal:
-            paths, maxLengthPath = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
+            paths, maxLengthPath, goalsInits = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
         else:
-            paths, maxLengthPath = createPaths(goalsInits, nAgents, limitLengthPath, graph, limitIteration)
+            paths, maxLengthPath, goalsInits = createPaths(goalsInits, nAgents, limitLengthPath, graph, limitIteration)
         
         i += 1
 

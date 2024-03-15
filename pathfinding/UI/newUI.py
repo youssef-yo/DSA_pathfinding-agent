@@ -165,10 +165,10 @@ class UI:
 
             if not path:
                 print("No path found for new agent")
-                return
+                return None, None, None
             
             return path, P, closedSet
-        return 
+        return None, None, None
         
     
     def reset_grid(self):
@@ -179,7 +179,7 @@ class UI:
         # Qui chiami il controller e generi la nuova istanza
         if nrow_input.get_text() == '' or ncol_input.get_text() == '' or free_cell_ratio_input.get_text() == '' or agglomeration_factor_input.get_text() == '' or max_input.get_text() == '' or n_agent_input.get_text() == '':
             #TODO: handle error
-            return
+            return 
         
         #TODO: create methods to get the values
         NROWS = int(nrow_input.get_text())
@@ -306,6 +306,7 @@ class UI:
 
         # Define text labels
         labels = [
+            f"Max time goal occupied: {self.instance.getMaxTimeGoalOccupied()}",
             f"Length of the path: {pathLength}",
             f"Length of P: {lengthP}",
             f"Length of ClosedSet: {lengthClosedSet}",
@@ -323,6 +324,13 @@ class UI:
         for i, label in enumerate(labels):
             text_surface = pygame.font.Font(None, 20).render(label, True, BLACK)
             self.screen.blit(text_surface, (text_pos[0], text_pos[1] + i * line_spacing))
+
+    def draw_error(self, error):
+        # Draw error message
+        error_font = pygame.font.Font(None, 30)
+        error_text = error_font.render(error, True, RED)
+        error_rect = error_text.get_rect(center=(400, 400))
+        self.screen.blit(error_text, error_rect)
 
     def run(self):
         running = True
@@ -422,6 +430,8 @@ class UI:
                                     self.draw_single_path(new_path, RED)
                             self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState())
                             self.draw_information()
+                        else:
+                            self.draw_error("Error with input parameters or couldn't find any valid paths")
                     # elif new_agent_button.is_over(pos):
                     #     # generate_new_path(global_instance, toggle_relaxed_path_button)
                     #     pass
