@@ -46,8 +46,7 @@ def reachGoal(instance, relaxedPlan = False):
             closedSet.add((newCurrentState.getNode(), newCurrentState.getTime()))
 
             currentState = newCurrentState
-
-        if currentState.getNode() == goal:
+        elif currentState.getNode() == goal and currentState.getTime() > maxTimeGoalOccupied + 1:
             return reconstructPath(init, goal, stateDict, 0, currentState.getTime()), stateDict, closedSet
 
         if relaxedPlan:

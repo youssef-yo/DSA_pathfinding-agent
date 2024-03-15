@@ -13,6 +13,7 @@ from solver.reachGoal import reachGoal
 import random
 import numpy as np
 
+
 # import time
 # import tracemalloc
 
@@ -78,8 +79,22 @@ def main():
         else:
             print("Parameters too restrictive, try again with different ones.")
 
-        
+           
+# def testCheckReachability(grid, init, goal):
+#     grid = [["0", "0", "1", "1", "0"],
+#             ["0", "0", "0", "1", "0"],
+#             ["1", "1", "1", "0", "0"],
+#             ["0", "0", "0", "0", "0"]]
+    
+#     islands = findIslands(grid)
+#     print(islands)
+#     init = (0, 0)
+#     goal = (3, 4)
+#     print(islands)
+#     for island in islands:
+#         if (init in island and goal not in island) or (goal in island and init not in island):
+#             return False
+#     return True
 
 if __name__ == "__main__":
     main()
-    

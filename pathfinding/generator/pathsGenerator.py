@@ -98,9 +98,14 @@ def createPathsUsingReachGoal(goalsInits, nAgents, limitLengthPath, graph, useRe
         instance = Instance(None, graph, paths, init, goal, limitLengthPath, timeMaxGoalOccupied)
 
         path, _, _ = reachGoal(instance, useRelaxedPath)
-
+        
         if not path:
             return 
+        
+        for t, move in path.getMoves():
+            if move.dst in goalsInits:
+                    goalsInits[move.dst] = (goalsInits[move.dst][0], max(goalsInits[move.dst][1], t))
+        
         paths.append(path)
         maxLengthPath = max(maxLengthPath, path.getLength())
 
