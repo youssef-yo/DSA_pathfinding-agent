@@ -97,9 +97,9 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
         graph = createGraphFromGrid(grid)
         
         if useReachGoal:
-            paths, maxLengthPath = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
+            paths, maxLengthPath, goalsInits = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
         else:
-            paths, maxLengthPath = createPaths(goalsInits, nAgents, limitLengthPath, graph, limitIteration)
+            paths, maxLengthPath, goalsInits = createPaths(goalsInits, nAgents, limitLengthPath, graph, limitIteration)
         
         i += 1
 
