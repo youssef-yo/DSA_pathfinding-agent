@@ -20,14 +20,14 @@ import numpy as np
 random.seed(22)
 np.random.seed(12)
 
-NROWS = 7
-NCOLS = 7
+NROWS = 10
+NCOLS = 13
 FREE_CELL_RATIO = 0.8
-AGGLOMERATION_FACTOR = 0.2
-MAX = 40
+AGGLOMERATION_FACTOR = 1
+MAX = 30
 
-N_AGENTS = 2
-LIMIT_LENGTH_PATH = FREE_CELL_RATIO * NROWS * NCOLS
+N_AGENTS = 3
+LIMIT_LENGTH_PATH = FREE_CELL_RATIO * NROWS * NCOLS #TODO: distanza diagonale tra init e goal corrente * nAgents
 
 MAX_ITERATION = 80 # max number of iteration to reset the creation of a single path
 MAX_TOTAL_RUN = 6 # max number of run to create a valid instance
@@ -71,8 +71,6 @@ def main():
                 information.stopMonitoring()
                 information.setValues(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS)
                 
-                #TODO: create before class information and let it calculate time and memory
-                # information = Information(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, executionTime, memoryUsage, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS) 
                 information.printInformation()
                 information.saveInformationToFile()
 

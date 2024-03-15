@@ -206,7 +206,6 @@ class UI:
         #TODO: scommenta quando crei le classi
         # instance, nIteration = instanceController.generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
         instance, nIteration = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
-
         if not instance:
             #TODO: handle error
             return
@@ -396,10 +395,9 @@ class UI:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     if generate_button.is_over(pos):
-
+                        self.setInstance(None)
                         self.clean_information()
                         self.reset_grid()
-                        
                         instance = self.generate_instance(self.instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button)
                         self.setInstance(instance)
 
@@ -419,9 +417,11 @@ class UI:
                                 self.draw_instance(self.instance, path_colors)
                                 new_path, P, closedSet = self.generate_new_path(self.reachGoalController, self.instance, toggle_relaxed_path_button)
                                 self.information.stopMonitoring()
-                                self.draw_single_path(new_path, RED)
-                        self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState())
-                        self.draw_information()
+                                if new_path:
+                                    self.instance.addPath(new_path)
+                                    self.draw_single_path(new_path, RED)
+                            self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState())
+                            self.draw_information()
                     # elif new_agent_button.is_over(pos):
                     #     # generate_new_path(global_instance, toggle_relaxed_path_button)
                     #     pass

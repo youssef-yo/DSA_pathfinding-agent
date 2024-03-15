@@ -12,7 +12,6 @@ def reachGoal(instance, relaxedPlan = False):
     Find a path from the initial node to the goal node
     Return the path and the list of states
     """
-
     # Note that instance.getGrid() could be None
     graph = instance.getGraph()
     paths = instance.getPaths()
