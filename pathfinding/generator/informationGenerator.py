@@ -83,22 +83,6 @@ class Information():
         self.waitCounter = self.computeWaitMove(path)
         self.relaxedPath = relaxedPath
         self.reachGoalExistingAgents = reachGoalExistingAgents
-        
-
-
-
-    # def __init__(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, executionTime, memoryUsage, relaxedPath, reachGoalExistingAgents):
-    #     self.instance = instance
-    #     self.freeCellRatio = freeCellRatio
-    #     self.agglomerationFactor = agglomerationFactor
-    #     self.path = path
-    #     self.P = P
-    #     self.closedSet = closedSet
-    #     self.waitCounter = self.computeWaitMove(path)
-    #     self.executionTime = executionTime
-    #     self.totalMemory = self.computeMemoryUsage(memoryUsage)
-    #     self.relaxedPath = relaxedPath
-    #     self.reachGoalExistingAgents = reachGoalExistingAgents
 
     def computeWaitMove(self, path):
         waitCounter = 0
@@ -106,9 +90,6 @@ class Information():
             if move.getSrc() == move.getDst():
                 waitCounter += 1
         return waitCounter
-
-    # def computeMemoryUsage(self, memoryUsage):
-    #     return sum(stat.size for stat in memoryUsage) / 1024
     
     def printInformation(self):
         if self.relaxedPath:
