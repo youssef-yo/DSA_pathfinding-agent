@@ -341,7 +341,7 @@ class UI:
 
         # Creazione dei bottoni
         generate_button = Button(LIGHT_BLUE, 1000, 50, 200, 50, 'Generate Instance')
-        toggle_step_by_step_button = ToggleButton(1150, 100, img_off_path, img_on_path)
+        toggle_step_by_step_button = ToggleButton(1150, 120, img_off_path, img_on_path)
 
         repeat_button = ImageButton(WHITE, 820, 50, img_repeat_path)
         # new_agent_button = Button(LIGHT_BLUE, 1000, 150, 200, 50, 'New Agent')
@@ -362,7 +362,7 @@ class UI:
         max_label = self.create_label(manager, (1050, 450), "Max:")
         relaxed_label = self.create_label(manager, (1000, 600), "Use Relaxed Path:")
         reach_goal_label = self.create_label(manager, (1000, 650), "Use Reach Goal:")
-        step_by_step_label = self.create_label(manager, (950, 100), "Step By Step:")
+        step_by_step_label = self.create_label(manager, (950, 120), "Step By Step:")
 
         nrow_input = self.create_text_input_int(manager, (1000, 350), (100, 30))
         ncol_input = self.create_text_input_int(manager, (1200, 350), (100, 30))
