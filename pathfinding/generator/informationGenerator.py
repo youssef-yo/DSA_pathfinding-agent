@@ -113,6 +113,10 @@ class Information():
         print("Rapporto di celle libere: ", self.freeCellRatio)
         print("Fattore di agglomerazione: ", self.agglomerationFactor)
         print("Numero di agenti preesistenti: ", len(self.instance.getPaths()) - 1)
+
+        for i, p in enumerate(self.instance.getPaths()[:-1]):
+            print("Lunghezza Percorso ", i, ":" , p.getLength())
+
         print("Valore orizzonte temporale max: ", self.instance.getMaxLengthNewAgent())
 
         print("Stati in Open (e P): ", len(self.P))
@@ -147,6 +151,8 @@ class Information():
             file.write("Rapporto di celle libere: " + str(self.freeCellRatio) + "\n")
             file.write("Fattore di agglomerazione: " + str(self.agglomerationFactor) + "\n")
             file.write("Numero di agenti preesistenti: " + str(len(self.instance.getPaths()) - 1) + "\n")
+            for i, p in enumerate(self.instance.getPaths()[:-1]):
+                file.write("Lunghezza Percorso " + str(i) + ":" + str(p.getLength()) + "\n")
             file.write("Valore orizzonte temporale max: " + str(self.instance.getMaxLengthNewAgent()) + "\n")
 
             file.write("Stati in Open (e P): " + str(len(self.P)) + "\n")
