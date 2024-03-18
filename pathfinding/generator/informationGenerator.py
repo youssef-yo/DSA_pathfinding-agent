@@ -78,10 +78,6 @@ class Information():
         avgMemory = tracedMemory[0] / 1000
         peakMemory = tracedMemory[1] / 1000
         return avgMemory, peakMemory
-        # snapshot = tracemalloc.take_snapshot()
-        # tracemalloc.stop()
-        # memoryUsage = snapshot.statistics('lineno')
-        # return sum(stat.size for stat in memoryUsage) / 1024
     
     def setValues(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents):
         self.instance = instance
