@@ -14,8 +14,9 @@ import random
 import numpy as np
 
 # seed = 10 to check waitGoalToBeFree (nAgent = 2)
-random.seed(22)
-np.random.seed(12)
+seed = 22
+random.seed(seed)
+np.random.seed(seed)
 
 NROWS = 10
 NCOLS = 13
@@ -34,11 +35,11 @@ def main():
     args = parser.parse_args()
 
     if args.gui:
-        ui = UI(generateInstance, reachGoal, informationGenerator) #TODO: create class for the two controllers
+        ui = UI(generateInstance, reachGoal, informationGenerator, seed) #TODO: create class for the two controllers
         ui.run()
     else:
         # Start time and memory monitoring
-        information = Information()
+        information = Information(seed)
         information.startMonitoring()
 
         instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)

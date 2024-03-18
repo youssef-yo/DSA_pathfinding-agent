@@ -6,7 +6,8 @@ import tracemalloc
 
 class Information():
 
-    def __init__(self):
+    def __init__(self, seed):
+        self.seed = seed
         self.startTime = None
         self.instance = None
         self.freeCellRatio = None
@@ -20,6 +21,7 @@ class Information():
         self.peakMemory = None
         self.relaxedPath = None
         self.reachGoalExistingAgents = None
+        
 
     def startMonitoring(self):
         self.startTime = self.getCurrentTime()
@@ -98,6 +100,7 @@ class Information():
         return waitCounter
     
     def printInformation(self):
+        print("Seed: ", self.seed)
         if self.relaxedPath:
             print("Relaxed path UTILIZZATO")
         else:
@@ -136,6 +139,7 @@ class Information():
 
         filename = os.path.join(directory, "information_" + str(uuid.uuid4())[:6] + ".txt")
         with open(filename, 'w') as file:
+            file.write("Seed: " + str(self.seed) + "\n")
             if self.relaxedPath:
                 file.write("Relaxed path UTILIZZATO\n")
             else:
