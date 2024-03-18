@@ -13,31 +13,30 @@ def resetPath(path, init, goal, nReset, goalsInitsCopy):
 
     return t, current, path, nReset, goalsInitsCopy
 
-def createPaths(goalsInits, nAgents, limitLengthPath, graph, limitNumberReset):
+def createPaths(goalsInits, nAgents, limitLengthPath, graph):
     """
     For all nAgents we will choose randomly the initial and goal positions
     The movement of the agents will be random as well
     INIT and GOAL must be different for each agent
     """
-
     paths = []
     maxLengthPath = 0
+    maxReset = 10
 
     for _ in range(nAgents):
         goal, (init, timeMaxGoalOccupied) = goalsInits.popitem()
         path = Path(init, goal)
         current = init
-        t = 0   
+        t = 0
         nReset = 0
 
         goalsInitsCopy = goalsInits.copy()
 
         #TODO: remove print
         while current != goal:
-            if nReset > limitNumberReset:
-                print("STOPPED FOR MAX ITERATION REACHED")
-                return None, 0
-            
+            if nReset >= maxReset:
+                print("MAX RESET REACHED")
+                return None, 0, None
             availableMoves = graph.getNeighbors(current)
             move = None
 
@@ -47,15 +46,13 @@ def createPaths(goalsInits, nAgents, limitLengthPath, graph, limitNumberReset):
                     move = m if not Path.checkIllegalMove(m.dst, paths, current, t) and t > timeMaxGoalOccupied else None
                     break
 
-            if not move:       
+            if not move:
                 availableMoves = Path.removeIllegalMoves(availableMoves, paths, current, t)
 
                 if len(availableMoves) == 0:
                     print("RESET NO MOVE")
-                    t, current, path, nReset, goalsInits = resetPath(path, init, goal, nReset, goalsInitsCopy)
-                    maxLengthPath = 0
-                    continue
-
+                    return None, 0, None
+                
                 move = random.choice(availableMoves)
 
             if move.dst in goalsInits:
@@ -76,15 +73,15 @@ def createPaths(goalsInits, nAgents, limitLengthPath, graph, limitNumberReset):
         maxLengthPath = max(maxLengthPath, path.getLength())
 
     # TODO: remove print
-    for path in paths:
-        path.printPath()
-    
+    # for path in paths:
+    #     path.printPath()
+
     return paths, maxLengthPath, goalsInits
 
 def createPathsUsingReachGoal(goalsInits, nAgents, limitLengthPath, graph, useRelaxedPath = False):
     """
     For all nAgents we will choose randomly the initial and goal positions
-    The movement of the agents will be random as well
+        The movement of the agents will be random as well
     INIT and GOAL must be different for each agent
     """
 
@@ -98,19 +95,19 @@ def createPathsUsingReachGoal(goalsInits, nAgents, limitLengthPath, graph, useRe
         instance = Instance(None, graph, paths, init, goal, limitLengthPath, timeMaxGoalOccupied)
 
         path, _, _ = reachGoal(instance, useRelaxedPath)
-        
+
         if not path:
-            return 
-        
+            return
+
         for t, move in path.getMoves():
             if move.dst in goalsInits:
                     goalsInits[move.dst] = (goalsInits[move.dst][0], max(goalsInits[move.dst][1], t))
-        
+
         paths.append(path)
         maxLengthPath = max(maxLengthPath, path.getLength())
 
     # TODO: remove print
     for path in paths:
         path.printPath()
-    
+
     return paths, maxLengthPath, goalsInits

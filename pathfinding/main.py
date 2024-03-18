@@ -13,28 +13,20 @@ from solver.reachGoal import reachGoal
 import random
 import numpy as np
 
-
-# import time
-# import tracemalloc
-
 # seed = 10 to check waitGoalToBeFree (nAgent = 2)
-random.seed(22)
-np.random.seed(12)
+# random.seed(22)
+# np.random.seed(12)
 
 NROWS = 10
 NCOLS = 13
 FREE_CELL_RATIO = 0.8
-AGGLOMERATION_FACTOR = 1
-MAX = 30
+AGGLOMERATION_FACTOR = 0.3
+MAX = 40
 
 N_AGENTS = 3
-LIMIT_LENGTH_PATH = FREE_CELL_RATIO * NROWS * NCOLS #TODO: distanza diagonale tra init e goal corrente * nAgents
-
-MAX_ITERATION = 80 # max number of iteration to reset the creation of a single path
-MAX_TOTAL_RUN = 6 # max number of run to create a valid instance
 
 USE_RELAXED_PATH = True
-USE_REACH_GOAL_EXISTING_AGENTS = True
+USE_REACH_GOAL_EXISTING_AGENTS = False
 
 def main():
     parser = argparse.ArgumentParser(description="Pathfinding algorithm for multi-agent systems.")
@@ -49,12 +41,11 @@ def main():
         information = Information()
         information.startMonitoring()
 
-        instance, nIteration = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
+        instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
 
         if not instance:
-            print("Parameter max was not valid for the current configuration.")
-
-        if instance and nIteration < MAX_TOTAL_RUN: 
+            print("Parameter max was not valid for the current configuration.\n Parameters too restrictive, try again with different ones.")
+        else:
             print(" ------------- ")
             print("NEW AGENT (init, goal): (", instance.getInit(), ", ", instance.getGoal(), ")")
             
@@ -76,25 +67,7 @@ def main():
                 information.saveInformationToFile()
 
                 # runUI(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
-        else:
-            print("Parameters too restrictive, try again with different ones.")
-
            
-# def testCheckReachability(grid, init, goal):
-#     grid = [["0", "0", "1", "1", "0"],
-#             ["0", "0", "0", "1", "0"],
-#             ["1", "1", "1", "0", "0"],
-#             ["0", "0", "0", "0", "0"]]
-    
-#     islands = findIslands(grid)
-#     print(islands)
-#     init = (0, 0)
-#     goal = (3, 4)
-#     print(islands)
-#     for island in islands:
-#         if (init in island and goal not in island) or (goal in island and init not in island):
-#             return False
-#     return True
 
 if __name__ == "__main__":
     main()

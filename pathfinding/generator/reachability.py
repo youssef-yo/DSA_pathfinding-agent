@@ -4,7 +4,7 @@ def findIslands(grid):
     obstacles = grid.getOccupiedCells()
 
     if len(obstacles) == 0:
-        return
+        return 
 
     rows, cols = grid.getNrows(), grid.getNcols()
 

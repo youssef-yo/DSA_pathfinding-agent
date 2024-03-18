@@ -196,20 +196,14 @@ class UI:
         if NROWS <= 0 or NROWS >= 16 or  NCOLS <= 0 or NCOLS >= 19 or  FREE_CELL_RATIO <= 0 or FREE_CELL_RATIO > 1 or AGGLOMERATION_FACTOR < 0 or AGGLOMERATION_FACTOR > 1 or MAX <= 0 or N_AGENTS <= 0:
             return
 
-        LIMIT_LENGTH_PATH = FREE_CELL_RATIO * NROWS * NCOLS
-
-        #TODO: create text input
-        MAX_ITERATION = 80 # max number of iteration to reset the creation of a single path
-        MAX_TOTAL_RUN = 6 # max number of run to create a valid instance
-
         self.information.startMonitoring()
         #TODO: scommenta quando crei le classi
-        # instance, nIteration = instanceController.generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
-        instance, nIteration = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_PATH, MAX_ITERATION, MAX_TOTAL_RUN, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
+        # instance, nIteration = instanceController.generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
+        instance = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
         if not instance:
             #TODO: handle error
             return
-        if instance and nIteration < MAX_TOTAL_RUN: 
+        if instance: 
             return instance
         return
 
@@ -303,16 +297,18 @@ class UI:
         waitCounter = self.information.getWaitCounter()
         executionTime = self.information.getExecutionTime()
         totalMemory = self.information.getTotalMemory()
-
+        maxTimeGoalOccupied = 'never' if self.instance.getMaxTimeGoalOccupied() < 0 else self.instance.getMaxTimeGoalOccupied()
         # Define text labels
         labels = [
-            f"Max time goal occupied: {self.instance.getMaxTimeGoalOccupied()}",
             f"Length of the path: {pathLength}",
+            f"Path Cost: {pathCost}",
+            f"Max time goal occupied: {maxTimeGoalOccupied}",
+            f"Wait Counter: {waitCounter}",
+
             f"Length of P: {lengthP}",
             f"Length of ClosedSet: {lengthClosedSet}",
-            f"Wait Counter: {waitCounter}",
+            
             f"Execution Time: {executionTime}",
-            f"Path Cost: {pathCost}",
             f"Total Memory: {totalMemory} KB"
         ]
 
@@ -428,8 +424,11 @@ class UI:
                                 if new_path:
                                     self.instance.addPath(new_path)
                                     self.draw_single_path(new_path, RED)
-                            self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState())
-                            self.draw_information()
+                            if new_path:
+                                self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState())
+                                self.draw_information()
+                            else:
+                                self.draw_error("Error: couldn't find a valid path for the new agent")
                         else:
                             self.draw_error("Error with input parameters or couldn't find any valid paths")
                     # elif new_agent_button.is_over(pos):

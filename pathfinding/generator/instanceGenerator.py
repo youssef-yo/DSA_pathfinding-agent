@@ -35,11 +35,12 @@ def createGoalsInits(nAgents, availableCells):
     return goalsInits
 
 
-def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, maxLengthPathNewAgent, limitLengthPath, limitIteration, limitRun, useReachGoal=False, useRelaxedPath = True):
-    goalsInits, grid, graph, paths, maxLengthPath, i = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthPath, limitIteration, limitRun, useReachGoal, useRelaxedPath)
+def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, maxLengthPathNewAgent, useReachGoal=False, useRelaxedPath = True):
+    limitLengthPath = freeCellRatio * nrows * ncols
+    goalsInits, grid, graph, paths, maxLengthPath = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthPath, useReachGoal, useRelaxedPath)
 
     if not paths: 
-        return None, i
+        return None
     
     goal, (init, timeMaxOccupied) = goalsInits.popitem()
 
@@ -47,11 +48,11 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     maxLengthPath = max(maxLengthPath, maxAvailableCells)
 
     if maxLengthPathNewAgent > maxLengthPath:
-        return None, i
+        return None
     
     instance = Instance(grid, graph, paths, init, goal, maxLengthPathNewAgent, timeMaxOccupied)
 
-    return instance, i
+    return instance
 
 def chooseRandomNode(grid, occupied_nodes):
     nrows, ncols = grid.getNrows(), grid.getNcols()
@@ -67,9 +68,7 @@ def chooseRandomNode(grid, occupied_nodes):
     return node
 
 
-def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthPath, limitIteration, limitRun, useReachGoal, useRelaxedPath):
-    i = 0
-    
+def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthPath, useReachGoal, useRelaxedPath):   
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
     graph = createGraphFromGrid(grid)
 
@@ -77,30 +76,20 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
     if len(availableCells) < nAgents:
         #TODO: throw exception
         print("Not enough cells to create a path for each agent")
-        return None, None, None, None, None, None
+        return None, None, None, None, None
     goalsInits = createGoalsInits(nAgents, availableCells)
     
     # check reachability
     islands = findIslands(grid)
-    for goal, (init, _) in goalsInits.items():
-        if not checkReachability(init, goal, islands):
-            return goalsInits, grid, graph, None, None, None
+    if islands:
+        for goal, (init, _) in goalsInits.items():
+            if not checkReachability(init, goal, islands):
+                return goalsInits, grid, graph, None, None
 
     limit = nrows*ncols*nAgents
     if useReachGoal:
         paths, maxLengthPath, goalsInits = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
     else: 
-        paths, maxLengthPath, goalsInits = createPaths(goalsInits, nAgents, limitLengthPath, graph, limitIteration)
-
-    while not paths and i < limitRun:
-        grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
-        graph = createGraphFromGrid(grid)
-        
-        if useReachGoal:
-            paths, maxLengthPath, goalsInits = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
-        else:
-            paths, maxLengthPath, goalsInits = createPaths(goalsInits, nAgents, limitLengthPath, graph, limitIteration)
-        
-        i += 1
-
-    return goalsInits, grid, graph, paths, maxLengthPath, i
+        paths, maxLengthPath, goalsInits = createPaths(goalsInits, nAgents, limitLengthPath, graph)
+    
+    return goalsInits, grid, graph, paths, maxLengthPath

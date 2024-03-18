@@ -27,6 +27,8 @@ def createAgglomeration(grid, nObstaclesInAgglomeration):
     
         
 def addObstacles(grid, nObstacle, agglomerationFactor):
+    if nObstacle == 0:
+        return grid
     nObstaclesInAgglomeration = math.floor(agglomerationFactor * nObstacle)
 
     createAgglomeration(grid, nObstaclesInAgglomeration)
