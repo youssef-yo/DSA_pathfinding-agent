@@ -428,6 +428,7 @@ class UI:
                                 self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState())
                                 self.draw_information()
                             else:
+                                self.reset_grid()
                                 self.draw_error("Error: couldn't find a valid path for the new agent")
                         else:
                             self.draw_error("Error with input parameters or couldn't find any valid paths")
