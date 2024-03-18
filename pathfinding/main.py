@@ -21,8 +21,8 @@ import numpy as np
 random.seed(22)
 np.random.seed(12)
 
-NROWS = 10
-NCOLS = 13
+NROWS = 100
+NCOLS = 100
 FREE_CELL_RATIO = 0.8
 AGGLOMERATION_FACTOR = 1
 MAX = 30

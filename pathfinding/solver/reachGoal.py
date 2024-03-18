@@ -5,7 +5,7 @@ from .reconstructPath import reconstructPath
 from .heuristic import computeHeuristic
 import heapq
 
-from .relaxedPath import aStarBidirectional
+from .relaxedPath import aStarBidirectional, findBidirectional
 
 
 
@@ -53,8 +53,10 @@ def reachGoal(instance, relaxedPlan = False):
 
         if relaxedPlan:
             #compute realxed plan
-            aStarBidirectional(graph, currentState.getNode(), goal, heuristic, maxLengthNewAgent - currentState.getTime(), currentState.getTime())   
-            relaxedPath, relaxedStateList, relaxedClosedSet = findRelaxedPath(graph, heuristic, currentState.getNode(), goal, maxLengthNewAgent - currentState.getTime(), currentState.getTime())
+            bidHeuristic = {**computeHeuristic(graph, currentState.getNode()),  **heuristic}
+
+            relaxedPath, relaxedStateList, relaxedClosedSet = findBidirectional(graph, bidHeuristic, currentState.getNode(), goal, maxLengthNewAgent - currentState.getTime(), currentState.getTime())   
+            # relaxedPath, relaxedStateList, relaxedClosedSet = findRelaxedPath(graph, heuristic, currentState.getNode(), goal, maxLengthNewAgent - currentState.getTime(), currentState.getTime())
             if relaxedPath and relaxedPath.isPathCollisionFree(paths, currentState.getTime(), maxTimeGoalOccupied):
                 path = reconstructPath(init, currentState.getNode(), stateDict, 0, currentState.getTime())
 
