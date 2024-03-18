@@ -75,8 +75,8 @@ class Information():
         tracedMemory = tracemalloc.get_traced_memory()
         tracemalloc.stop()
 
-        avgMemory = tracedMemory[0] /1024
-        peakMemory = tracedMemory[1] / 1024
+        avgMemory = tracedMemory[0] / 1000
+        peakMemory = tracedMemory[1] / 1000
         return avgMemory, peakMemory
         # snapshot = tracemalloc.take_snapshot()
         # tracemalloc.stop()
