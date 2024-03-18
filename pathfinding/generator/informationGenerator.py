@@ -17,6 +17,7 @@ class Information():
         self.waitCounter = None
         self.executionTime = None
         self.totalMemory = None
+        self.peakMemory = None
         self.relaxedPath = None
         self.reachGoalExistingAgents = None
 
@@ -26,7 +27,7 @@ class Information():
 
     def stopMonitoring(self):
         self.executionTime = self.getCurrentTime() - self.startTime
-        self.totalMemory = self.computeMemoryUsage()
+        self.totalMemory, self.peakMemory = self.computeMemoryUsage()
 
 
     def getCurrentTime(self):
@@ -58,6 +59,9 @@ class Information():
     
     def getTotalMemory(self):
         return self.totalMemory
+
+    def getPeakMemory(self):
+        return self.peakMemory
     
     def getRelaxedPath(self):
         return self.relaxedPath
@@ -68,10 +72,16 @@ class Information():
 
     def computeMemoryUsage(self):
         # Stop memory monitoring
-        snapshot = tracemalloc.take_snapshot()
+        tracedMemory = tracemalloc.get_traced_memory()
         tracemalloc.stop()
-        memoryUsage = snapshot.statistics('lineno')
-        return sum(stat.size for stat in memoryUsage) / 1024
+
+        avgMemory = tracedMemory[0] /1024
+        peakMemory = tracedMemory[1] / 1024
+        return avgMemory, peakMemory
+        # snapshot = tracemalloc.take_snapshot()
+        # tracemalloc.stop()
+        # memoryUsage = snapshot.statistics('lineno')
+        # return sum(stat.size for stat in memoryUsage) / 1024
     
     def setValues(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents):
         self.instance = instance
@@ -116,6 +126,7 @@ class Information():
         print("Numero di wait move: ", self.waitCounter)
         print("Tempo di esecuzione: ", self.executionTime)
         print("Utilizzo di memoria: ", self.totalMemory , "KB")
+        print("Picco di memoria: ", self.peakMemory , "KB")
     
     def saveInformationToFile(self):
 
@@ -149,3 +160,4 @@ class Information():
             file.write("Numero di wait move: " + str(self.waitCounter) + "\n")
             file.write("Tempo di esecuzione: " + str(self.executionTime) + "\n")
             file.write("Utilizzo di memoria: " + str(self.totalMemory) + " KB\n")
+            file.write("Picco di memoria: " + str(self.peakMemory) + " KB\n")

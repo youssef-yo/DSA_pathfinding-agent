@@ -14,12 +14,12 @@ import random
 import numpy as np
 
 # seed = 10 to check waitGoalToBeFree (nAgent = 2)
-# random.seed(22)
-# np.random.seed(12)
+random.seed(22)
+np.random.seed(12)
 
 NROWS = 10
 NCOLS = 13
-FREE_CELL_RATIO = 0.8
+FREE_CELL_RATIO = 1
 AGGLOMERATION_FACTOR = 0.3
 MAX = 40
 
