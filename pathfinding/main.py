@@ -69,7 +69,8 @@ def executeCLI():
     information = Information(SEED)
     information.startMonitoring()
 
-    instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
+    goalsInits = None
+    instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, goalsInits, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
 
     if not instance:
         print("Parameter max was not valid for the current configuration.\n Parameters too restrictive, try again with different ones.")
@@ -110,6 +111,10 @@ def executeEvaluationTest():
         MAX = 10 * i * N_AGENTS
 
         #TODO to complete
+        # genero istanza usando random per gli agenti preesistenti
+        # dall'istanza prendo i paths ed estraggo gli init e goal di ogni agente per creare la dict goalsInits da passare a createPathsUsingReachGoal
+
+    
         
         
 

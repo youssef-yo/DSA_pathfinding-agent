@@ -192,6 +192,8 @@ class UI:
         USE_RELAXED_PATH = toggle_relaxed_path_button.getState()
         USE_REACH_GOAL_EXISTING_AGENTS = toggle_reach_goal_button.getState()
 
+        goalsInits = None
+
         #TODO: max of row = 15, max of col = 18
         if NROWS <= 0 or NROWS >= 16 or  NCOLS <= 0 or NCOLS >= 19 or  FREE_CELL_RATIO <= 0 or FREE_CELL_RATIO > 1 or AGGLOMERATION_FACTOR < 0 or AGGLOMERATION_FACTOR > 1 or MAX <= 0 or N_AGENTS <= 0:
             return
@@ -199,7 +201,7 @@ class UI:
         self.information.startMonitoring()
         #TODO: scommenta quando crei le classi
         # instance, nIteration = instanceController.generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
-        instance = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
+        instance = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, goalsInits, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
         if not instance:
             #TODO: handle error
             return

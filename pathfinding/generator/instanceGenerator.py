@@ -55,9 +55,9 @@ def createInits(nAgents, availableCells):
 
     return inits, goalsInits
 
-def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, maxLengthPathNewAgent, limitLengthExistingPaths, useReachGoal=False, useRelaxedPath = True):
+def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, maxLengthPathNewAgent, limitLengthExistingPaths, goalsInits, useReachGoal=False, useRelaxedPath = True):
     # limitLengthPath = freeCellRatio * nrows * ncols
-    goalInitNewAgent, grid, graph, paths, maxLengthPath = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, useReachGoal, useRelaxedPath)
+    goalInitNewAgent, grid, graph, paths, maxLengthPath = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, goalsInits, useReachGoal, useRelaxedPath)
 
     if not paths: 
         return None
@@ -75,7 +75,7 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     return instance
 
 
-def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, useReachGoal, useRelaxedPath):   
+def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, goalsInits, useReachGoal, useRelaxedPath):   
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
     graph = createGraphFromGrid(grid)
 
@@ -87,7 +87,8 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
 
     limit = nrows*ncols*nAgents
     if useReachGoal:
-        goalsInits = createGoalsInits(nAgents, availableCells)
+        if not goalsInits:
+            goalsInits = createGoalsInits(nAgents, availableCells)
     
         # check reachability
         islands = findIslands(grid)
