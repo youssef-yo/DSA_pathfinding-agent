@@ -88,7 +88,7 @@ class ToggleButton:
         return self.state
         
 class UI:
-    def __init__(self, instanceController, reachGoalController, informationController, seed):
+    def __init__(self, instanceController, reachGoalController, informationController):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Pathfinding for new Agent")
@@ -97,8 +97,8 @@ class UI:
         self.reachGoalController = reachGoalController
 
         self.instance = None
-
-        self.information = informationController.Information(seed)
+        self.seed = 22 # Default seed
+        self.information = informationController.Information(self.seed)
 
     def setInstance(self, instance):
         self.instance = instance

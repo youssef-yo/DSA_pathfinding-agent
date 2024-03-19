@@ -29,22 +29,23 @@ def setSeed(seed):
 
 
 def defaulParameterstValues():
-    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH, SEED
-    NROWS = 20
-    NCOLS = 20
-    FREE_CELL_RATIO = 0.9
-    AGGLOMERATION_FACTOR = 1
+    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH, SEED
+    NROWS = 45
+    NCOLS = 45
+    FREE_CELL_RATIO = 0.7
+    AGGLOMERATION_FACTOR = 0.2
     MAX = 60
+    LIMIT_LENGTH_EXISTING_PATHS = 40
 
-    N_AGENTS = 6
+    N_AGENTS = 50
 
     USE_RELAXED_PATH = True
     USE_REACH_GOAL_EXISTING_AGENTS = False
 
-    SEED = 1235
+    SEED = 6453
 
 def readParametersFromFile():
-    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH, SEED
+    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH, SEED
     config = configparser.ConfigParser()
     config.read('parameters.INI')
 
@@ -56,6 +57,7 @@ def readParametersFromFile():
     # INSTANCE
     N_AGENTS = int(config['INSTANCE']['n_agents'])
     MAX = int(config['INSTANCE']['max'])
+    LIMIT_LENGTH_EXISTING_PATHS = int(config['INSTANCE']['limit_length_existing_paths'])
     USE_RELAXED_PATH = config['INSTANCE'].getboolean('use_relaxed_path')
     USE_REACH_GOAL_EXISTING_AGENTS = config['INSTANCE'].getboolean('use_reach_goal_existing_agents')
     # SEED
@@ -67,7 +69,7 @@ def executeCLI():
     information = Information(SEED)
     information.startMonitoring()
 
-    instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
+    instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
 
     if not instance:
         print("Parameter max was not valid for the current configuration.\n Parameters too restrictive, try again with different ones.")
@@ -92,10 +94,10 @@ def executeCLI():
             information.printInformation()
             information.saveInformationToFile()
 
-            # plot(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+            plot(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
 
 def executeUI():
-    ui = UI(generateInstance, reachGoal, informationGenerator, SEED) #TODO: create class for the two controllers
+    ui = UI(generateInstance, reachGoal, informationGenerator) #TODO: create class for the two controllers
     ui.run()
 
 def executeEvaluationTest():
@@ -121,7 +123,7 @@ def main():
     else:
         # readParametersFromFile()
         defaulParameterstValues()
-        
+
         setSeed(SEED)   
         executeCLI()
            
