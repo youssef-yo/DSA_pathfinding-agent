@@ -2,7 +2,11 @@ import pygame
 from pygame.locals import *
 import pygame_gui
 import random
+import numpy as np
 import sys
+
+import seaborn as sns
+
 
 # Define image
 img_off_path = './UI/img/toggle-off.svg'
@@ -126,33 +130,38 @@ class UI:
     @staticmethod
     def initialize_color(n_paths):
 
-        # Definizione dei colori per i percorsi
-        path_colors = [
-            (0, 0, 255),   # Blue
-            (255, 255, 0), # Yellow
-            (255, 0, 255), # Magenta
-            (0, 255, 255), # Cyan
-            (128, 0, 0),   # Maroon
-            (0, 128, 0),   # Green (Dark)
-            (0, 0, 128),   # Navy
-            (128, 128, 0), # Olive
-            (128, 0, 128), # Purple
-            (0, 128, 128), # Teal
-            (128, 128, 128), # Gray
-            (192, 192, 192), # Silver
-            (128, 0, 0),   # Maroon (Dark)
-            (0, 128, 0),   # Green (Dark)
-            (0, 0, 128),   # Navy (Dark)
-            (128, 128, 0), # Olive (Dark)
-            (128, 0, 128), # Purple (Dark)
-            (0, 128, 128)  # Teal (Dark)
-        ]
+        # # Definizione dei colori per i percorsi
+        # path_colors = [
+        #     (0, 0, 255),   # Blue
+        #     (255, 255, 0), # Yellow
+        #     (255, 0, 255), # Magenta
+        #     (0, 255, 255), # Cyan
+        #     (128, 0, 0),   # Maroon
+        #     (0, 128, 0),   # Green (Dark)
+        #     (0, 0, 128),   # Navy
+        #     (128, 128, 0), # Olive
+        #     (128, 0, 128), # Purple
+        #     (0, 128, 128), # Teal
+        #     (128, 128, 128), # Gray
+        #     (192, 192, 192), # Silver
+        #     (128, 0, 0),   # Maroon (Dark)
+        #     (0, 128, 0),   # Green (Dark)
+        #     (0, 0, 128),   # Navy (Dark)
+        #     (128, 128, 0), # Olive (Dark)
+        #     (128, 0, 128), # Purple (Dark)
+        #     (0, 128, 128)  # Teal (Dark)
+        # ]
+        # Utilizza la palette di seaborn per generare n colori distinti
+        colors = sns.color_palette("husl", n_paths)
+        # Converte i colori RGB da float a int nell'intervallo [0, 255]
+        colors = [(int(r * 100), int(g * 255), int(b * 255)) for r, g, b in colors]
 
-        colors = []
-        for _ in range(n_paths):
-            color = random.choice(path_colors)
-            path_colors.remove(color)
-            colors.append(color)
+        # colors = []
+        # for _ in range(n_paths):
+        #     # color = random.choice(path_colors)
+        #     color = np.random.rand(n, 3)
+        #     path_colors.remove(color)
+        #     colors.append(color)
         return colors
 
     def generate_new_path(self, reachGoalController, global_instance, toggle_relaxed_path_button):
@@ -175,9 +184,9 @@ class UI:
         self.screen.fill(WHITE, (0, 0, 800, HEIGHT))
 
     # Funzione per generare una nuova istanza
-    def generate_instance(self, instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button):
+    def generate_instance(self, instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, max_length_existing_paths_input, toggle_relaxed_path_button, toggle_reach_goal_button):
         # Qui chiami il controller e generi la nuova istanza
-        if nrow_input.get_text() == '' or ncol_input.get_text() == '' or free_cell_ratio_input.get_text() == '' or agglomeration_factor_input.get_text() == '' or max_input.get_text() == '' or n_agent_input.get_text() == '':
+        if nrow_input.get_text() == '' or ncol_input.get_text() == '' or free_cell_ratio_input.get_text() == '' or agglomeration_factor_input.get_text() == '' or max_input.get_text() == '' or n_agent_input.get_text() == '' or max_length_existing_paths_input.get_text() == '':
             #TODO: handle error
             return 
         
@@ -188,6 +197,7 @@ class UI:
         AGGLOMERATION_FACTOR = float(agglomeration_factor_input.get_text())
         MAX = int(max_input.get_text())
         N_AGENTS = int(n_agent_input.get_text())
+        MAX_LENGTH_EXISTING_PATHS = int(max_length_existing_paths_input.get_text())
 
         USE_RELAXED_PATH = toggle_relaxed_path_button.getState()
         USE_REACH_GOAL_EXISTING_AGENTS = toggle_reach_goal_button.getState()
@@ -195,13 +205,13 @@ class UI:
         goalsInits = None
 
         #TODO: max of row = 15, max of col = 18
-        if NROWS <= 0 or NROWS >= 16 or  NCOLS <= 0 or NCOLS >= 19 or  FREE_CELL_RATIO <= 0 or FREE_CELL_RATIO > 1 or AGGLOMERATION_FACTOR < 0 or AGGLOMERATION_FACTOR > 1 or MAX <= 0 or N_AGENTS <= 0:
+        if NROWS <= 0 or NROWS >= 16 or  NCOLS <= 0 or NCOLS >= 19 or  FREE_CELL_RATIO <= 0 or FREE_CELL_RATIO > 1 or AGGLOMERATION_FACTOR < 0 or AGGLOMERATION_FACTOR > 1 or MAX <= 0 or N_AGENTS <= 0 or MAX_LENGTH_EXISTING_PATHS <= 0 or MAX_LENGTH_EXISTING_PATHS > NROWS * NCOLS:
             return
 
         self.information.startMonitoring()
         #TODO: scommenta quando crei le classi
         # instance, nIteration = instanceController.generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
-        instance = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, goalsInits, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
+        instance = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, MAX_LENGTH_EXISTING_PATHS, goalsInits, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
         if not instance:
             #TODO: handle error
             return
@@ -330,6 +340,15 @@ class UI:
         error_rect = error_text.get_rect(center=(400, 400))
         self.screen.blit(error_text, error_rect)
 
+    def setSeed(self, seed_input):
+        seed_text = seed_input.get_text()
+
+        if seed_text != '':
+            seed = int(seed_text)
+            self.information.setSeed(seed)
+            random.seed(seed)
+            np.random.seed(seed)
+
     def run(self):
         running = True
         clock = pygame.time.Clock()
@@ -361,6 +380,8 @@ class UI:
         relaxed_label = self.create_label(manager, (1000, 600), "Use Relaxed Path:")
         reach_goal_label = self.create_label(manager, (1000, 650), "Use Reach Goal:")
         step_by_step_label = self.create_label(manager, (950, 120), "Step By Step:")
+        seed_label = self.create_label(manager, (1050, 500), "Seed:")
+        max_length_existing_paths_label = self.create_label(manager, (800, 500), "Max Existing Paths:")
 
         nrow_input = self.create_text_input_int(manager, (1000, 350), (100, 30))
         ncol_input = self.create_text_input_int(manager, (1200, 350), (100, 30))
@@ -368,9 +389,11 @@ class UI:
         agglomeration_factor_input = self.create_text_input_float(manager, (1000, 450), (100, 30))
         n_agent_input = self.create_text_input_int(manager, (1200, 400), (100, 30))
         max_input = self.create_text_input_int(manager, (1200, 450), (100, 30))
+        seed_input = self.create_text_input_int(manager, (1200, 500), (100, 30))
+        max_length_existing_paths_input = self.create_text_input_int(manager, (1000, 500), (100, 30))
 
-        text_inputs.extend([nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, n_agent_input, max_input])
-        labels.extend([nrow_label, ncol_label, free_cell_ratio_label, agglomeration_factor_label, n_agent_label, max_label, relaxed_label, reach_goal_label, step_by_step_label])
+        text_inputs.extend([nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, n_agent_input, max_input, seed_input, max_length_existing_paths_input])
+        labels.extend([nrow_label, ncol_label, free_cell_ratio_label, agglomeration_factor_label, n_agent_label, max_label, relaxed_label, reach_goal_label, step_by_step_label, seed_label, max_length_existing_paths_label])
 
         self.screen.fill(WHITE)
 
@@ -404,7 +427,8 @@ class UI:
                         self.setInstance(None)
                         self.clean_information()
                         self.reset_grid()
-                        instance = self.generate_instance(self.instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, toggle_relaxed_path_button, toggle_reach_goal_button)
+
+                        instance = self.generate_instance(self.instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, max_length_existing_paths_input,  toggle_relaxed_path_button, toggle_reach_goal_button)
                         self.setInstance(instance)
 
                         if self.instance:
@@ -452,7 +476,9 @@ class UI:
                     elif toggle_step_by_step_button.is_over(pos):
                         toggle_step_by_step_button.toggle()
                         toggle_step_by_step_button.draw(self.screen)  
-
+                elif event.type == pygame.KEYDOWN:
+                    if seed_input.is_focused:
+                        self.setSeed(seed_input)
                         
                 manager.process_events(event)
             # Aggiornamento e disegno degli elementi GUI

@@ -40,6 +40,7 @@ class Information():
     
     def getFreeCellRatio(self):
         return self.freeCellRatio
+
     
     def getAgglomerationFactor(self):
         return self.agglomerationFactor
@@ -71,6 +72,8 @@ class Information():
     def getReachGoalExistingAgents(self):
         return self.reachGoalExistingAgents
     
+    def setSeed(self, seed):   
+        self.seed = seed
 
     def computeMemoryUsage(self):
         # Stop memory monitoring
