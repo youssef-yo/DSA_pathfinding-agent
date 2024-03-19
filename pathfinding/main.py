@@ -28,20 +28,20 @@ def setSeed(seed):
     np.random.seed(seed)
 
 
-# def defaulParameterstValues():
-#     global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH, SEED
-#     NROWS = 10
-#     NCOLS = 13
-#     FREE_CELL_RATIO = 1
-#     AGGLOMERATION_FACTOR = 0.3
-#     MAX = 40
+def defaulParameterstValues():
+    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH, SEED
+    NROWS = 20
+    NCOLS = 20
+    FREE_CELL_RATIO = 0.9
+    AGGLOMERATION_FACTOR = 1
+    MAX = 60
 
-#     N_AGENTS = 3
+    N_AGENTS = 6
 
-#     USE_RELAXED_PATH = True
-#     USE_REACH_GOAL_EXISTING_AGENTS = False
+    USE_RELAXED_PATH = True
+    USE_REACH_GOAL_EXISTING_AGENTS = False
 
-#     SEED = 22
+    SEED = 1235
 
 def readParametersFromFile():
     global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH, SEED
@@ -98,20 +98,31 @@ def executeUI():
     ui = UI(generateInstance, reachGoal, informationGenerator, SEED) #TODO: create class for the two controllers
     ui.run()
 
-def executeTest():
-    pass
+def executeEvaluationTest():
+    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH
+    for i in range(1,5):
+        NROWS = NCOLS = 10 * i
+        FREE_CELL_RATIO = 1 - 0.1 * (i - 1)
+        AGGLOMERATION_FACTOR = 1 / i
+        N_AGENTS = 3*i
+        MAX = 10 * i * N_AGENTS
+
+        #TODO to complete
+        
+        
 
 def main():
-    readParametersFromFile()
-    setSeed(SEED)
-
     args = getInputArgs()
 
     if args.gui:
         executeUI()
     elif args.test:
-        executeTest()
+        executeEvaluationTest()
     else:
+        # readParametersFromFile()
+        defaulParameterstValues()
+        
+        setSeed(SEED)   
         executeCLI()
            
 

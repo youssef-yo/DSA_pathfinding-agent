@@ -133,7 +133,7 @@ class Information():
     
     def saveInformationToFile(self):
 
-        directory = "output"
+        directory = "../output"
         if not os.path.exists(directory):
             os.makedirs(directory)
 

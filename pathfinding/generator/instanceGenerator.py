@@ -77,6 +77,7 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
         #TODO: throw exception
         print("Not enough cells to create a path for each agent")
         return None, None, None, None, None
+    
     goalsInits = createGoalsInits(nAgents, availableCells)
     
     # check reachability
@@ -89,7 +90,7 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
     limit = nrows*ncols*nAgents
     if useReachGoal:
         paths, maxLengthPath, goalsInits = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
-    else: 
+    else:
         paths, maxLengthPath, goalsInits = createPaths(goalsInits, nAgents, limitLengthPath, graph)
     
     return goalsInits, grid, graph, paths, maxLengthPath
