@@ -34,3 +34,9 @@ class Instance:
     
     def addPath(self, path):
         self.paths.append(path)
+
+    def getGoalsInits(self):
+        # goalsInits[goal] = (init, -1)
+        goalsInits = {}
+        for path in self.paths:
+            goalsInits[path.getGoal()] = (path.getInit(), -1)

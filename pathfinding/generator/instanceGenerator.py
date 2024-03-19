@@ -99,7 +99,13 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
             
         paths, maxLengthPath, goalInitNewAgent = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
     else:
-        inits, goalsInits = createInits(nAgents, availableCells)
+        if not goalsInits:
+            inits, goalsInits = createInits(nAgents, availableCells)
+        else:
+            inits = set()
+            for _, (init, _) in goalsInits.items():
+                inits.add(init)
+                
         paths, maxLengthPath, goalInitNewAgent = createPaths(inits, goalsInits, nAgents, limitLengthExistingPaths, graph)
     
     return goalInitNewAgent, grid, graph, paths, maxLengthPath
