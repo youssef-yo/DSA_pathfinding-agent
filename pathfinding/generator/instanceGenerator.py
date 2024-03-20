@@ -85,7 +85,7 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
         print("Not enough cells to create a path for each agent")
         return None, None, None, None, None
 
-    limit = nrows*ncols*nAgents
+    limit = len(availableCells)
     if useReachGoal:
         if not goalsInits:
             goalsInits = createGoalsInits(nAgents, availableCells)

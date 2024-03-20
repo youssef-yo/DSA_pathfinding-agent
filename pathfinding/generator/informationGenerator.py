@@ -2,6 +2,7 @@ import uuid
 import os
 import time
 import tracemalloc
+import pathlib
 
 
 class Information():
@@ -135,8 +136,8 @@ class Information():
         print("Picco di memoria: ", self.peakMemory , "KB")
     
     def saveInformationToFile(self):
-
-        directory = "../output"
+        directory = os.path.join(pathlib.Path(__file__).parent.parent.parent.resolve(), "output")
+        
         if not os.path.exists(directory):
             os.makedirs(directory)
 

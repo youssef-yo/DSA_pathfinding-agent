@@ -120,7 +120,7 @@ def runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath):
             information.stopMonitoring()
             information.setValues(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS)
             
-            information.printInformation()
+            # information.printInformation()
             information.saveInformationToFile()
         else:
             print("No path found for new agent")
@@ -136,6 +136,7 @@ def defineCombination():
     useReachGoalExistingAgents = False
     useRelaxedPath = False
 
+    print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
     instance = runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath)
 
     freeMemory()
@@ -147,6 +148,7 @@ def defineCombination():
     useReachGoalExistingAgents = False
     useRelaxedPath = True
 
+    print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
     instance = runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath)
     freeMemory()
     #####
@@ -157,6 +159,7 @@ def defineCombination():
     useReachGoalExistingAgents = True
     useRelaxedPath = False
 
+    print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
     instance = runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath)
     freeMemory()
     #####
@@ -167,24 +170,29 @@ def defineCombination():
     useReachGoalExistingAgents = True
     useRelaxedPath = True
 
+    print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
     instance = runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath)
     freeMemory()
 
 
 def executeEvaluationTest():
-    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH
+    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH
     
-    for i in range(1,6):
-        for k_rows in range(5,11):
-            NROWS = NCOLS = k_rows * i
+    for i in range(1,11): # totali run = 10 * 6 * 3 = 180 * 4 (combinazioni) = 720 
+        for kRows in range(5,11):
+            NROWS = NCOLS = kRows * i
             FREE_CELL_RATIO = 1 - 0.1 * (i - 1)
             AGGLOMERATION_FACTOR = 1 / i
-            for k_agents in range(3,6):
-                N_AGENTS = k_agents*i
-                MAX = 10 * i * N_AGENTS
+            for factorAgent in np.arange(0.1, 0.6, 0.2):
+                availableCells = NROWS * NCOLS * FREE_CELL_RATIO  
 
-        
-        defineCombination()
+                N_AGENTS = int(math.ceil(availableCells * factorAgent))                 
+                LIMIT_LENGTH_EXISTING_PATHS = max(int((availableCells - N_AGENTS) * 0.5), 1)
+                MAX = int(math.ceil((availableCells + LIMIT_LENGTH_EXISTING_PATHS) * 0.3))
+
+                print("I: ", i, "NROWS: ", NROWS, " N_AGENTS: ", N_AGENTS, " FREE_CELL_RATIO: ", FREE_CELL_RATIO, " AGGLOMERATION_FACTOR: ", AGGLOMERATION_FACTOR, " MAX: ", MAX, " LIMIT_LENGTH_EXISTING_PATHS: ", LIMIT_LENGTH_EXISTING_PATHS)
+                
+                defineCombination()
     
     for i in range(0, 0.7, 0.1):
         FREE_CELL_RATIO = i
@@ -198,7 +206,7 @@ def executeEvaluationTest():
         
 def main():
     args = getInputArgs()
-
+    args.test = True
     if args.gui:
         executeUI()
     elif args.test:
