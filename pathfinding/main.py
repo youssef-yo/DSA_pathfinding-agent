@@ -10,6 +10,7 @@ from generator import informationGenerator
 from generator.instanceGenerator import generateInstance
 from solver.reachGoal import reachGoal
 
+import math
 import random
 import numpy as np
 import gc   # garbage collector
@@ -174,18 +175,26 @@ def executeEvaluationTest():
     global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH
     
     for i in range(1,6):
-        NROWS = NCOLS = 10 * i
-        FREE_CELL_RATIO = 1 - 0.1 * (i - 1)
-        AGGLOMERATION_FACTOR = 1 / i
-        N_AGENTS = 3*i
-        MAX = 10 * i * N_AGENTS
+        for k_rows in range(5,11):
+            NROWS = NCOLS = k_rows * i
+            FREE_CELL_RATIO = 1 - 0.1 * (i - 1)
+            AGGLOMERATION_FACTOR = 1 / i
+            for k_agents in range(3,6):
+                N_AGENTS = k_agents*i
+                MAX = 10 * i * N_AGENTS
 
-        #TODO to complete
-        # genero istanza usando random per gli agenti preesistenti
-        # dall'istanza prendo i paths ed estraggo gli init e goal di ogni agente per creare la dict goalsInits da passare a createPathsUsingReachGoal
+        
+        defineCombination()
+    
+    for i in range(0, 0.7, 0.1):
+        FREE_CELL_RATIO = i
+        NROWS = NCOLS = math.ceil(10 * ((i*10)+1))
+        
+        AGGLOMERATION_FACTOR = 1 / math.ceil(10 * ((i*10)+1))
+        N_AGENTS = 3*math.ceil(10 * ((i*10)+1))
+        MAX = 10 * N_AGENTS * math.ceil(10 * ((i*10)+1))
 
         defineCombination()
-
         
 def main():
     args = getInputArgs()
@@ -193,7 +202,7 @@ def main():
     if args.gui:
         executeUI()
     elif args.test:
-        defaulParameterstValues() # TODO: remove
+        defaulParameterstValues() # TODO: remove, ask user for SEED
         setSeed(SEED)   
         executeEvaluationTest()
     else:

@@ -22,7 +22,8 @@ def createPaths(inits, goalsInits, nAgents, limitLengthExistingPaths, graph):
     paths = []
 
     #TODO: check if it works ok (alternative: us random.gauss
-    maxLengthPath = random.randint(1, limitLengthExistingPaths) 
+    limitPath = random.randint(1, limitLengthExistingPaths) 
+    maxLengthAllPaths = 0
 
     for _ in range(nAgents):
         init = inits.pop()
@@ -32,7 +33,7 @@ def createPaths(inits, goalsInits, nAgents, limitLengthExistingPaths, graph):
         t = 0
 
         #TODO: remove print
-        while t <= maxLengthPath:
+        while t < limitPath:
             availableMoves = graph.getNeighbors(current)
 
             availableMoves = Path.removeIllegalMoves(availableMoves, paths, current, t)
@@ -53,13 +54,9 @@ def createPaths(inits, goalsInits, nAgents, limitLengthExistingPaths, graph):
         path.setGoal(current)
 
         paths.append(path)
-        maxLengthPath = max(maxLengthPath, path.getLength())
+        maxLengthAllPaths = max(maxLengthAllPaths, path.getLength())
 
-    # TODO: remove print
-    # for path in paths:
-    #     path.printPath()
-
-    return paths, maxLengthPath, goalsInits
+    return paths, maxLengthAllPaths, goalsInits
 
 def createPathsUsingReachGoal(goalsInits, nAgents, limitLengthPath, graph, useRelaxedPath = False):
     """

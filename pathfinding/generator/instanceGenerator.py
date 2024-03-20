@@ -57,7 +57,7 @@ def createInits(nAgents, availableCells):
 
 def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, maxLengthPathNewAgent, limitLengthExistingPaths, goalsInits, useReachGoal=False, useRelaxedPath = True):
     # limitLengthPath = freeCellRatio * nrows * ncols
-    goalInitNewAgent, grid, graph, paths, maxLengthPath = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, goalsInits, useReachGoal, useRelaxedPath)
+    goalInitNewAgent, grid, graph, paths, maxLenthAllPaths = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, goalsInits, useReachGoal, useRelaxedPath)
 
     if not paths: 
         return None
@@ -65,9 +65,9 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     goal, (init, timeMaxOccupied) = goalInitNewAgent.popitem()
 
     maxAvailableCells = len(graph.getNodes())
-    maxLengthPath = max(maxLengthPath, maxAvailableCells)
+    limitMaxNewAgent = maxAvailableCells + maxLenthAllPaths
 
-    if maxLengthPathNewAgent > maxLengthPath:
+    if maxLengthPathNewAgent > limitMaxNewAgent:
         return None
     
     instance = Instance(grid, graph, paths, init, goal, maxLengthPathNewAgent, timeMaxOccupied)
@@ -97,7 +97,7 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
                 if not checkReachability(init, goal, islands):
                     return goalsInits, grid, graph, None, None
             
-        paths, maxLengthPath, goalInitNewAgent = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
+        paths, maxLengthAllPaths, goalInitNewAgent = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
     else:
         if not goalsInits:
             inits, goalsInits = createInits(nAgents, availableCells)
@@ -106,6 +106,6 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
             for _, (init, _) in goalsInits.items():
                 inits.add(init)
                 
-        paths, maxLengthPath, goalInitNewAgent = createPaths(inits, goalsInits, nAgents, limitLengthExistingPaths, graph)
+        paths, maxLengthAllPaths, goalInitNewAgent = createPaths(inits, goalsInits, nAgents, limitLengthExistingPaths, graph)
     
-    return goalInitNewAgent, grid, graph, paths, maxLengthPath
+    return goalInitNewAgent, grid, graph, paths, maxLengthAllPaths
