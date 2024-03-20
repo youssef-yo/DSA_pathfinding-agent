@@ -126,6 +126,8 @@ class Information():
 
         print("Valore orizzonte temporale max: ", self.instance.getMaxLengthNewAgent())
 
+        print("Init nuovo Agente: ", self.instance.getInit())
+        print("Goal nuovo Agente: ", self.instance.getGoal())
         print("Stati in Open (e P): ", len(self.P))
         print("Stati espansi in Closed: ", len(self.closedSet))
         print("Lunghezza del percorso: ", self.path.getLength())
@@ -163,6 +165,8 @@ class Information():
                 file.write("Lunghezza Percorso " + str(i) + ":" + str(p.getLength()) + "\n")
             file.write("Valore orizzonte temporale max: " + str(self.instance.getMaxLengthNewAgent()) + "\n")
 
+            file.write("Init nuovo Agente: " + str(self.instance.getInit()) + "\n")
+            file.write("Goal nuovo Agente: " + str(self.instance.getGoal()) + "\n")
             file.write("Stati in Open (e P): " + str(len(self.P)) + "\n")
             file.write("Stati espansi in Closed: " + str(len(self.closedSet)) + "\n")
             file.write("Lunghezza del percorso: " + str(self.path.getLength()) + "\n")

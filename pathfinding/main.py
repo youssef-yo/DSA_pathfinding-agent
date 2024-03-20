@@ -10,10 +10,10 @@ from generator import informationGenerator
 from generator.instanceGenerator import generateInstance
 from solver.reachGoal import reachGoal
 
-import math
+from automated_test import automatedTest
+
 import random
 import numpy as np
-import gc   # garbage collector
 
 import configparser
 
@@ -102,117 +102,16 @@ def executeCLI():
 def executeUI():
     ui = UI(generateInstance, reachGoal, informationGenerator) #TODO: create class for the two controllers
     ui.run()
-
-def runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath):
-    information = Information(SEED)
-    information.startMonitoring()
-        
-    instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, goalsInits, useReachGoalExistingAgents, useRelaxedPath)
-    
-    if not instance:
-        print("Could not create instance.")
-        # TODO: save to file
-    else:
-        path, minimumSpanningTree, closedSet = reachGoal(instance, USE_RELAXED_PATH)
-        if path:
-            instance.addPath(path)
-
-            information.stopMonitoring()
-            information.setValues(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS)
-            
-            # information.printInformation()
-            information.saveInformationToFile()
-        else:
-            print("No path found for new agent")
-            # TODO: save to file
-    
-    return instance
-
-def freeMemory():
-    gc.collect()
-
-def defineCombination():
-    goalsInits = None
-    useReachGoalExistingAgents = False
-    useRelaxedPath = False
-
-    print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
-    instance = runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath)
-
-    freeMemory()
-    #####
-
-    if instance:
-        goalsInits = instance.getGoalsInits()
-    
-    useReachGoalExistingAgents = False
-    useRelaxedPath = True
-
-    print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
-    instance = runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath)
-    freeMemory()
-    #####
-
-    if instance:
-        goalsInits = instance.getGoalsInits()
-    
-    useReachGoalExistingAgents = True
-    useRelaxedPath = False
-
-    print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
-    instance = runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath)
-    freeMemory()
-    #####
-
-    if instance:
-        goalsInits = instance.getGoalsInits()
-    
-    useReachGoalExistingAgents = True
-    useRelaxedPath = True
-
-    print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
-    instance = runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath)
-    freeMemory()
-
-
-def executeEvaluationTest():
-    global NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH
-    
-    for i in range(1,11): # totali run = 10 * 6 * 3 = 180 * 4 (combinazioni) = 720 
-        for kRows in range(5,11):
-            NROWS = NCOLS = kRows * i
-            FREE_CELL_RATIO = 1 - 0.1 * (i - 1)
-            AGGLOMERATION_FACTOR = 1 / i
-            for factorAgent in np.arange(0.1, 0.6, 0.2):
-                availableCells = NROWS * NCOLS * FREE_CELL_RATIO  
-
-                N_AGENTS = int(math.ceil(availableCells * factorAgent))                 
-                LIMIT_LENGTH_EXISTING_PATHS = max(int((availableCells - N_AGENTS) * 0.5), 1)
-                MAX = int(math.ceil((availableCells + LIMIT_LENGTH_EXISTING_PATHS) * 0.3))
-
-                print("I: ", i, "NROWS: ", NROWS, " N_AGENTS: ", N_AGENTS, " FREE_CELL_RATIO: ", FREE_CELL_RATIO, " AGGLOMERATION_FACTOR: ", AGGLOMERATION_FACTOR, " MAX: ", MAX, " LIMIT_LENGTH_EXISTING_PATHS: ", LIMIT_LENGTH_EXISTING_PATHS)
-                
-                defineCombination()
-    
-    for i in range(0, 0.7, 0.1):
-        FREE_CELL_RATIO = i
-        NROWS = NCOLS = math.ceil(10 * ((i*10)+1))
-        
-        AGGLOMERATION_FACTOR = 1 / math.ceil(10 * ((i*10)+1))
-        N_AGENTS = 3*math.ceil(10 * ((i*10)+1))
-        MAX = 10 * N_AGENTS * math.ceil(10 * ((i*10)+1))
-
-        defineCombination()
         
 def main():
     args = getInputArgs()
-    args.test = True
+    # args.test = True
     if args.gui:
         executeUI()
     elif args.test:
-        defaulParameterstValues() # TODO: remove, ask user for SEED
-        setSeed(SEED)   
-        executeEvaluationTest()
+        # defaulParameterstValues() # TODO: remove, ask user for SEED
+        # setSeed(SEED)   
+        automatedTest.executeEvaluationTest()
     else:
         # readParametersFromFile()
         defaulParameterstValues()
