@@ -96,7 +96,15 @@ class Information():
         self.relaxedPath = relaxedPath
         self.reachGoalExistingAgents = reachGoalExistingAgents
 
+    def setFailValues(self, freeCellRatio, agglomerationFactor, relaxedPath, reachGoalExistingAgents):
+        self.freeCellRatio = freeCellRatio
+        self.agglomerationFactor = agglomerationFactor
+        self.relaxedPath = relaxedPath
+        self.reachGoalExistingAgents = reachGoalExistingAgents
+
     def computeWaitMove(self, path):
+        if not path:
+            return None
         waitCounter = 0
         for _, move in path.getMoves():
             if move.getSrc() == move.getDst():
@@ -176,7 +184,7 @@ class Information():
             file.write("Utilizzo di memoria: " + str(self.totalMemory) + " KB\n")
             file.write("Picco di memoria: " + str(self.peakMemory) + " KB\n")
     
-    def saveFailInformationToFile(self):
+    def saveFailInformationToFile(self, nrows, ncols, maxLengthNewAgent):
         directory = os.path.join(pathlib.Path(__file__).parent.parent.parent.resolve(), "output")
         
         if not os.path.exists(directory):
@@ -196,12 +204,12 @@ class Information():
             else:
                 file.write("Reach goal NON UTILIZZATO per gli agenti preesistenti\n")
 
-            file.write("Numero di righe: " + str(self.instance.getGrid().getNrows()) + "\n")
-            file.write("Numero di colonne: " + str(self.instance.getGrid().getNcols()) + "\n")
+            file.write("Numero di righe: " + str(nrows) + "\n")
+            file.write("Numero di colonne: " + str(ncols) + "\n")
             file.write("Rapporto di celle libere: " + str(self.freeCellRatio) + "\n")
             file.write("Fattore di agglomerazione: " + str(self.agglomerationFactor) + "\n")
-            file.write("Valore orizzonte temporale max: " + str(self.instance.getMaxLengthNewAgent()) + "\n")
-            
+            file.write("Valore orizzonte temporale max: " + str(maxLengthNewAgent) + "\n")
+
             file.write("Tempo di esecuzione: " + str(self.executionTime) + "\n")
             file.write("Utilizzo di memoria: " + str(self.totalMemory) + " KB\n")
             file.write("Picco di memoria: " + str(self.peakMemory) + " KB\n")
