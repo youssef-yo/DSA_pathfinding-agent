@@ -41,7 +41,9 @@ def runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath):
     
     if not instance:
         print("Could not create instance.")
-        # TODO: save to file
+        information.stopMonitoring()
+        information.setValues(None, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, None, None, None, useRelaxedPath, useReachGoalExistingAgents)
+        information.saveFailInformationToFile()
     else:
         path, minimumSpanningTree, closedSet = reachGoal(instance, useRelaxedPath)
         if path:
@@ -54,7 +56,9 @@ def runSingleSimulation(goalsInits, useReachGoalExistingAgents, useRelaxedPath):
             information.saveInformationToFile()
         else:
             print("No path found for new agent")
-            # TODO: save to file
+            information.stopMonitoring()
+            information.setValues(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, None, None, None, useRelaxedPath, useReachGoalExistingAgents)
+            information.saveFailInformationToFile()
     
     return instance
 

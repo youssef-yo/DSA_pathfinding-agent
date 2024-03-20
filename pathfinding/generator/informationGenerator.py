@@ -175,3 +175,33 @@ class Information():
             file.write("Tempo di esecuzione: " + str(self.executionTime) + "\n")
             file.write("Utilizzo di memoria: " + str(self.totalMemory) + " KB\n")
             file.write("Picco di memoria: " + str(self.peakMemory) + " KB\n")
+    
+    def saveFailInformationToFile(self):
+        directory = os.path.join(pathlib.Path(__file__).parent.parent.parent.resolve(), "output")
+        
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        filename = os.path.join(directory, "information_" + str(uuid.uuid4())[:6] + ".txt")
+        with open(filename, 'w') as file:
+            file.write("FAIL\n")
+            file.write("Seed: " + str(self.seed) + "\n")
+            if self.relaxedPath:
+                file.write("Relaxed path UTILIZZATO\n")
+            else:
+                file.write("Relaxed path NON UTILIZZATO\n")
+            
+            if self.reachGoalExistingAgents:
+                file.write("Reach goal UTILIZZATO per gli agenti preesistenti\n")
+            else:
+                file.write("Reach goal NON UTILIZZATO per gli agenti preesistenti\n")
+
+            file.write("Numero di righe: " + str(self.instance.getGrid().getNrows()) + "\n")
+            file.write("Numero di colonne: " + str(self.instance.getGrid().getNcols()) + "\n")
+            file.write("Rapporto di celle libere: " + str(self.freeCellRatio) + "\n")
+            file.write("Fattore di agglomerazione: " + str(self.agglomerationFactor) + "\n")
+            file.write("Valore orizzonte temporale max: " + str(self.instance.getMaxLengthNewAgent()) + "\n")
+            
+            file.write("Tempo di esecuzione: " + str(self.executionTime) + "\n")
+            file.write("Utilizzo di memoria: " + str(self.totalMemory) + " KB\n")
+            file.write("Picco di memoria: " + str(self.peakMemory) + " KB\n")
