@@ -42,6 +42,8 @@ def reachGoal(instance, relaxedPlan = False):
 
         # check if the goal will be occupied in the future, if so take another state
         if currentState.getNode() == goal and currentState.getTime() <= maxTimeGoalOccupied + 1:
+            if not openList:
+                return None, None, None
             newCurrentState = heapq.heappop(openList)[1]
             closedSet.add((newCurrentState.getNode(), newCurrentState.getTime()))
 
