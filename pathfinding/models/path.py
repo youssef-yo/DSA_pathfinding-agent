@@ -32,6 +32,9 @@ class Path:
     
     def getGoal(self):
         return self.goal
+    
+    def setGoal(self, goal):
+        self.goal = goal
 
     def getCost(self):
         return self.cost
