@@ -294,8 +294,8 @@ class UI:
 
             t += 1
     
-    def initialize_information(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents):
-        self.information.setValues(instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents)
+    def initialize_information(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents, maxLengthExistingPaths):
+        self.information.setValues(instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents, maxLengthExistingPaths)
     
 
     def clean_information(self):
@@ -451,7 +451,7 @@ class UI:
                                     self.instance.addPath(new_path)
                                     self.draw_single_path(new_path, RED)
                             if new_path:
-                                self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState())
+                                self.initialize_information(self.instance, float(free_cell_ratio_input.get_text()), float(agglomeration_factor_input.get_text()), new_path, P, closedSet, toggle_relaxed_path_button.getState(), toggle_reach_goal_button.getState(), max_length_existing_paths_input.get_text())
                                 self.draw_information()
                             else:
                                 self.reset_grid()

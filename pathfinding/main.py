@@ -10,7 +10,8 @@ from generator import informationGenerator
 from generator.instanceGenerator import generateInstance
 from solver.reachGoal import reachGoal
 
-from automated_test import automatedTest
+from automated_test.automatedTest import AutomatedTest
+from automated_test.elaborateInformation import ElaborateInformation
 
 import random
 import numpy as np
@@ -92,7 +93,7 @@ def executeCLI():
             instance.addPath(path)
 
             information.stopMonitoring()
-            information.setValues(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS)
+            information.setValues(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, USE_RELAXED_PATH, USE_REACH_GOAL_EXISTING_AGENTS, LIMIT_LENGTH_EXISTING_PATHS)
             
             information.printInformation()
             information.saveInformationToFile()
@@ -109,9 +110,21 @@ def main():
     if args.gui:
         executeUI()
     elif args.test:
-        # defaulParameterstValues() # TODO: remove, ask user for SEED
-        # setSeed(SEED)   
-        automatedTest.executeEvaluationTest()
+        
+        # Uncomment to create a csv
+
+        # automatedTest = AutomatedTest()
+        # data = automatedTest.executeEvaluationTest()
+        
+        # elaborateInformation = ElaborateInformation(data)
+        # elaborateInformation.printData()
+        # elaborateInformation.saveDataToFile()
+
+        # Uncomment to read the csv and plot the data
+        
+        elaborateInformation = ElaborateInformation(None)
+        elaborateInformation.loadDataFromFile()
+        elaborateInformation.elaborateData()
     else:
         # readParametersFromFile()
         defaulParameterstValues()

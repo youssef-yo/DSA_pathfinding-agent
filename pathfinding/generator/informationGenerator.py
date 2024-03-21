@@ -22,6 +22,7 @@ class Information():
         self.peakMemory = None
         self.relaxedPath = None
         self.reachGoalExistingAgents = None
+        self.limitLengthExistingPaths = None
         
 
     def startMonitoring(self):
@@ -85,7 +86,7 @@ class Information():
         peakMemory = tracedMemory[1] / 1000
         return avgMemory, peakMemory
     
-    def setValues(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents):
+    def setValues(self, instance, freeCellRatio, agglomerationFactor, path, P, closedSet, relaxedPath, reachGoalExistingAgents, limitLengthExistingPaths):
         self.instance = instance
         self.freeCellRatio = freeCellRatio
         self.agglomerationFactor = agglomerationFactor
@@ -95,12 +96,14 @@ class Information():
         self.waitCounter = self.computeWaitMove(path)
         self.relaxedPath = relaxedPath
         self.reachGoalExistingAgents = reachGoalExistingAgents
+        self.limitLengthExistingPaths = limitLengthExistingPaths
 
-    def setFailValues(self, freeCellRatio, agglomerationFactor, relaxedPath, reachGoalExistingAgents):
+    def setFailValues(self, freeCellRatio, agglomerationFactor, relaxedPath, reachGoalExistingAgents, limitLengthExistingPaths):
         self.freeCellRatio = freeCellRatio
         self.agglomerationFactor = agglomerationFactor
         self.relaxedPath = relaxedPath
         self.reachGoalExistingAgents = reachGoalExistingAgents
+        self.limitLengthExistingPaths = limitLengthExistingPaths
 
     def computeWaitMove(self, path):
         if not path:
@@ -128,7 +131,7 @@ class Information():
         print("Rapporto di celle libere: ", self.freeCellRatio)
         print("Fattore di agglomerazione: ", self.agglomerationFactor)
         print("Numero di agenti preesistenti: ", len(self.instance.getPaths()) - 1)
-
+        print("Lunghezza Max Agenti Preesistenti: ", self.limitLengthExistingPaths)
         for i, p in enumerate(self.instance.getPaths()[:-1]):
             print("Lunghezza Percorso ", i, ":" , p.getLength())
 
@@ -169,6 +172,7 @@ class Information():
             file.write("Rapporto di celle libere: " + str(self.freeCellRatio) + "\n")
             file.write("Fattore di agglomerazione: " + str(self.agglomerationFactor) + "\n")
             file.write("Numero di agenti preesistenti: " + str(len(self.instance.getPaths()) - 1) + "\n")
+            file.write("Lunghezza Max Agenti Preesistenti: " + str(self.limitLengthExistingPaths) + "\n")
             for i, p in enumerate(self.instance.getPaths()[:-1]):
                 file.write("Lunghezza Percorso " + str(i) + ":" + str(p.getLength()) + "\n")
             file.write("Valore orizzonte temporale max: " + str(self.instance.getMaxLengthNewAgent()) + "\n")
@@ -213,3 +217,55 @@ class Information():
             file.write("Tempo di esecuzione: " + str(self.executionTime) + "\n")
             file.write("Utilizzo di memoria: " + str(self.totalMemory) + " KB\n")
             file.write("Picco di memoria: " + str(self.peakMemory) + " KB\n")
+    
+    def getRowInformation(self, typeRun):     
+        rowData = {
+            'seed': self.seed,
+            'type': typeRun,
+            'row': self.instance.getGrid().getNrows(),
+            'col': self.instance.getGrid().getNcols(),
+            'freeCellRatio': self.freeCellRatio,
+            'agglomerationFactor': self.agglomerationFactor,
+            'nAgents': len(self.instance.getPaths()) - 1,
+            'limitLengthExistingPaths': self.limitLengthExistingPaths,
+            'executionTime': self.executionTime,
+            'totalMemory': self.totalMemory,
+            'peakMemory': self.peakMemory,
+            'maxLengthNewAgent': self.instance.getMaxLengthNewAgent(),
+            'initNewAgent': self.instance.getInit(),
+            'goalNewAgent': self.instance.getGoal(),
+            'nStatesVisited': len(self.P),
+            'nStatesClosed': len(self.closedSet),
+            'pathLength': self.path.getLength(),
+            'pathCost': self.path.getCost(),
+            'waitCounter': self.waitCounter
+        }
+
+        return rowData
+
+    def getFailRowInformation(self, typeRun, nrows, ncols, maxLengthNewAgent):     
+        rowData = {
+            'seed': self.seed,
+            'type': typeRun,
+            'row': nrows,
+            'col': ncols,
+            'freeCellRatio': self.freeCellRatio,
+            'agglomerationFactor': self.agglomerationFactor,
+            'nAgents': None,
+            'limitLengthExistingPaths': self.limitLengthExistingPaths,
+            'executionTime': self.executionTime,
+            'totalMemory': self.totalMemory,
+            'peakMemory': self.peakMemory,
+            'maxLengthNewAgent': maxLengthNewAgent,
+            'initNewAgent': None,
+            'goalNewAgent': None,
+            'nStatesVisited': None,
+            'nStatesClosed': None,
+            'pathLength': None,
+            'pathCost': None,
+            'waitCounter': self.waitCounter
+        }
+
+        return rowData
+
+    
