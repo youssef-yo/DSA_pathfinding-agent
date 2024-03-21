@@ -23,6 +23,7 @@ class Information():
         self.relaxedPath = None
         self.reachGoalExistingAgents = None
         self.limitLengthExistingPaths = None
+        self.lengthExistingPaths = None
         
 
     def startMonitoring(self):
@@ -96,6 +97,7 @@ class Information():
         self.waitCounter = self.computeWaitMove(path)
         self.relaxedPath = relaxedPath
         self.reachGoalExistingAgents = reachGoalExistingAgents
+        self.lengthExistingPaths = self.instance.getPaths()[0].getLength()
         self.limitLengthExistingPaths = limitLengthExistingPaths
 
     def setFailValues(self, freeCellRatio, agglomerationFactor, relaxedPath, reachGoalExistingAgents, limitLengthExistingPaths):
@@ -131,6 +133,7 @@ class Information():
         print("Rapporto di celle libere: ", self.freeCellRatio)
         print("Fattore di agglomerazione: ", self.agglomerationFactor)
         print("Numero di agenti preesistenti: ", len(self.instance.getPaths()) - 1)
+        print("Lunghezza Agenti Preesistenti: ", self.lengthExistingPaths)
         print("Lunghezza Max Agenti Preesistenti: ", self.limitLengthExistingPaths)
         for i, p in enumerate(self.instance.getPaths()[:-1]):
             print("Lunghezza Percorso ", i, ":" , p.getLength())
@@ -172,6 +175,7 @@ class Information():
             file.write("Rapporto di celle libere: " + str(self.freeCellRatio) + "\n")
             file.write("Fattore di agglomerazione: " + str(self.agglomerationFactor) + "\n")
             file.write("Numero di agenti preesistenti: " + str(len(self.instance.getPaths()) - 1) + "\n")
+            file.write("Lunghezza Agenti Preesistenti: " + str(self.lengthExistingPaths) + "\n")
             file.write("Lunghezza Max Agenti Preesistenti: " + str(self.limitLengthExistingPaths) + "\n")
             for i, p in enumerate(self.instance.getPaths()[:-1]):
                 file.write("Lunghezza Percorso " + str(i) + ":" + str(p.getLength()) + "\n")
@@ -227,6 +231,7 @@ class Information():
             'freeCellRatio': self.freeCellRatio,
             'agglomerationFactor': self.agglomerationFactor,
             'nAgents': len(self.instance.getPaths()) - 1,
+            'lengthExistingPaths': self.lengthExistingPaths,
             'limitLengthExistingPaths': self.limitLengthExistingPaths,
             'executionTime': self.executionTime,
             'totalMemory': self.totalMemory,
@@ -252,6 +257,7 @@ class Information():
             'freeCellRatio': self.freeCellRatio,
             'agglomerationFactor': self.agglomerationFactor,
             'nAgents': None,
+            'lengthExistingPaths': None,
             'limitLengthExistingPaths': self.limitLengthExistingPaths,
             'executionTime': self.executionTime,
             'totalMemory': self.totalMemory,

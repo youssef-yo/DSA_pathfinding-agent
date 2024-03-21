@@ -30,19 +30,22 @@ class AutomatedTest():
         #TODO: generate random or ask?
         SEED = 1234
         
-        for i in range(1,4): # lista al posto di range [1, 2, 5, 10, 20, 100]
+        gridDimension = [1, 2, 5]
+        # for i in range(1,6): # lista al posto di range [1, 2, 5, 10, 20, 100]
+        for i in gridDimension: # lista al posto di range [1, 2, 5, 10, 20, 100]
             NROWS = NCOLS = i * 5
             FREE_CELL_RATIO = 1 - 0.1 * (i - 1)
             AGGLOMERATION_FACTOR = 1 / i
             availableCells = NROWS * NCOLS * FREE_CELL_RATIO 
-            for factorAgent in np.arange(0.1, 0.6, 0.2):
+            for factorAgent in np.arange(0.01, 0.1, 0.01):
                 N_AGENTS = int(math.ceil(availableCells * factorAgent))                 
-                LIMIT_LENGTH_EXISTING_PATHS = max(int((availableCells - N_AGENTS) * 0.5), 1)
-                MAX = int(math.ceil((availableCells + LIMIT_LENGTH_EXISTING_PATHS) * 0.3))
+                LIMIT_LENGTH_EXISTING_PATHS = max(int((availableCells - N_AGENTS) * 0.05), 1)
+                MAX = int(math.ceil((availableCells + LIMIT_LENGTH_EXISTING_PATHS) * 0.1))
 
                 print("I: ", i, "NROWS: ", NROWS, " N_AGENTS: ", N_AGENTS, " FREE_CELL_RATIO: ", FREE_CELL_RATIO, " AGGLOMERATION_FACTOR: ", AGGLOMERATION_FACTOR, " MAX: ", MAX, " LIMIT_LENGTH_EXISTING_PATHS: ", LIMIT_LENGTH_EXISTING_PATHS)
                 
-                self.defineCombination()
+                for _ in range(1,5):
+                    self.defineCombination()
         return self.data
     
     def runSingleSimulation(self, typeRun, goalsInits, useReachGoalExistingAgents, useRelaxedPath):
@@ -85,7 +88,6 @@ class AutomatedTest():
         print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
         typeRun = 0
         instance = self.runSingleSimulation(typeRun, goalsInits, useReachGoalExistingAgents, useRelaxedPath)
-
         self.freeMemory()
         #####
 

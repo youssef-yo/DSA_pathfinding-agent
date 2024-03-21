@@ -17,9 +17,10 @@ class ElaborateInformation:
         print(self.df.info())
         print("\n")
 
-        self.analyze_by_type(self.df)
+        self.plot_grouped_graphs(self.df)
+        # self.analyze_by_type(self.df)
         # self.analyze_by_type_and_parameters(self.df)
-        self.compare_instances_across_types(self.df)
+        # self.compare_instances_across_types(self.df)
 
     def analyze_by_type(self, df):
         types = df['type'].unique()
@@ -117,7 +118,55 @@ class ElaborateInformation:
             print("\n")
 
 
+    def plot_grouped_graphs(self, df):
+        # Remove rows with NaN values
+        df = df.dropna()
+        df.drop(columns=['initNewAgent'], inplace=True)
+        df.drop(columns=['goalNewAgent'], inplace=True)
 
+        # Raggruppa il DataFrame per righe e colonne uguali
+        grouped_df = df.groupby(['type','row', 'col', 'freeCellRatio', 'agglomerationFactor', 'nAgents', 'limitLengthExistingPaths', 'maxLengthNewAgent']).mean().reset_index()
+        
+        # Creazione dei grafici
+        for name, group in grouped_df.groupby(['row', 'col', 'freeCellRatio', 'agglomerationFactor']):
+            fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(18, 10))
+
+            # Grafico per il numero di agenti
+            sns.lineplot(x='nAgents', y='executionTime', hue='type', data=group, ax=axes[0, 0])
+            axes[0, 0].set_title('Numero di agenti - Tempo di esecuzione')
+            axes[0, 0].set_xlabel('Numero di agenti')
+            axes[0, 0].set_ylabel('Tempo di esecuzione')
+
+            sns.lineplot(x='nAgents', y='totalMemory', hue='type', data=group, ax=axes[1, 0])
+            axes[1, 0].set_title('Numero di agenti - Picco di memoria')
+            axes[1, 0].set_xlabel('Numero di agenti')
+            axes[1, 0].set_ylabel('Picco di memoria')
+
+            # # Grafico per maxLengthNewAgent
+            # sns.lineplot(x='maxLengthNewAgent', y='executionTime', hue='type', data=group, ax=axes[0, 1])
+            # axes[0, 1].set_title('MaxLengthNewAgent - Tempo di esecuzione')
+            # axes[0, 1].set_xlabel('MaxLengthNewAgent')
+            # axes[0, 1].set_ylabel('Tempo di esecuzione')
+
+            # sns.lineplot(x='maxLengthNewAgent', y='totalMemory', hue='type', data=group, ax=axes[1, 1])
+            # axes[1, 1].set_title('MaxLengthNewAgent - Picco di memoria')
+            # axes[1, 1].set_xlabel('MaxLengthNewAgent')
+            # axes[1, 1].set_ylabel('Picco di memoria')
+
+            # # Grafico per limitLengthExistingPaths
+            # sns.lineplot(x='limitLengthExistingPaths', y='executionTime', hue='type', data=group, ax=axes[0, 2])
+            # axes[0, 2].set_title('LimitLengthExistingPaths - Tempo di esecuzione')
+            # axes[0, 2].set_xlabel('LimitLengthExistingPaths')
+            # axes[0, 2].set_ylabel('Tempo di esecuzione')
+
+            # sns.lineplot(x='limitLengthExistingPaths', y='totalMemory', hue='type', data=group, ax=axes[1, 2])
+            # axes[1, 2].set_title('LimitLengthExistingPaths - Picco di memoria')
+            # axes[1, 2].set_xlabel('LimitLengthExistingPaths')
+            # axes[1, 2].set_ylabel('Picco di memoria')
+
+            plt.tight_layout()
+            plt.suptitle(f'Grafici per row={name[0]}, col={name[1]}', y=1.05)
+            plt.show()
     
 
     def printData(self):

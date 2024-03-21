@@ -113,18 +113,18 @@ def main():
         
         # Uncomment to create a csv
 
-        # automatedTest = AutomatedTest()
-        # data = automatedTest.executeEvaluationTest()
+        automatedTest = AutomatedTest()
+        data = automatedTest.executeEvaluationTest()
         
-        # elaborateInformation = ElaborateInformation(data)
-        # elaborateInformation.printData()
-        # elaborateInformation.saveDataToFile()
+        elaborateInformation = ElaborateInformation(data)
+        elaborateInformation.printData()
+        elaborateInformation.saveDataToFile()
 
         # Uncomment to read the csv and plot the data
         
-        elaborateInformation = ElaborateInformation(None)
-        elaborateInformation.loadDataFromFile()
-        elaborateInformation.elaborateData()
+        # elaborateInformation = ElaborateInformation(None)
+        # elaborateInformation.loadDataFromFile()
+        # elaborateInformation.elaborateData()
     else:
         # readParametersFromFile()
         defaulParameterstValues()
