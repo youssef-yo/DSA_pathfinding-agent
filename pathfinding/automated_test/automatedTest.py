@@ -31,7 +31,7 @@ class AutomatedTest():
         SEED = seed
         
         
-        gridDimension = [50, 100]
+        gridDimension = [250]
         # for i in range(1,6): # lista al posto di range [1, 2, 5, 10, 20, 100]
         for dim in gridDimension: # lista al posto di range [1, 2, 5, 10, 20, 100]
             NROWS = NCOLS = dim
@@ -39,22 +39,42 @@ class AutomatedTest():
             FREE_CELL_RATIO = 0.7
             AGGLOMERATION_FACTOR = 0.2
             
-            availableCells = NROWS * NCOLS * FREE_CELL_RATIO 
-            for factorAgent in np.arange(0.1, 0.2, 0.02):
-                N_AGENTS = int(math.ceil(availableCells * factorAgent))                 
+            # availableCells = NROWS * NCOLS * FREE_CELL_RATIO 
+            LIMIT_LENGTH_EXISTING_PATHS = max(int((NROWS) * 0.5), 1)
+            MAX = int(math.ceil((NROWS + NCOLS + LIMIT_LENGTH_EXISTING_PATHS)))
 
-                # TODO: fare un for anche per coefficiente di limitLengthExistingPaths
-                LIMIT_LENGTH_EXISTING_PATHS = max(int((availableCells - N_AGENTS) * 0.01), 1)
-                MAX = int(math.ceil((availableCells + LIMIT_LENGTH_EXISTING_PATHS) * 0.1))
+            for factorAgent in np.arange(0.4, 1.5, 0.2):
+                # N_AGENTS = int(math.ceil(availableCells * factorAgent))
+                N_AGENTS = int(math.ceil(NROWS* factorAgent))               
+
+                # # TODO: fare un for anche per coefficiente di limitLengthExistingPaths
+                # # LIMIT_LENGTH_EXISTING_PATHS = max(int((N_AGENTS) * 0.8), 1)
+                # LIMIT_LENGTH_EXISTING_PATHS = max(int((N_AGENTS) * 0.8), 1)
+                # # MAX = int(math.ceil((availableCells + LIMIT_LENGTH_EXISTING_PATHS) * 0.1))
+                # MAX = int(math.ceil((NROWS + NCOLS + LIMIT_LENGTH_EXISTING_PATHS)))
 
                 print("I: ", dim, "NROWS: ", NROWS, " N_AGENTS: ", N_AGENTS, " FREE_CELL_RATIO: ", FREE_CELL_RATIO, " AGGLOMERATION_FACTOR: ", AGGLOMERATION_FACTOR, " MAX: ", MAX, " LIMIT_LENGTH_EXISTING_PATHS: ", LIMIT_LENGTH_EXISTING_PATHS)
                 
                 for iRun in range(1,5):
                     print("iRun: ", iRun)
                     self.defineCombination()
+            
+            N_AGENTS = NROWS
+            for limitLength in range(0.1, 0.6, 0.1):
+                LIMIT_LENGTH_EXISTING_PATHS = max(int((N_AGENTS) * limitLength), 1)
+                MAX = int(math.ceil((NROWS + NCOLS + LIMIT_LENGTH_EXISTING_PATHS)))
+                for iRun in range(1,5):
+                    print("iRun: ", iRun)
+                    self.defineCombination()
         return self.data
     
-    def executeReachGoal(self, typeRun, instance, useReachGoalExistingAgents, useRelaxedPath, information):
+
+    # def updateInformationValue(self, information, informationInstance):
+    #     information.setExecutionTime(information.getExecutionTime() + informationInstance.getExecutionTime())
+    #     information.setTotalMemory(information.getTotalMemory() + informationInstance.getTotalMemory())
+    #     information.setPeakMemory(information.getPeakMemory() + informationInstance.getPeakMemory())
+
+    def executeReachGoal(self, typeRun, instance, useReachGoalExistingAgents, useRelaxedPath, information, informationInstance):
         path, minimumSpanningTree, closedSet = reachGoal(instance, useRelaxedPath)
         if path:
             instance.addPath(path)
@@ -62,18 +82,22 @@ class AutomatedTest():
 
             information.stopMonitoring()
             information.setValues(instance, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, path, minimumSpanningTree, closedSet, useRelaxedPath, useReachGoalExistingAgents, LIMIT_LENGTH_EXISTING_PATHS)
+            # self.updateInformationValue(information, informationInstance)
             # information.saveInformationToFile()
-            self.addRow(information.getRowInformation(typeRun))
+            self.addRow(information.getRowInformation(typeRun, informationInstance))
 
         else:
             instance.setIsNewAgentAdded(False)
             print("No path found for new agent")
             information.stopMonitoring()
+            # add time and memory
             information.setFailValues(FREE_CELL_RATIO, AGGLOMERATION_FACTOR, useRelaxedPath, useReachGoalExistingAgents, LIMIT_LENGTH_EXISTING_PATHS)
-            # information.saveFailInformationToFile(NROWS, NCOLS, MAX)
-            self.addRow(information.getFailRowInformation(typeRun, NROWS, NCOLS, MAX))
+            # self.updateInformationValue(information, informationInstance)
 
-    def runSingleSimultationWithInstance(self, typeRun, instance, useReachGoalExistingAgents, useRelaxedPath):
+            # information.saveFailInformationToFile(NROWS, NCOLS, MAX)
+            self.addRow(information.getFailRowInformation(typeRun, NROWS, NCOLS, MAX, informationInstance))
+
+    def runSingleSimultationWithInstance(self, typeRun, instance, useReachGoalExistingAgents, useRelaxedPath, informationInstance):
         # rimuovo il percorso del new agent dall'istanza che mi è stata passata
         if instance.getIsNewAgentAdded():
             instance.removeLastPath()
@@ -81,9 +105,20 @@ class AutomatedTest():
         information = Information(SEED)
         information.startMonitoring()
 
-        self.executeReachGoal(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath, information)
+        self.executeReachGoal(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath, information, informationInstance)
         
         return instance
+
+    def createInstance(self, useReachGoalExistingAgents, useRelaxedPath = False):
+        information = Information(SEED)
+        information.startMonitoring()
+
+        goalsInits = None
+        instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, goalsInits, useReachGoalExistingAgents, useRelaxedPath)
+        
+        information.stopMonitoring()
+
+        return instance, information
 
     def runSingleSimulation(self, typeRun, instance, useReachGoalExistingAgents, useRelaxedPath):
         information = Information(SEED)
@@ -110,32 +145,53 @@ class AutomatedTest():
     def defineCombination(self):
         instance = None
 
-        useReachGoalExistingAgents = False
-        useRelaxedPath = False  
-
         # potremmo fare anche così:
         # creo prima l'istanza sono riuscito? si, esegui la simulazione, no, termina
         # Mi salvo il tempo neccessario per creare l'istanza, la aggiungo poi al tempo per eseguire ogni singola simulazione
+        useReachGoalExistingAgents = False
+        instance, informationInstance = self.createInstance(useReachGoalExistingAgents)
+        # timeToInstance = information.getExecutionTime()
+        # totalMemory = information.getTotalMemory()
+        # pickMemory = information.getPeakMemory()
+
+        self.freeMemory()
+
+        if not instance:
+            print("Instance not created")
+        else:
+            useRelaxedPath = False     
+            print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
+            typeRun = 0
+            self.runSingleSimultationWithInstance(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath, informationInstance)
+            self.freeMemory()
+
+            useRelaxedPath = True  
+            print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
+            typeRun = 1
+            self.runSingleSimultationWithInstance(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath, informationInstance)
+            self.freeMemory()
+
+
 
         ## TODO: RUN SECOND COMBINATION ONLY IF FIRST COMBINATION CREATED INSTANCE SUCCESSFULLY
 
-        print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
-        typeRun = 0
-        instance = self.runSingleSimulation(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath)
-        self.freeMemory()
-        #####
+        # print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
+        # typeRun = 0
+        # instance = self.runSingleSimulation(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath)
+        # self.freeMemory()
+        # #####
 
-        useReachGoalExistingAgents = False
-        useRelaxedPath = True
+        # useReachGoalExistingAgents = False
+        # useRelaxedPath = True
 
-        print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
-        typeRun = 1
-        if instance:
-            instance = self.runSingleSimultationWithInstance(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath)
-        else:
-            print("---->Creating instance for second combination")
-            instance = self.runSingleSimulation(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath)
-        self.freeMemory()
+        # print("useReachGoalExistingAgents: ", useReachGoalExistingAgents, " useRelaxedPath: ", useRelaxedPath)
+        # typeRun = 1
+        # if instance:
+        #     instance = self.runSingleSimultationWithInstance(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath)
+        # else:
+        #     print("---->Creating instance for second combination")
+        #     instance = self.runSingleSimulation(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath)
+        # self.freeMemory()
         #####
         
         

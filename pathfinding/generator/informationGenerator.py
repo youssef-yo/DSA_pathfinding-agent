@@ -78,6 +78,15 @@ class Information():
     def setSeed(self, seed):   
         self.seed = seed
 
+    def setExecutionTime(self, executionTime):
+        self.executionTime = executionTime
+    
+    def setTotalMemory(self, totalMemory):
+        self.totalMemory = totalMemory
+    
+    def setPeakMemory(self, peakMemory):
+        self.peakMemory = peakMemory
+
     def computeMemoryUsage(self):
         # Stop memory monitoring
         tracedMemory = tracemalloc.get_traced_memory()
@@ -222,7 +231,7 @@ class Information():
             file.write("Utilizzo di memoria: " + str(self.totalMemory) + " KB\n")
             file.write("Picco di memoria: " + str(self.peakMemory) + " KB\n")
     
-    def getRowInformation(self, typeRun):     
+    def getRowInformation(self, typeRun, informationInstance):     
         rowData = {
             'seed': self.seed,
             'type': typeRun,
@@ -243,12 +252,15 @@ class Information():
             'nStatesClosed': len(self.closedSet),
             'pathLength': self.path.getLength(),
             'pathCost': self.path.getCost(),
-            'waitCounter': self.waitCounter
+            'waitCounter': self.waitCounter,
+            'executionTimeInstance': informationInstance.getExecutionTime(),
+            'totalMemoryInstance': informationInstance.getTotalMemory(),
+            'peakMemoryInstance': informationInstance.getPeakMemory()
         }
 
         return rowData
 
-    def getFailRowInformation(self, typeRun, nrows, ncols, maxLengthNewAgent):     
+    def getFailRowInformation(self, typeRun, nrows, ncols, maxLengthNewAgent, informationInstance):     
         rowData = {
             'seed': self.seed,
             'type': typeRun,
@@ -269,7 +281,10 @@ class Information():
             'nStatesClosed': None,
             'pathLength': None,
             'pathCost': None,
-            'waitCounter': self.waitCounter
+            'waitCounter': self.waitCounter,
+            'executionTimeInstance': informationInstance.getExecutionTime(),
+            'totalMemoryInstance': informationInstance.getTotalMemory(),
+            'peakMemoryInstance': informationInstance.getPeakMemory()
         }
 
         return rowData
