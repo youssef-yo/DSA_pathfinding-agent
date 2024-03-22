@@ -97,10 +97,7 @@ def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, open
             currentGscore = currentState.g + weight
 
             updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore)
-                    
-            # if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in openList]:
-            #     heapq.heappush(openList, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
-
+             
             if (neighbor, currentState.getTime() + 1) not in openNodeTime:
                 openNodeTime.add((neighbor, currentState.getTime() + 1))
                 heapq.heappush(openList, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
@@ -154,9 +151,6 @@ def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
                 currentGscore = currentState.g + weight
 
                 updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore)
-                                
-                # if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in openList]:
-                #     heapq.heappush(openList, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
 
                 if (neighbor, currentState.getTime() + 1) not in openNodeTime:
                     openNodeTime.add((neighbor, currentState.getTime() + 1))

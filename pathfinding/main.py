@@ -22,6 +22,7 @@ def getInputArgs():
     parser = argparse.ArgumentParser(description="Pathfinding algorithm for multi-agent systems.")
     parser.add_argument('--gui', action='store_true', help="Execute the program with the GUI interface. If not specified, the program will run in command line mode.")
     parser.add_argument('--test', action='store_true', help="Evaluate the program using automated tests.")
+    parser.add_argument('--plot', action='store_true', help="Evaluate the program using cli and plot the final grid.")
 
     return parser.parse_args()
 
@@ -67,7 +68,7 @@ def readParametersFromFile():
     SEED = int(config['SEED']['seed'])
     
 
-def executeCLI():
+def executeCLI(plotGrid):
     # Start time and memory monitoring
     information = Information(SEED)
     information.startMonitoring()
@@ -98,7 +99,8 @@ def executeCLI():
             information.printInformation()
             information.saveInformationToFile()
 
-            plot(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+            if plotGrid:
+                plot(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
 
 def executeUI():
     ui = UI(generateInstance, reachGoal, informationGenerator) #TODO: create class for the two controllers
@@ -132,7 +134,7 @@ def main():
         # defaulParameterstValues()
 
         setSeed(SEED)   
-        executeCLI()
+        executeCLI(args.plot)
            
 
 if __name__ == "__main__":
