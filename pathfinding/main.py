@@ -22,6 +22,7 @@ def getInputArgs():
     parser = argparse.ArgumentParser(description="Pathfinding algorithm for multi-agent systems.")
     parser.add_argument('--gui', action='store_true', help="Execute the program with the GUI interface. If not specified, the program will run in command line mode.")
     parser.add_argument('--test', action='store_true', help="Evaluate the program using automated tests.")
+    parser.add_argument('--plot', action='store_true', help="Evaluate the program using cli and plot the final grid.")
 
     return parser.parse_args()
 
@@ -67,7 +68,7 @@ def readParametersFromFile():
     SEED = int(config['SEED']['seed'])
     
 
-def executeCLI():
+def executeCLI(plotGrid):
     # Start time and memory monitoring
     information = Information(SEED)
     information.startMonitoring()
@@ -76,7 +77,7 @@ def executeCLI():
     instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, goalsInits, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
 
     if not instance:
-        print("Parameter max was not valid for the current configuration.\n Parameters too restrictive, try again with different ones.")
+        print("Could not create instance.")
     else:
         print(" ------------- ")
         print("NEW AGENT (init, goal): (", instance.getInit(), ", ", instance.getGoal(), ")")
@@ -98,7 +99,8 @@ def executeCLI():
             information.printInformation()
             information.saveInformationToFile()
 
-            plot(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
+            if plotGrid:
+                plot(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
 
 def executeUI():
     ui = UI(generateInstance, reachGoal, informationGenerator) #TODO: create class for the two controllers
@@ -111,26 +113,28 @@ def main():
         executeUI()
     elif args.test:
         
+        seed = 1234
+        setSeed(seed)
         # Uncomment to create a csv
 
-        # automatedTest = AutomatedTest()
-        # data = automatedTest.executeEvaluationTest()
+        automatedTest = AutomatedTest()
+        data = automatedTest.executeEvaluationTest(seed)
         
-        # elaborateInformation = ElaborateInformation(data)
-        # elaborateInformation.printData()
-        # elaborateInformation.saveDataToFile()
+        elaborateInformation = ElaborateInformation(data)
+        elaborateInformation.printData()
+        elaborateInformation.saveDataToFile()
 
         # Uncomment to read the csv and plot the data
         
-        elaborateInformation = ElaborateInformation(None)
-        elaborateInformation.loadDataFromFile()
-        elaborateInformation.elaborateData()
+        # elaborateInformation = ElaborateInformation(None)
+        # elaborateInformation.loadDataFromFile()
+        # elaborateInformation.elaborateData()
     else:
-        # readParametersFromFile()
-        defaulParameterstValues()
+        readParametersFromFile()
+        # defaulParameterstValues()
 
         setSeed(SEED)   
-        executeCLI()
+        executeCLI(args.plot)
            
 
 if __name__ == "__main__":

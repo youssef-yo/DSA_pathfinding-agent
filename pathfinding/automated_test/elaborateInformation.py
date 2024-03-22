@@ -17,9 +17,20 @@ class ElaborateInformation:
         print(self.df.info())
         print("\n")
 
-        self.analyze_by_type(self.df)
-        # self.analyze_by_type_and_parameters(self.df)
-        self.compare_instances_across_types(self.df)
+        self.df = self.df.dropna()
+        self.df.drop(columns=['initNewAgent'], inplace=True)
+        self.df.drop(columns=['goalNewAgent'], inplace=True)
+
+        # # self.plot_grouped_graphs(self.df)
+        self.plot_row_col(self.df)
+        self.plot_agents(self.df)
+        self.plot_max_length_new_agent(self.df)
+        # self.plot_grouped_agents_graphs(self.df)
+        # self.plot_grouped_limit_len_ex_graphs(self.df)
+
+        # # self.analyze_by_type(self.df)
+        # # self.analyze_by_type_and_parameters(self.df)
+        # # self.compare_instances_across_types(self.df)
 
     def analyze_by_type(self, df):
         types = df['type'].unique()
@@ -116,9 +127,166 @@ class ElaborateInformation:
             print(f"Tipo che richiede meno tempo di esecuzione: {min_time_type}")
             print("\n")
 
-
-
     
+    def plot_row_col(self, df):
+        # Raggruppamento dei dati per tipo, righe e colonne e calcolo della media
+        grouped_df = df.groupby(['type', 'row', 'col']).mean().reset_index()
+
+        # Creazione dei grafici
+        fig, axes = plt.subplots(1, 2, figsize=(18, 6))  # Definisci una griglia di subplot con 1 riga e 2 colonne
+
+        # Grafico per il tempo di esecuzione
+        sns.lineplot(x='row', y='executionTime', hue='type', data=grouped_df, palette='colorblind', legend='full', ax=axes[0])
+        axes[0].set_xlabel('Dimensioni della griglia (NROWS o NCOLS)')
+        axes[0].set_ylabel('Tempo di esecuzione (secondi)')
+        axes[0].set_title('Tempo di esecuzione rispetto alle dimensioni della griglia')
+        axes[0].grid(True)
+
+        # Grafico per il picco di memoria
+        sns.lineplot(x='row', y='peakMemory', hue='type', data=grouped_df, palette='colorblind', legend='full', ax=axes[1])
+        axes[1].set_xlabel('Dimensioni della griglia (NROWS o NCOLS)')
+        axes[1].set_ylabel('Picco di memoria (KB)')
+        axes[1].set_title('Picco di memoria rispetto alle dimensioni della griglia')
+        axes[1].grid(True)
+
+        plt.tight_layout()
+        plt.show()
+
+    def plot_agents(self, df):
+        # Raggruppamento dei dati per tipo, righe e colonne e calcolo della media
+        grouped_df = df.groupby(['type', 'nAgents']).mean().reset_index()
+
+        # Creazione dei grafici
+        fig, axes = plt.subplots(1, 2, figsize=(18, 6))  # Definisci una griglia di subplot con 1 riga e 2 colonne
+
+        # Grafico per il tempo di esecuzione
+        sns.lineplot(x='nAgents', y='executionTime', hue='type', data=grouped_df, palette='colorblind', legend='full', ax=axes[0])
+        axes[0].set_xlabel('Numero di agenti')
+        axes[0].set_ylabel('Tempo di esecuzione (secondi)')
+        axes[0].set_title('Tempo di esecuzione rispetto al numero di agenti')
+        axes[0].grid(True)
+
+        # Grafico per il picco di memoria
+        sns.lineplot(x='nAgents', y='peakMemory', hue='type', data=grouped_df, palette='colorblind', legend='full', ax=axes[1])
+        axes[1].set_xlabel('Numero di agenti')
+        axes[1].set_ylabel('Picco di memoria (KB)')
+        axes[1].set_title('Picco di memoria rispetto al numero di agenti')
+        axes[1].grid(True)
+
+        plt.tight_layout()
+        plt.show()
+        
+    def plot_max_length_new_agent(self, df):
+        # Raggruppamento dei dati per tipo, righe e colonne e calcolo della media
+        grouped_df = df.groupby(['type', 'maxLengthNewAgent']).mean().reset_index()
+
+        # Creazione dei grafici
+        fig, axes = plt.subplots(1, 2, figsize=(18, 6))  # Definisci una griglia di subplot con 1 riga e 2 colonne
+
+        # Grafico per il tempo di esecuzione
+        sns.lineplot(x='maxLengthNewAgent', y='executionTime', hue='type', data=grouped_df, palette='colorblind', legend='full', ax=axes[0])
+        axes[0].set_xlabel('Massima lunghezza per il nuovo agente')
+        axes[0].set_ylabel('Tempo di esecuzione (secondi)')
+        axes[0].set_title('Tempo di esecuzione rispetto alla massima lunghezza per il nuovo agente')
+        axes[0].grid(True)
+
+        # Grafico per il picco di memoria
+        sns.lineplot(x='maxLengthNewAgent', y='peakMemory', hue='type', data=grouped_df, palette='colorblind', legend='full', ax=axes[1])
+        axes[1].set_xlabel('Massima lunghezza per il nuovo agente')
+        axes[1].set_ylabel('Picco di memoria (KB)')
+        axes[1].set_title('Picco di memoria rispetto alla massima lunghezza per il nuovo agente')
+        axes[1].grid(True)
+
+        plt.tight_layout()
+        plt.show()
+
+    def plot_grouped_agents_graphs(self, df):
+
+        grouped_df = df.groupby(['type','row', 'col', 'freeCellRatio', 'agglomerationFactor', 'nAgents']).mean().reset_index()
+        
+        # Creazione dei grafici
+        for name, group in grouped_df.groupby(['row', 'col', 'freeCellRatio', 'agglomerationFactor']):
+            fig, axes = plt.subplots(1, 2, figsize=(18, 6))  # Definisci una griglia di subplot con 1 riga e 2 colonne
+
+            # Grafico per il tempo di esecuzione
+            sns.lineplot(x='nAgents', y='executionTime', hue='type', data=group, palette='colorblind', legend='full', ax=axes[0])
+            axes[0].set_title(f'Tempo di esecuzione - row={name[0]}, col={name[1]}')
+            axes[0].set_xlabel('Numero di agenti')
+            axes[0].set_ylabel('Tempo di esecuzione [secondi]')
+            axes[0].grid(True)
+
+            # Grafico per il picco di memoria
+            sns.lineplot(x='nAgents', y='peakMemory', hue='type', data=group, palette='colorblind', legend='full', ax=axes[1])
+            axes[1].set_title(f'Picco di memoria - row={name[0]}, col={name[1]}')
+            axes[1].set_xlabel('Numero di agenti')
+            axes[1].set_ylabel('Picco di memoria [KB]')
+            axes[1].grid(True)
+
+            plt.tight_layout()
+            plt.show()
+
+    def plot_grouped_limit_len_ex_graphs(self, df):
+
+        grouped_df = df.groupby(['type','row', 'col', 'freeCellRatio', 'agglomerationFactor', 'limitLengthExistingPaths']).mean().reset_index()
+        
+        # Creazione dei grafici
+        for name, group in grouped_df.groupby(['row', 'col', 'freeCellRatio', 'agglomerationFactor']):
+            fig, axes = plt.subplots(1, 2, figsize=(18, 6))  # Definisci una griglia di subplot con 1 riga e 2 colonne
+
+            # Grafico per il tempo di esecuzione
+            sns.lineplot(x='limitLengthExistingPaths', y='executionTime', hue='type', data=group, palette='colorblind', legend='full', ax=axes[0])
+            axes[0].set_title(f'Tempo di esecuzione - row={name[0]}, col={name[1]}')
+            axes[0].set_xlabel('Lunghezza percorsi Preesistenti')
+            axes[0].set_ylabel('Tempo di esecuzione [secondi]')
+            axes[0].grid(True)
+
+            # Grafico per il picco di memoria
+            sns.lineplot(x='limitLengthExistingPaths', y='peakMemory', hue='type', data=group, palette='colorblind', legend='full', ax=axes[1])
+            axes[1].set_title(f'Picco di memoria - row={name[0]}, col={name[1]}')
+            axes[1].set_xlabel('Lunghezza percorsi Preesistenti')
+            axes[1].set_ylabel('Picco di memoria [KB]')
+            axes[1].grid(True)
+
+            plt.tight_layout()
+            plt.show()
+            
+
+    def plot_grouped_graphs(self, df):
+
+        # Raggruppa il DataFrame per righe e colonne uguali
+        grouped_df = df.groupby(['type','row', 'col', 'freeCellRatio', 'agglomerationFactor', 'nAgents', 'limitLengthExistingPaths', 'maxLengthNewAgent']).mean().reset_index()
+        
+        # Creazione dei grafici
+        for name, group in grouped_df.groupby(['row', 'col', 'freeCellRatio', 'agglomerationFactor']):
+            fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(18, 10))
+
+            # Grafico per il numero di agenti
+            sns.lineplot(x='nAgents', y='executionTime', hue='type', data=group, ax=axes[0, 0])
+            axes[0, 0].set_title('Numero di agenti - Tempo di esecuzione')
+            axes[0, 0].set_xlabel('Numero di agenti')
+            axes[0, 0].set_ylabel('Tempo di esecuzione')
+
+            sns.lineplot(x='nAgents', y='peakMemory', hue='type', data=group, ax=axes[1, 0])
+            axes[1, 0].set_title('Numero di agenti - Picco di memoria')
+            axes[1, 0].set_xlabel('Numero di agenti')
+            axes[1, 0].set_ylabel('Picco di memoria')
+
+            # Grafico per limitLengthExistingPaths
+            sns.lineplot(x='limitLengthExistingPaths', y='executionTime', hue='type', data=group, ax=axes[0, 2])
+            axes[0, 2].set_title('LimitLengthExistingPaths - Tempo di esecuzione')
+            axes[0, 2].set_xlabel('LimitLengthExistingPaths')
+            axes[0, 2].set_ylabel('Tempo di esecuzione')
+
+            sns.lineplot(x='limitLengthExistingPaths', y='peakMemory', hue='type', data=group, ax=axes[1, 2])
+            axes[1, 2].set_title('LimitLengthExistingPaths - Picco di memoria')
+            axes[1, 2].set_xlabel('LimitLengthExistingPaths')
+            axes[1, 2].set_ylabel('Picco di memoria')
+
+            plt.tight_layout()
+            plt.title(f'Grafici per row={name[0]}, col={name[1]}')
+            # plt.suptitle(f'Grafici per row={name[0]}, col={name[1]}', y=1.05)
+            plt.show()
+            
 
     def printData(self):
         print(self.df)

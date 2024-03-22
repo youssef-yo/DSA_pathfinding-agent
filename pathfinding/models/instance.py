@@ -10,6 +10,7 @@ class Instance:
         self.goal = goal
         self.maxTimeGoalOccupied = maxTimeGoalOccupied
         self.maxLengthNewAgent = max
+        self.isNewAgentAdded = False
 
     def getGrid(self):
         return self.grid
@@ -35,6 +36,15 @@ class Instance:
     def addPath(self, path):
         self.paths.append(path)
 
+    def removeLastPath(self):
+        self.paths.pop()
+
+    def setIsNewAgentAdded(self, value):
+        self.isNewAgentAdded = value
+    
+    def getIsNewAgentAdded(self):
+        return self.isNewAgentAdded
+    
     def getGoalsInits(self):
         # goalsInits[goal] = (init, -1)
         goalsInits = {}

@@ -22,6 +22,8 @@ def reachGoal(instance, relaxedPlan = False):
 
     # initialize the open and closed sets
     openList = []
+    openNodeTime = set() # set of (node, time)
+
     closedSet = set() # set o tuples (node, time)
     stateDict = defaultdict(State) # list of states, we use it instead of P. Each state has a pointer to parent state
     heuristic = computeHeuristic(graph, goal)
@@ -30,6 +32,7 @@ def reachGoal(instance, relaxedPlan = False):
 
     # push the initial node into the open set with its f-score
     heapq.heappush(openList, (stateDict[(init, 0)].f, stateDict[(init, 0)]))
+    openNodeTime.add((init, 0))
 
     #check for wait
     if maxTimeGoalOccupied + 1 > maxLengthNewAgent:
@@ -39,13 +42,17 @@ def reachGoal(instance, relaxedPlan = False):
         # get the node with the lowest f-score from the open set
         currentState = heapq.heappop(openList)[1]
         closedSet.add((currentState.getNode(), currentState.getTime()))
+        openNodeTime.remove((currentState.getNode(), currentState.getTime()))
 
         # check if the goal will be occupied in the future, if so take another state
         if currentState.getNode() == goal and currentState.getTime() <= maxTimeGoalOccupied + 1:
             if not openList:
                 return None, None, None
             newCurrentState = heapq.heappop(openList)[1]
+            openNodeTime.remove((newCurrentState.getNode(), newCurrentState.getTime()))
+            
             closedSet.add((newCurrentState.getNode(), newCurrentState.getTime()))
+            
 
             currentState = newCurrentState
         elif currentState.getNode() == goal and currentState.getTime() > maxTimeGoalOccupied + 1:
@@ -66,10 +73,10 @@ def reachGoal(instance, relaxedPlan = False):
                 return path, stateDict, closedSet
 
         if currentState.getTime() < maxLengthNewAgent:
-            exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heuristic, currentState)
+            exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, openNodeTime, heuristic, currentState)
     return None, None, None
 
-def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heuristic, currentState):
+def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, openNodeTime, heuristic, currentState):
     """"
     Explore the neighbors of the current node    
     """
@@ -90,8 +97,9 @@ def exploreNeighborhood(graph, paths, goal, openList, closedSet, stateDict, heur
             currentGscore = currentState.g + weight
 
             updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore)
-                    
-            if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in openList]:
+             
+            if (neighbor, currentState.getTime() + 1) not in openNodeTime:
+                openNodeTime.add((neighbor, currentState.getTime() + 1))
                 heapq.heappush(openList, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
 
 def updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore):
@@ -108,17 +116,22 @@ def updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentG
 def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
     # initialize the open and closed sets
     openList = []
+    openNodeTime = set() # set of (node, time)
+
     closedSet = set() # set o tuples (node, time)
     stateDict = defaultdict(State) # list of states, we use it instead of P. Each state has a pointer to parent state
 
     stateDict[(init, startTime)] = State(init, startTime, None, 0, heuristic[(init, goal)])
-
+    
     # push the initial node into the open set with its f-score
     heapq.heappush(openList, (stateDict[(init, startTime)].f, stateDict[(init, startTime)]))
-    
+    openNodeTime.add((init, startTime))
+
     while openList:
         # get the node with the lowest f-score from the open set
         currentState = heapq.heappop(openList)[1]
+        openNodeTime.remove((currentState.getNode(), currentState.getTime()))
+
         closedSet.add((currentState.getNode(), currentState.getTime()))
 
         if currentState.getNode() == goal:
@@ -138,7 +151,9 @@ def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
                 currentGscore = currentState.g + weight
 
                 updateStateDict(goal, stateDict, heuristic, currentState, neighbor, currentGscore)
-                                
-                if (neighbor, currentState.getTime() + 1) not in [(state[1].getNode(), state[1].getTime()) for state in openList]:
+
+                if (neighbor, currentState.getTime() + 1) not in openNodeTime:
+                    openNodeTime.add((neighbor, currentState.getTime() + 1))
                     heapq.heappush(openList, (stateDict[(neighbor, currentState.getTime() + 1)].f, stateDict[(neighbor, currentState.getTime() + 1)]))
+
     return None, None, None

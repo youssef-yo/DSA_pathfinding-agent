@@ -57,7 +57,7 @@ def createInits(nAgents, availableCells):
 
 def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, maxLengthPathNewAgent, limitLengthExistingPaths, goalsInits, useReachGoal=False, useRelaxedPath = True):
     # limitLengthPath = freeCellRatio * nrows * ncols
-    goalInitNewAgent, grid, graph, paths, maxLenthAllPaths = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, goalsInits, useReachGoal, useRelaxedPath)
+    goalInitNewAgent, grid, graph, paths, maxLenthAllPaths = initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, maxLengthPathNewAgent, goalsInits, useReachGoal, useRelaxedPath)
 
     if not paths: 
         return None
@@ -75,7 +75,7 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     return instance
 
 
-def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, goalsInits, useReachGoal, useRelaxedPath):   
+def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, maxLengthPathNewAgent, goalsInits, useReachGoal, useRelaxedPath):   
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
     graph = createGraphFromGrid(grid)
 
@@ -85,7 +85,8 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
         print("Not enough cells to create a path for each agent")
         return None, None, None, None, None
 
-    limit = len(availableCells)
+    # limit = len(availableCells)
+
     if useReachGoal:
         if not goalsInits:
             goalsInits = createGoalsInits(nAgents, availableCells)
@@ -97,7 +98,7 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
                 if not checkReachability(init, goal, islands):
                     return goalsInits, grid, graph, None, None
             
-        paths, maxLengthAllPaths, goalInitNewAgent = createPathsUsingReachGoal(goalsInits, nAgents, limit, graph, useRelaxedPath)
+        paths, maxLengthAllPaths, goalInitNewAgent = createPathsUsingReachGoal(goalsInits, nAgents, maxLengthPathNewAgent, graph, useRelaxedPath)
     else:
         if not goalsInits:
             inits, goalsInits = createInits(nAgents, availableCells)
