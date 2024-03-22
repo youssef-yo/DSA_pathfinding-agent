@@ -110,11 +110,12 @@ def main():
     if args.gui:
         executeUI()
     elif args.test:
-        
+        SEED = 1234
+        setSeed(SEED)
         # Uncomment to create a csv
 
         automatedTest = AutomatedTest()
-        data = automatedTest.executeEvaluationTest()
+        data = automatedTest.executeEvaluationTest(SEED)
         
         elaborateInformation = ElaborateInformation(data)
         elaborateInformation.printData()
