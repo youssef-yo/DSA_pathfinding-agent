@@ -31,7 +31,8 @@ class AutomatedTest():
         SEED = seed
         
         
-        gridDimension = [250]
+        # gridDimension = [5, 10, 25, 50, 100, 150, 200, 250]
+        gridDimension = [150, 200]
         # for i in range(1,6): # lista al posto di range [1, 2, 5, 10, 20, 100]
         for dim in gridDimension: # lista al posto di range [1, 2, 5, 10, 20, 100]
             NROWS = NCOLS = dim
@@ -60,9 +61,12 @@ class AutomatedTest():
                     self.defineCombination()
             
             N_AGENTS = NROWS
-            for limitLength in range(0.1, 0.6, 0.1):
-                LIMIT_LENGTH_EXISTING_PATHS = max(int((N_AGENTS) * limitLength), 1)
+            for limitLength in np.arange(0.1, 0.6, 0.1):
+                LIMIT_LENGTH_EXISTING_PATHS = max(int(math.ceil((N_AGENTS) * limitLength)), 1)
                 MAX = int(math.ceil((NROWS + NCOLS + LIMIT_LENGTH_EXISTING_PATHS)))
+
+                print("I: ", dim, "NROWS: ", NROWS, " N_AGENTS: ", N_AGENTS, " FREE_CELL_RATIO: ", FREE_CELL_RATIO, " AGGLOMERATION_FACTOR: ", AGGLOMERATION_FACTOR, " MAX: ", MAX, " LIMIT_LENGTH_EXISTING_PATHS: ", LIMIT_LENGTH_EXISTING_PATHS)
+                
                 for iRun in range(1,5):
                     print("iRun: ", iRun)
                     self.defineCombination()
@@ -135,7 +139,7 @@ class AutomatedTest():
             information.setFailValues(FREE_CELL_RATIO, AGGLOMERATION_FACTOR, useRelaxedPath, useReachGoalExistingAgents, LIMIT_LENGTH_EXISTING_PATHS)
             # information.saveFailInformationToFile(NROWS, NCOLS, MAX)
             self.addRow(information.getFailRowInformation(typeRun, NROWS, NCOLS, MAX))
-
+                
         # l'istanza è stata generata correttamente
         else:
             self.executeReachGoal(typeRun, instance, useReachGoalExistingAgents, useRelaxedPath, information)
