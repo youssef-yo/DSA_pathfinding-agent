@@ -76,7 +76,7 @@ def executeCLI():
     instance = generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, LIMIT_LENGTH_EXISTING_PATHS, goalsInits, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
 
     if not instance:
-        print("Parameter max was not valid for the current configuration.\n Parameters too restrictive, try again with different ones.")
+        print("Could not create instance.")
     else:
         print(" ------------- ")
         print("NEW AGENT (init, goal): (", instance.getInit(), ", ", instance.getGoal(), ")")
@@ -110,12 +110,13 @@ def main():
     if args.gui:
         executeUI()
     elif args.test:
-        SEED = 1234
-        setSeed(SEED)
+        
+        seed = 1234
+        setSeed(seed)
         # Uncomment to create a csv
 
         automatedTest = AutomatedTest()
-        data = automatedTest.executeEvaluationTest(SEED)
+        data = automatedTest.executeEvaluationTest(seed)
         
         elaborateInformation = ElaborateInformation(data)
         elaborateInformation.printData()
@@ -127,8 +128,8 @@ def main():
         # elaborateInformation.loadDataFromFile()
         # elaborateInformation.elaborateData()
     else:
-        # readParametersFromFile()
-        defaulParameterstValues()
+        readParametersFromFile()
+        # defaulParameterstValues()
 
         setSeed(SEED)   
         executeCLI()
