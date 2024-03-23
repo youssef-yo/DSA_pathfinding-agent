@@ -46,7 +46,6 @@ def gridGenerator(rows, cols, freeCellRatio, agglomerationFactor):
     grid[r][c] = 1 -> obstacle
     """
 
-    # grid = [[0 for _ in range(rows)] for _ in range(cols)]
     grid = Grid(rows, cols)
 
     #add obstacles to grid

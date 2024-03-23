@@ -103,26 +103,30 @@ def executeCLI(plotGrid):
                 plot(instance.getGrid(), instance.getPaths(), minimumSpanningTree)
 
 def executeUI():
-    ui = UI(generateInstance, reachGoal, informationGenerator) #TODO: create class for the two controllers
+    ui = UI(generateInstance, reachGoal, informationGenerator)
     ui.run()
         
 def main():
     args = getInputArgs()
-    # args.test = True
     if args.gui:
         executeUI()
     elif args.test:
         
         seed = 1234
         setSeed(seed)
+
         # Uncomment to create a csv
 
-        automatedTest = AutomatedTest()
-        data = automatedTest.executeEvaluationTest(seed)
-        
-        elaborateInformation = ElaborateInformation(data)
-        elaborateInformation.printData()
-        elaborateInformation.saveDataToFile()
+        proceed = input("Do you want to proceed with the automated test? (y/n): ")
+        if proceed.lower() == "y":
+            automatedTest = AutomatedTest()
+            data = automatedTest.executeEvaluationTest(seed)
+            
+            elaborateInformation = ElaborateInformation(data)
+            elaborateInformation.printData()
+            elaborateInformation.saveDataToFile()
+        else:
+            print("Automated test cancelled.")
 
         # Uncomment to read the csv and plot the data
         

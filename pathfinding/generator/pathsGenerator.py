@@ -32,14 +32,12 @@ def createPaths(inits, goalsInits, nAgents, limitLengthExistingPaths, graph):
         current = init
         t = 0
 
-        #TODO: remove print
         while t < limitPath:
             availableMoves = graph.getNeighbors(current)
 
             availableMoves = Path.removeIllegalMoves(availableMoves, paths, current, t)
 
             if len(availableMoves) == 0:
-                print("RESET NO MOVE")
                 return None, 0, None
             
             move = random.choice(availableMoves)
@@ -86,7 +84,6 @@ def createPathsUsingReachGoal(goalsInits, nAgents, limitLengthPath, graph, useRe
         paths.append(path)
         maxLengthPath = max(maxLengthPath, path.getLength())
 
-    # TODO: remove print
     # for path in paths:
     #     path.printPath()
 

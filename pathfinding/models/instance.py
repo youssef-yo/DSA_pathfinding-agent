@@ -46,7 +46,6 @@ class Instance:
         return self.isNewAgentAdded
     
     def getGoalsInits(self):
-        # goalsInits[goal] = (init, -1)
         goalsInits = {}
         for path in self.paths:
             goalsInits[path.getGoal()] = (path.getInit(), -1)

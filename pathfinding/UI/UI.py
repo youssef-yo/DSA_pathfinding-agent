@@ -117,7 +117,6 @@ def definePlotPaths(ax, paths):
                     ax.plot(yEnd + 0.5, xEnd + 0.5, marker='^', markersize=10, color=colors[i])
                 ax.plot([yStart + 0.5, yEnd + 0.5], [xStart + 0.5, xEnd + 0.5], color=colors[i], linewidth=2)
 
-                # Creating legend with color box 
             if path == paths[-1]:
                 labels.append(mpatches.Patch(color=colors[i], label='New Agent'))
             else:

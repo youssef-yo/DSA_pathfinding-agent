@@ -82,7 +82,7 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
     availableCells = list(graph.getNodes())
     if len(availableCells) < nAgents:
         #TODO: throw exception
-        print("Not enough cells to create a path for each agent")
+        #print("Not enough cells to create a path for each agent")
         return None, None, None, None, None
 
     # limit = len(availableCells)

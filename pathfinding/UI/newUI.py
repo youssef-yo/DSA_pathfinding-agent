@@ -186,31 +186,38 @@ class UI:
     # Funzione per generare una nuova istanza
     def generate_instance(self, instanceController, nrow_input, ncol_input, free_cell_ratio_input, agglomeration_factor_input, max_input, n_agent_input, max_length_existing_paths_input, toggle_relaxed_path_button, toggle_reach_goal_button):
         # Qui chiami il controller e generi la nuova istanza
-        if nrow_input.get_text() == '' or ncol_input.get_text() == '' or free_cell_ratio_input.get_text() == '' or agglomeration_factor_input.get_text() == '' or max_input.get_text() == '' or n_agent_input.get_text() == '' or max_length_existing_paths_input.get_text() == '':
+        if nrow_input.get_text() == '' or ncol_input.get_text() == '' or free_cell_ratio_input.get_text() == '' or agglomeration_factor_input.get_text() == '' or max_input.get_text() == '' or n_agent_input.get_text() == '':
             #TODO: handle error
             return 
         
-        #TODO: create methods to get the values
-        NROWS = int(nrow_input.get_text())
-        NCOLS = int(ncol_input.get_text())
+        #NB: nrows and ncols are swapped for a better plot!
+        NROWS = int(ncol_input.get_text())
+        NCOLS = int(nrow_input.get_text())
+
+
         FREE_CELL_RATIO = float(free_cell_ratio_input.get_text())
         AGGLOMERATION_FACTOR = float(agglomeration_factor_input.get_text())
         MAX = int(max_input.get_text())
         N_AGENTS = int(n_agent_input.get_text())
-        MAX_LENGTH_EXISTING_PATHS = int(max_length_existing_paths_input.get_text())
 
         USE_RELAXED_PATH = toggle_relaxed_path_button.getState()
         USE_REACH_GOAL_EXISTING_AGENTS = toggle_reach_goal_button.getState()
+        
+        if not toggle_reach_goal_button.getState() and max_length_existing_paths_input.get_text() == '':
+            return
+        elif not toggle_reach_goal_button.getState():
+            MAX_LENGTH_EXISTING_PATHS = int(max_length_existing_paths_input.get_text())
+        else:
+            MAX_LENGTH_EXISTING_PATHS = 1
+
 
         goalsInits = None
 
-        #TODO: max of row = 15, max of col = 18
+        #TODO: max of row = 18, max of col = 15
         if NROWS <= 0 or NROWS >= 16 or  NCOLS <= 0 or NCOLS >= 19 or  FREE_CELL_RATIO <= 0 or FREE_CELL_RATIO > 1 or AGGLOMERATION_FACTOR < 0 or AGGLOMERATION_FACTOR > 1 or MAX <= 0 or N_AGENTS <= 0 or MAX_LENGTH_EXISTING_PATHS <= 0 or MAX_LENGTH_EXISTING_PATHS > NROWS * NCOLS:
             return
 
         self.information.startMonitoring()
-        #TODO: scommenta quando crei le classi
-        # instance, nIteration = instanceController.generateInstance(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
         instance = instanceController(NROWS, NCOLS, FREE_CELL_RATIO, AGGLOMERATION_FACTOR, N_AGENTS, MAX, MAX_LENGTH_EXISTING_PATHS, goalsInits, USE_REACH_GOAL_EXISTING_AGENTS, USE_RELAXED_PATH)
         if not instance:
             #TODO: handle error
@@ -320,8 +327,8 @@ class UI:
             f"Length of P: {lengthP}",
             f"Length of ClosedSet: {lengthClosedSet}",
             
-            f"Execution Time: {executionTime}",
-            f"Total Memory: {totalMemory} KB"
+            f"Execution Time: {executionTime} [s]",
+            f"Total Memory: {totalMemory} [KB]"
         ]
 
         # Define text positions

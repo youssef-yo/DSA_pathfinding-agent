@@ -21,16 +21,9 @@ class ElaborateInformation:
         self.df.drop(columns=['initNewAgent'], inplace=True)
         self.df.drop(columns=['goalNewAgent'], inplace=True)
 
-        # # self.plot_grouped_graphs(self.df)
         self.plot_row_col(self.df)
         self.plot_agents(self.df)
         self.plot_max_length_new_agent(self.df)
-        # self.plot_grouped_agents_graphs(self.df)
-        # self.plot_grouped_limit_len_ex_graphs(self.df)
-
-        # # self.analyze_by_type(self.df)
-        # # self.analyze_by_type_and_parameters(self.df)
-        # # self.compare_instances_across_types(self.df)
 
     def analyze_by_type(self, df):
         types = df['type'].unique()
