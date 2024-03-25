@@ -1,7 +1,7 @@
 import collections
 
 def findIslands(grid):
-    obstacles = grid.getOccupiedCells()
+    obstacles = grid.getObstacleCells()
 
     if len(obstacles) == 0:
         return 

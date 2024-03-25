@@ -3,6 +3,7 @@ from generator.graphGenerator import createGraphFromGrid
 from generator.pathsGenerator import createPaths, createPathsUsingReachGoal
 from generator.reachability import checkReachability, findIslands
 from models.instance import Instance
+from models.path import Path
 
 import random
 
@@ -75,6 +76,10 @@ def generateInstance(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, 
     return instance
 
 
+def updateOccupiedInitCell(grid, init, agentId):
+    grid.addTimeOccupiedInCellByAgent(init, 0, agentId)
+    
+
 def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLengthExistingPaths, maxLengthPathNewAgent, goalsInits, useReachGoal, useRelaxedPath):   
     grid = gridGenerator(nrows,ncols, freeCellRatio, agglomerationFactor)
     graph = createGraphFromGrid(grid)
@@ -87,26 +92,49 @@ def initVars(nrows, ncols, freeCellRatio, agglomerationFactor, nAgents, limitLen
 
     # limit = len(availableCells)
 
+
+    paths = dict()
+
     if useReachGoal:
         if not goalsInits:
+            # I want to use reachGoal so init and goal for each agent must be selected
             goalsInits = createGoalsInits(nAgents, availableCells)
-    
+
         # check reachability
         islands = findIslands(grid)
         if islands:
             for goal, (init, _) in goalsInits.items():
+                path = Path(init, goal)
+                paths[path.getId()] = path
+
+                updateOccupiedInitCell(grid, init, path.getId())
+
                 if not checkReachability(init, goal, islands):
                     return goalsInits, grid, graph, None, None
             
-        paths, maxLengthAllPaths, goalInitNewAgent = createPathsUsingReachGoal(goalsInits, nAgents, maxLengthPathNewAgent, graph, useRelaxedPath)
+        maxLengthAllPaths, goalInitNewAgent = createPathsUsingReachGoal(paths, goalsInits, grid, maxLengthPathNewAgent, graph, useRelaxedPath)
     else:
         if not goalsInits:
+            # I want to create paths randomly so I need to know where to start for each eagent but i don't need to know the goal
             inits, goalsInits = createInits(nAgents, availableCells)
+
+            for init in inits:
+                path = Path(init, None)
+                paths[path.getId()] = path
+
+                updateOccupiedInitCell(grid, init, path.getId())
+
         else:
+            # TODO: refactor this
             inits = set()
             for _, (init, _) in goalsInits.items():
+                path = Path(init, None)
+                paths[path.getId()] = path
+
+                updateOccupiedInitCell(grid, init, path.getId())
                 inits.add(init)
                 
-        paths, maxLengthAllPaths, goalInitNewAgent = createPaths(inits, goalsInits, nAgents, limitLengthExistingPaths, graph)
+        
+        maxLengthAllPaths, goalInitNewAgent = createPaths(paths, goalsInits, limitLengthExistingPaths, graph)
     
     return goalInitNewAgent, grid, graph, paths, maxLengthAllPaths

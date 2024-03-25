@@ -1,4 +1,5 @@
 import math 
+import uuid
 
 class Move:
     def __init__(self, src, dst, w) -> None:
@@ -26,7 +27,14 @@ class Path:
         self.goal = goal
         self.cost = 0
         self.length = 0
-    
+        
+        self.maxTimeGoalOccupied = -1
+        self.id = uuid.uuid4()
+        
+
+    def getId(self):
+        return self.id
+
     def getInit(self):
         return self.init
     
@@ -53,6 +61,9 @@ class Path:
         """
         return self.moves.items()
 
+    def getTimeMaxGoalOccupied(self):
+        return self.maxTimeGoalOccupied
+    
     def existMoveAtTimeT(self, t):
         return t in self.moves
     
@@ -61,49 +72,53 @@ class Path:
         self.cost += w
         self.length += 1
 
-    def checkSameDestination(self, dst, t):
-        if t in self.moves:
-            if self.getMove(t).dst == dst:
-                return True
-        return False
+    def addMoves(self, _moves):
+        self.moves.update(_moves)
 
-    def checkSeatSwapping(self, src, dst, t):
-        if t in self.moves:
-            if self.getMove(t).src == dst and self.getMove(t).dst == src:
-                return True
-        return False
+    # def checkSameDestination(self, dst, t):
+    #     if t in self.moves:
+    #         if self.getMove(t).dst == dst:
+    #             return True
+    #     return False
+
+
+    # def checkSeatSwapping(self, src, dst, t):
+    #     if t in self.moves:
+    #         if self.getMove(t).src == dst and self.getMove(t).dst == src:
+    #             return True
+    #     return False
     
-    def checkTrajectories(self, src, dst, t):
-        if t not in self.moves:
-            return False
+    # def checkTrajectories(self, src, dst, t):
+    #     if t not in self.moves:
+    #         return False
         
-        src_move_x = self.getMove(t).src[0]
-        src_move_y = self.getMove(t).src[1]
-        dst_move_x = self.getMove(t).dst[0]
-        dst_move_y = self.getMove(t).dst[1]
+    #     src_move_x = self.getMove(t).src[0]
+    #     src_move_y = self.getMove(t).src[1]
+    #     dst_move_x = self.getMove(t).dst[0]
+    #     dst_move_y = self.getMove(t).dst[1]
 
-        #check that one agent is up/down of the other
-        if (src_move_y == src[1] and
-             abs(src_move_x-src[0]) == 1):
-            #check if they cross each other
-            if (dst_move_y == dst[1] and
-                abs(dst_move_x-dst[0]) == 1 and 
-                (src_move_x == dst[0] and dst_move_x == src[0])):
-                return True
+    #     #check that one agent is up/down of the other
+    #     if (src_move_y == src[1] and
+    #          abs(src_move_x-src[0]) == 1):
+    #         #check if they cross each other
+    #         if (dst_move_y == dst[1] and
+    #             abs(dst_move_x-dst[0]) == 1 and 
+    #             (src_move_x == dst[0] and dst_move_x == src[0])):
+    #             return True
             
-        #check that one agent is left/right of the other
-        if (src_move_x == src[0] and
-             abs(src_move_y-src[1]) == 1):
-            #check if they cross each other
-            if (dst_move_x == dst[0] and
-                abs(dst_move_y-dst[1]) == 1 and 
-                (src_move_y == dst[1] and dst_move_y == src[1])):
-                return True
+    #     #check that one agent is left/right of the other
+    #     if (src_move_x == src[0] and
+    #          abs(src_move_y-src[1]) == 1):
+    #         #check if they cross each other
+    #         if (dst_move_x == dst[0] and
+    #             abs(dst_move_y-dst[1]) == 1 and 
+    #             (src_move_y == dst[1] and dst_move_y == src[1])):
+    #             return True
             
-        return False
+    #     return False
     
-    def checkCollision(self, src, dst, t):
-        return self.checkSameDestination(dst, t) or self.checkSeatSwapping(src, dst, t) or self.checkTrajectories(src, dst, t)
+    # def checkCollision(self, src, dst, t):
+    #     return self.checkSameDestination(dst, t) or self.checkSeatSwapping(src, dst, t) or self.checkTrajectories(src, dst, t)
     
     def concatenatePaths(self, path2):
         for t, move in path2.getMoves():

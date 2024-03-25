@@ -129,7 +129,7 @@ class TestGridGenerator(unittest.TestCase):
 
         n_obstacles = 5
         createAgglomeration(grid, n_obstacles)
-        self.assertEqual(len(grid.getOccupiedCells()), n_obstacles)     
+        self.assertEqual(len(grid.getObstacleCells()), n_obstacles)     
     
 if __name__ == '__main__':
     unittest.main()
