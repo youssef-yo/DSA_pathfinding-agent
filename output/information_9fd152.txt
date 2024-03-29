@@ -1,0 +1,51 @@
+Seed: 50
+Relaxed path UTILIZZATO
+Reach goal UTILIZZATO per gli agenti preesistenti
+Numero di righe: 25
+Numero di colonne: 25
+Rapporto di celle libere: 0.7
+Fattore di agglomerazione: 0.2
+Numero di agenti preesistenti: 30
+Lunghezza Agenti Preesistenti: 9
+Lunghezza Max Agenti Preesistenti: 14
+Lunghezza Percorso 0:9
+Lunghezza Percorso 1:17
+Lunghezza Percorso 2:13
+Lunghezza Percorso 3:6
+Lunghezza Percorso 4:23
+Lunghezza Percorso 5:7
+Lunghezza Percorso 6:17
+Lunghezza Percorso 7:5
+Lunghezza Percorso 8:9
+Lunghezza Percorso 9:9
+Lunghezza Percorso 10:19
+Lunghezza Percorso 11:18
+Lunghezza Percorso 12:27
+Lunghezza Percorso 13:14
+Lunghezza Percorso 14:17
+Lunghezza Percorso 15:8
+Lunghezza Percorso 16:20
+Lunghezza Percorso 17:5
+Lunghezza Percorso 18:7
+Lunghezza Percorso 19:20
+Lunghezza Percorso 20:8
+Lunghezza Percorso 21:25
+Lunghezza Percorso 22:17
+Lunghezza Percorso 23:15
+Lunghezza Percorso 24:14
+Lunghezza Percorso 25:24
+Lunghezza Percorso 26:12
+Lunghezza Percorso 27:8
+Lunghezza Percorso 28:19
+Lunghezza Percorso 29:5
+Valore orizzonte temporale max: 100
+Init nuovo Agente: (23, 16)
+Goal nuovo Agente: (6, 2)
+Stati in Open (e P): 546
+Stati espansi in Closed: 243
+Lunghezza del percorso: 25
+Costo del percorso: 29.142135623730955
+Numero di wait move: 0
+Tempo di esecuzione: 1.2833209037780762
+Utilizzo di memoria: 1139.709 KB
+Picco di memoria: 1349.75 KB

@@ -124,7 +124,9 @@ def findRelaxedPath(graph, heuristic, init, goal, maxLengthNewAgent, startTime):
         if currentState.getNode() == goal:
             # reconstruct the path from the initial node to the goal
             return reconstructPath(init, goal, stateDict, startTime, currentState.getTime()), stateDict
+        
 
+        
         if currentState.getTime() < maxLengthNewAgent:
             # explore the neighbors of the current node
             for edge in graph.getNeighbors(currentState.getNode()):
